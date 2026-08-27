@@ -3,186 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Wesam Amer — Academic & Research</title>
+    <title>Dr. Mohammedwesam Amer — Academic & Research</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-white text-gray-800">
-    <!-- Navigation -->
+<body class="bg-gray-50 text-gray-800">
+
     <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-gray-900">Dr. Mohammedwesam Amer</div>
-            <ul class="hidden md:flex gap-8">
+            <div class="text-xl font-bold text-gray-900">Dr. Mohammedwesam Amer</div>
+            
+            <ul class="hidden lg:flex gap-6 text-sm font-medium">
                 <li><a href="#home" class="text-gray-700 hover:text-blue-600 transition">Home</a></li>
                 <li><a href="#about" class="text-gray-700 hover:text-blue-600 transition">About</a></li>
+                <li><a href="#news" class="text-gray-700 hover:text-blue-600 transition">News</a></li>
                 <li><a href="#research" class="text-gray-700 hover:text-blue-600 transition">Research</a></li>
                 <li><a href="#publications" class="text-gray-700 hover:text-blue-600 transition">Publications</a></li>
+                <li><a href="#teaching" class="text-gray-700 hover:text-blue-600 transition">Teaching</a></li>
+                <li><a href="#leadership" class="text-gray-700 hover:text-blue-600 transition">Leadership</a></li>
+                <li><a href="#media" class="text-gray-700 hover:text-blue-600 transition">Media</a></li>
+                <li><a href="#cv" class="text-gray-700 hover:text-blue-600 transition">CV</a></li>
+                <li><a href="#services" class="text-gray-700 hover:text-blue-600 transition">Services</a></li>
                 <li><a href="#contact" class="text-gray-700 hover:text-blue-600 transition">Contact</a></li>
             </ul>
-            <!-- Mobile Menu Button -->
-            <button id="menu-toggle" class="md:hidden text-gray-700">
+
+            <button id="menu-toggle" class="lg:hidden text-gray-700 focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <ul class="flex flex-col gap-4 px-6 py-4">
-                <li><a href="#home" class="text-gray-700 hover:text-blue-600">Home</a></li>
-                <li><a href="#about" class="text-gray-700 hover:text-blue-600">About</a></li>
-                <li><a href="#research" class="text-gray-700 hover:text-blue-600">Research</a></li>
-                <li><a href="#publications" class="text-gray-700 hover:text-blue-600">Publications</a></li>
-                <li><a href="#contact" class="text-gray-700 hover:text-blue-600">Contact</a></li>
+
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-200 px-6 py-4">
+            <ul class="flex flex-col gap-3 text-sm">
+                <li><a href="#home" class="block text-gray-700 hover:text-blue-600">Home</a></li>
+                <li><a href="#about" class="block text-gray-700 hover:text-blue-600">About</a></li>
+                <li><a href="#news" class="block text-gray-700 hover:text-blue-600">News</a></li>
+                <li><a href="#research" class="block text-gray-700 hover:text-blue-600">Research</a></li>
+                <li><a href="#publications" class="block text-gray-700 hover:text-blue-600">Publications</a></li>
+                <li><a href="#teaching" class="block text-gray-700 hover:text-blue-600">Teaching & Supervision</a></li>
+                <li><a href="#leadership" class="block text-gray-700 hover:text-blue-600">Academic Leadership & Service</a></li>
+                <li><a href="#media" class="block text-gray-700 hover:text-blue-600">Media & Public Engagement</a></li>
+                <li><a href="#cv" class="block text-gray-700 hover:text-blue-600">CV</a></li>
+                <li><a href="#services" class="block text-gray-700 hover:text-blue-600">Services & Offers</a></li>
+                <li><a href="#testimonials" class="block text-gray-700 hover:text-blue-600">Testimonials</a></li>
+                <li><a href="#contact" class="block text-gray-700 hover:text-blue-600">Contact</a></li>
+                <li><a href="#profiles" class="block text-gray-700 hover:text-blue-600">Social Media & Profiles</a></li>
             </ul>
         </div>
     </nav>
 
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Website Content Structure</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            background-color: #f9f9f9;
-        }
-        .container {
-            background: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        h1 {
-            border-bottom: 2px solid #eaeaea;
-            padding-bottom: 10px;
-            color: #111;
-        }
-        ol {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        ul {
-            list-style-type: disc;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            font-weight: normal;
-        }
-        ul li {
-            margin-bottom: 4px;
-            font-weight: normal;
-            color: #555;
-        }
-    </style>
-</head>
-<body>
+    <main class="max-w-4xl mx-auto px-6 py-10 space-y-16">
 
-    <div class="container">
-        <h1>📋 Content Structure</h1>
-        <p>Comprehensive layout for an academic portfolio and research website.</p>
+        <section id="home" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">1. Home</h1>
+            <div class="space-y-2 text-gray-600">
+                <p><strong>1.1. Welcome Message:</strong> Welcome to the official academic and professional portfolio of Dr. Mohammedwesam Amer.</p>
+            </div>
+        </section>
 
-        <ol>
-            <li>Home
-                <ul>
-                    <li>1.1. Welcome Message</li>
-                </ul>
-            </li>
-            <li>News</li>
-            <li>Research
-                <ul>
-                    <li>3.1. Research Agenda</li>
-                    <li>3.2. Research Themes</li>
-                    <li>3.3. Research Projects</li>
-                    <li>3.4. Intellectual Trajectory &amp; Featured Projects</li>
-                </ul>
-            </li>
-            <li>Publications
-                <ul>
-                    <li>4.1. Peer-Reviewed Journal Articles</li>
-                    <li>4.2. Books and Book Chapters</li>
-                    <li>4.3. Working Papers and Works in Progress</li>
-                    <li>4.4. Research Reports and Other Publications</li>
-                </ul>
-            </li>
-            <li>Teaching &amp; Supervision
-                <ul>
-                    <li>5.1. Teaching Overview</li>
-                    <li>5.2. Courses (Graduate Courses / Undergraduate Courses)</li>
-                    <li>5.3. Supervision &amp; Examination (Doctoral Supervision, Master's Supervision, Thesis Examination and Academic Mentorship)</li>
-                </ul>
-            </li>
-            <li>Academic Leadership &amp; Service
-                <ul>
-                    <li>6.1. Academic Leadership</li>
-                    <li>6.2. Academic Service</li>
-                    <li>6.3. Academic Networks and Professional Memberships</li>
-                </ul>
-            </li>
-            <li>Media and Public Engagement
-                <ul>
-                    <li>7.1. Conferences and Events (Conference Organisation, Symposia and Workshops, Invited Talks and Presentations)</li>
-                    <li>7.2. Media Appearances and Interviews</li>
-                    <li>7.3. Public Lectures and Keynote Addresses</li>
-                    <li>7.4. Policy and Knowledge Exchange</li>
-                </ul>
-            </li>
-            <li>About / Biography
-                <ul>
-                    <li>8.1. Short Biography</li>
-                    <li>8.2. Academic Journey</li>
-                    <li>8.3. Fellowships &amp; Appointments</li>
-                </ul>
-            </li>
-            <li>CV
-                <ul>
-                    <li>9.1. Web CV</li>
-                    <li>9.2. Download CV</li>
-                </ul>
-            </li>
-            <li>Services and Offers
-                <ul>
-                    <li>10.1. Research and Academic Consultancy</li>
-                    <li>10.2. Training and Workshops</li>
-                    <li>10.3. Research Design and Methodological Support</li>
-                    <li>10.4. Media and Communication Consultancy</li>
-                    <li>10.5. Invited Lectures and Speaking Engagements</li>
-                </ul>
-            </li>
-            <li>Testimonials
-                <ul>
-                    <li>11.1. Academic Collaborators</li>
-                    <li>11.2. Students and Mentees</li>
-                    <li>11.3. Professional and Institutional Partners</li>
-                </ul>
-            </li>
-            <li>Contact
-                <ul>
-                    <li>12.1. Get in Touch</li>
-                    <li>12.2. Institutional Affiliation</li>
-                    <li>12.3. Professional Enquiries</li>
-                </ul>
-            </li>
-            <li>Social Media &amp; Academic Profiles
-                <ul>
-                    <li>13.1. Google Scholar</li>
-                    <li>13.2. ORCID</li>
-                    <li>13.3. ResearchGate</li>
-                    <li>13.4. LinkedIn</li>
-                    <li>13.5. Other Professional Profiles</li>
-                </ul>
-            </li>
-        </ol>
-    </div>
+        <section id="news" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">2. News</h2>
+            <p class="text-gray-600">Latest updates, announcements, awards, and recent publications.</p>
+        </section>
 
+        <section id="research" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Research</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>3.1. Research Agenda:</strong> Overview of overarching scholarly goals and focus areas.</li>
+                <li><strong>3.2. Research Themes:</strong> Key pillars and thematic sub-fields.</li>
+                <li><strong>3.3. Research Projects:</strong> Active and past academic studies.</li>
+                <li><strong>3.4. Intellectual Trajectory &amp; Featured Projects:</strong> Evolution of research concepts and highlighted highlights.</li>
+            </ul>
+        </section>
+
+        <section id="publications" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Publications</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>4.1. Peer-Reviewed Journal Articles:</strong> Academic papers in peer-reviewed journals.</li>
+                <li><strong>4.2. Books and Book Chapters:</strong> Authored or edited books and contributions.</li>
+                <li><strong>4.3. Working Papers and Works in Progress:</strong> Ongoing pre-prints and manuscripts.</li>
+                <li><strong>4.4. Research Reports and Other Publications:</strong> Policy briefs, reports, and white papers.</li>
+            </ul>
+        </section>
+
+        <section id="teaching" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Teaching &amp; Supervision</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>5.1. Teaching Overview:</strong> Pedagogical philosophy and experience.</li>
+                <li><strong>5.2. Courses:</strong> Graduate Courses and Undergraduate Courses.</li>
+                <li><strong>5.3. Supervision &amp; Examination:</strong> Doctoral Supervision, Master's Supervision, Thesis Examination, and Academic Mentorship.</li>
+            </ul>
+        </section>
+
+        <section id="leadership" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Academic Leadership &amp; Service</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>6.1. Academic Leadership:</strong> Administrative roles, department heads, or committee chairs.</li>
+                <li><strong>6.2. Academic Service:</strong> Peer review, editorial boards, and institutional contributions.</li>
+                <li><strong>6.3. Academic Networks and Professional Memberships:</strong> Affiliations with learned societies.</li>
+            </ul>
+        </section>
+
+        <section id="media" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Media and Public Engagement</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>7.1. Conferences and Events:</strong> Conference Organisation, Symposia and Workshops, Invited Talks and Presentations.</li>
+                <li><strong>7.2. Media Appearances and Interviews:</strong> TV, radio, podcasts, and press interviews.</li>
+                <li><strong>7.3. Public Lectures and Keynote Addresses:</strong> Presentations aimed at general or broader public audiences.</li>
+                <li><strong>7.4. Policy and Knowledge Exchange:</strong> Engagement with government bodies, NGOs, and industry partners.</li>
+            </ul>
+        </section>
+
+        <section id="about" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">8. About / Biography</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>8.1. Short Biography:</strong> A concise introduction for keynote intros and profiles.</li>
+                <li><strong>8.2. Academic Journey:</strong> Educational history, institutions, and credentials.</li>
+                <li><strong>8.3. Fellowships &amp; Appointments:</strong> Grants, visiting positions, and honored titles.</li>
+            </ul>
+        </section>
+
+        <section id="cv" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">9. CV</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>9.1. Web CV:</strong> Comprehensive HTML-based resume format.</li>
+                <li><strong>9.2. Download CV:</strong> Link to downloadable PDF curriculum vitae.</li>
+            </ul>
+        </section>
+
+        <section id="services" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">10. Services and Offers</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>10.1. Research and Academic Consultancy:</strong> Expert advisory services.</li>
+                <li><strong>10.2. Training and Workshops:</strong> Professional development programs.</li>
+                <li><strong>10.3. Research Design and Methodological Support:</strong> Guidance on studies and analytics.</li>
+                <li><strong>10.4. Media and Communication Consultancy:</strong> Public messaging and communication insights.</li>
+                <li><strong>10.5. Invited Lectures and Speaking Engagements:</strong> Keynote bookings.</li>
+            </ul>
+        </section>
+
+        <section id="testimonials" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">11. Testimonials</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>11.1. Academic Collaborators:</strong> Endorsements from fellow researchers.</li>
+                <li><strong>11.2. Students and Mentees:</strong> Feedback from supervised students and mentees.</li>
+                <li><strong>11.3. Professional and Institutional Partners:</strong> Comments from industry and organizational partners.</li>
+            </ul>
+        </section>
+
+        <section id="contact" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">12. Contact</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>12.1. Get in Touch:</strong> Contact form and email address.</li>
+                <li><strong>12.2. Institutional Affiliation:</strong> University or organizational office location.</li>
+                <li><strong>12.3. Professional Enquiries:</strong> Media bookings, joint research, and consultancy channels.</li>
+            </ul>
+        </section>
+
+        <section id="profiles" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">13. Social Media &amp; Academic Profiles</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                <li><strong>13.1. Google Scholar:</strong> Link to citation metrics.</li>
+                <li><strong>13.2. ORCID:</strong> Researcher identification link.</li>
+                <li><strong>13.3. ResearchGate:</strong> Collaborative network profile.</li>
+                <li><strong>13.4. LinkedIn:</strong> Professional network profile.</li>
+                <li><strong>13.5. Other Professional Profiles:</strong> Academia.edu, X (Twitter), etc.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 text-center py-6 text-sm text-gray-500 mt-16">
+        <p>&copy; 2026 Dr. Mohammedwesam Amer. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const toggleBtn = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        toggleBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>
