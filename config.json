@@ -1,0 +1,233 @@
+{
+  "site": {
+    "title": "Dr. Mohammedwesam Amer — Academic & Research",
+    "author": "Dr. Mohammedwesam Amer",
+    "description": "Personal academic website presenting research, publications, and professional activities",
+    "url": "https://mwamer.github.io/index.html",
+    "language": "en",
+    "version": "1.0.0"
+  },
+  "contact": {
+    "email": "your-email@example.com",
+    "phone": "+1 (555) 123-4567",
+    "affiliation": "University Name",
+    "location": "City, Country"
+  },
+  "navigation": {
+    "home": {
+      "label": "Home",
+      "href": "#home",
+      "icon": "home"
+    },
+    "about": {
+      "label": "About",
+      "href": "#about",
+      "icon": "user"
+    },
+    "research": {
+      "label": "Research",
+      "href": "#research",
+      "icon": "book"
+    },
+    "publications": {
+      "label": "Publications",
+      "href": "#publications",
+      "icon": "document"
+    },
+    "contact": {
+      "label": "Contact",
+      "href": "#contact",
+      "icon": "mail"
+    }
+  },
+  "theme": {
+    "colors": {
+      "primary-dark": "#1F2937",
+      "primary-light": "#F9FAFB",
+      "accent-blue": "#2563EB",
+      "accent-dark": "#1E40AF",
+      "border-color": "#E5E7EB",
+      "text-muted": "#6B7280"
+    },
+    "typography": {
+      "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto'",
+      "font-size-base": "16px",
+      "line-height": "1.75"
+    },
+    "spacing": {
+      "section-padding": "5rem 0",
+      "container-max-width": "1024px",
+      "container-padding": "1.5rem"
+    }
+  },
+  "sections": {
+    "hero": {
+      "title": "Dr. Mohammedwesam Amer",
+      "subtitle": "Scholar of Media, Communication, and Digital Culture",
+      "description": "Academic researcher at the intersection of media and communication, digital media, political communication, conflict and war, critical discourse analysis, platform and algorithmic communication, artificial intelligence, and higher education"
+    },
+    "research-areas": [
+      {
+        "title": "Media and Communication Studies",
+        "description": "Core research in media theory and communication practices"
+      },
+      {
+        "title": "Digital Media and Platforms",
+        "description": "Analysis of social media platforms and digital infrastructures"
+      },
+      {
+        "title": "Political Communication",
+        "description": "Examination of communication in political contexts"
+      },
+      {
+        "title": "Conflict and War Communication",
+        "description": "Study of media narratives in conflicts and warfare"
+      },
+      {
+        "title": "Critical Discourse Analysis",
+        "description": "Analytical approach to power and ideology in communication"
+      },
+      {
+        "title": "Algorithmic Communication",
+        "description": "Examination of algorithms and computational systems in communication"
+      },
+      {
+        "title": "Artificial Intelligence and Communication",
+        "description": "Investigation of AI systems and their communication implications"
+      },
+      {
+        "title": "Higher Education and Scholasticide",
+        "description": "Study of academic work, institutional pressures, and knowledge production"
+      }
+    ],
+    "research-programme": [
+      {
+        "id": "platform-communication",
+        "title": "Platform Communication and Digital Culture",
+        "description": "Examining how social media platforms, algorithms, and digital infrastructures shape political discourse, social movements, and collective meaning-making in contemporary societies."
+      },
+      {
+        "id": "conflict-narratives",
+        "title": "Conflict Narratives and Media",
+        "description": "Analyzing how media representations, military communication, propaganda, and narrative warfare function in contemporary conflicts, with particular focus on discursive strategies and counter-narratives."
+      },
+      {
+        "id": "discourse-analysis",
+        "title": "Critical Discourse Analysis",
+        "description": "Using critical discourse analysis and multimodal methods to examine power relations, ideologies, and knowledge production embedded in communication practices."
+      },
+      {
+        "id": "ai-communication",
+        "title": "Artificial Intelligence and Communication",
+        "description": "Investigating the implications of AI systems, large language models, and automated communication technologies for research, education, and public discourse."
+      },
+      {
+        "id": "higher-education",
+        "title": "Higher Education and Academic Knowledge",
+        "description": "Examining institutional pressures, scholarly communication practices, and broader changes affecting academic work, intellectual freedom, and knowledge production."
+      }
+    ],
+    "professional-activities": [
+      {
+        "title": "Teaching and Supervision",
+        "description": "Teaching and mentoring in media, communication, and digital studies. Supervision of research students and collaborative academic development."
+      },
+      {
+        "title": "Academic Collaboration",
+        "description": "Collaborative research with academics, universities, and research institutions globally."
+      },
+      {
+        "title": "Public Engagement",
+        "description": "Engagement with policymakers, international organizations, media professionals, and civil society on communication issues."
+      },
+      {
+        "title": "Institutional Service",
+        "description": "Committee work, editorial activities, and professional service to academic organizations."
+      }
+    ]
+  },
+  "publications": {
+    "journal-articles": {
+      "title": "Journal Articles",
+      "description": "Research articles in peer-reviewed journals and academic publications",
+      "placeholder": "Coming soon — detailed publications list"
+    },
+    "book-chapters": {
+      "title": "Book Chapters",
+      "description": "Contributions to edited volumes and academic books",
+      "placeholder": "Coming soon — detailed publications list"
+    },
+    "reports": {
+      "title": "Reports and Policy Papers",
+      "description": "Research reports and contributions to policy discussions",
+      "placeholder": "Coming soon — detailed publications list"
+    }
+  },
+  "social-media": {
+    "twitter": "https://twitter.com/username",
+    "linkedin": "https://linkedin.com/in/username",
+    "researchgate": "https://researchgate.net/profile/username",
+    "academia": "https://academia.edu/profile/username",
+    "github": "https://github.com/mwamer"
+  },
+  "seo": {
+    "keywords": "media, communication, digital media, political communication, discourse analysis, artificial intelligence",
+    "og-image": "https://example.com/og-image.png",
+    "og-type": "website",
+    "twitter-card": "summary_large_image"
+  },
+  "form-settings": {
+    "contact-form": {
+      "enabled": true,
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Your Name"
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "required": true,
+          "placeholder": "your@email.com"
+        },
+        {
+          "name": "subject",
+          "type": "text",
+          "required": true,
+          "placeholder": "Subject"
+        },
+        {
+          "name": "message",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Your message",
+          "rows": 6
+        }
+      ],
+      "submit-text": "Send Message",
+      "success-message": "Thank you! Your message has been received. I'll get back to you soon.",
+      "error-message": "Please fill out all fields correctly."
+    }
+  },
+  "features": {
+    "smooth-scrolling": true,
+    "mobile-menu": true,
+    "scroll-animations": true,
+    "form-validation": true,
+    "dark-mode": false,
+    "search": false,
+    "comments": false
+  },
+  "analytics": {
+    "google-analytics": "",
+    "gtag-enabled": false
+  },
+  "deployment": {
+    "platform": "github-pages",
+    "repository": "mwamer/index.html",
+    "branch": "main",
+    "domain": "mwamer.github.io"
+  }
+}
