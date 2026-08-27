@@ -3,79 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Website</title>
+    <title>Dr. Mohammedwesam Amer — Academic & Research</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="bg-white text-gray-800">
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">My Portfolio</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-900">Dr. Mohammedwesam Amer</div>
+            <ul class="hidden md:flex gap-8">
+                <li><a href="#home" class="text-gray-700 hover:text-blue-600 transition">Home</a></li>
+                <li><a href="#about" class="text-gray-700 hover:text-blue-600 transition">About</a></li>
+                <li><a href="#research" class="text-gray-700 hover:text-blue-600 transition">Research</a></li>
+                <li><a href="#publications" class="text-gray-700 hover:text-blue-600 transition">Publications</a></li>
+                <li><a href="#contact" class="text-gray-700 hover:text-blue-600 transition">Contact</a></li>
+            </ul>
+            <!-- Mobile Menu Button -->
+            <button id="menu-toggle" class="md:hidden text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <ul class="flex flex-col gap-4 px-6 py-4">
+                <li><a href="#home" class="text-gray-700 hover:text-blue-600">Home</a></li>
+                <li><a href="#about" class="text-gray-700 hover:text-blue-600">About</a></li>
+                <li><a href="#research" class="text-gray-700 hover:text-blue-600">Research</a></li>
+                <li><a href="#publications" class="text-gray-700 hover:text-blue-600">Publications</a></li>
+                <li><a href="#contact" class="text-gray-700 hover:text-blue-600">Contact</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <h1>Welcome to My Website</h1>
-            <p>I'm a developer building amazing things on the web</p>
-            <button class="cta-button">Learn More</button>
+    <section id="home" class="bg-white py-20 md:py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">Dr. Mohammedwesam Amer</h1>
+            <p class="text-xl md:text-2xl text-gray-600 mb-8 font-light">
+                Scholar of Media, Communication, and Digital Culture
+            </p>
+            <div class="text-lg text-gray-700 max-w-3xl mx-auto space-y-4">
+                <p class="leading-relaxed">
+                    Academic researcher at the intersection of <span class="font-semibold">media and communication, digital media, political communication, conflict and war, critical discourse analysis, platform and algorithmic communication, artificial intelligence, and higher education</span>.
+                </p>
+            </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <h2>About Me</h2>
-            <p>Tell your story here. Share your background, skills, and what you're passionate about.</p>
+    <section id="about" class="bg-gray-50 py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-gray-900 mb-12">About</h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Dr. Mohammedwesam Amer is an established scholar working on critical issues in contemporary media, communication, and digital culture. His research addresses the role of media platforms, algorithmic systems, and communication technologies in shaping political discourse, conflict narratives, and academic knowledge production.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        With expertise in critical discourse analysis, platform studies, and media theory, Dr. Amer engages with academics, researchers, policymakers, and civil society organizations to advance understanding of communication's role in contemporary challenges.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">Research Focus Areas</h3>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Media and Communication Studies</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Digital Media and Platforms</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Political Communication</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Conflict and War Communication</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Critical Discourse Analysis</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Algorithmic Communication</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>AI and Communication</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">•</span>
+                            <span>Higher Education and Scholasticide</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
-        <div class="container">
-            <h2>My Projects</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <h3>Project 1</h3>
-                    <p>Description of your first project</p>
+    <!-- Research Section -->
+    <section id="research" class="bg-white py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-gray-900 mb-12">Research Programme</h2>
+            <div class="space-y-8">
+                <div class="border-l-4 border-blue-600 pl-6 py-4">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Platform Communication and Digital Culture</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Examining how social media platforms, algorithms, and digital infrastructures shape political discourse, social movements, and collective meaning-making in contemporary societies.
+                    </p>
                 </div>
-                <div class="project-card">
-                    <h3>Project 2</h3>
-                    <p>Description of your second project</p>
+
+                <div class="border-l-4 border-blue-600 pl-6 py-4">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Conflict Narratives and Media</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Analyzing how media representations, military communication, propaganda, and narrative warfare function in contemporary conflicts, with particular focus on discursive strategies and counter-narratives.
+                    </p>
                 </div>
-                <div class="project-card">
-                    <h3>Project 3</h3>
-                    <p>Description of your third project</p>
+
+                <div class="border-l-4 border-blue-600 pl-6 py-4">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Critical Discourse Analysis</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Using critical discourse analysis and multimodal methods to examine power relations, ideologies, and knowledge production embedded in communication practices.
+                    </p>
+                </div>
+
+                <div class="border-l-4 border-blue-600 pl-6 py-4">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Artificial Intelligence and Communication</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Investigating the implications of AI systems, large language models, and automated communication technologies for research, education, and public discourse.
+                    </p>
+                </div>
+
+                <div class="border-l-4 border-blue-600 pl-6 py-4">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Higher Education and Academic Knowledge</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Examining institutional pressures, scholarly communication practices, and broader changes affecting academic work, intellectual freedom, and knowledge production.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications Section -->
+    <section id="publications" class="bg-gray-50 py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-gray-900 mb-12">Publications</h2>
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Journal Articles</h3>
+                    <p class="text-gray-600">Research articles in peer-reviewed journals and academic publications</p>
+                    <p class="text-sm text-gray-500 mt-4">Coming soon — detailed publications list</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Book Chapters</h3>
+                    <p class="text-gray-600">Contributions to edited volumes and academic books</p>
+                    <p class="text-sm text-gray-500 mt-4">Coming soon — detailed publications list</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Reports and Policy Papers</h3>
+                    <p class="text-gray-600">Research reports and contributions to policy discussions</p>
+                    <p class="text-sm text-gray-500 mt-4">Coming soon — detailed publications list</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professional Activities Section -->
+    <section class="bg-white py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-gray-900 mb-12">Professional Activities</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Teaching and Supervision</h3>
+                    <p class="text-gray-700">
+                        Teaching and mentoring in media, communication, and digital studies. Supervision of research students and collaborative academic development.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Academic Collaboration</h3>
+                    <p class="text-gray-700">
+                        Collaborative research with academics, universities, and research institutions globally.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Public Engagement</h3>
+                    <p class="text-gray-700">
+                        Engagement with policymakers, international organizations, media professionals, and civil society on communication issues.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Institutional Service</h3>
+                    <p class="text-gray-700">
+                        Committee work, editorial activities, and professional service to academic organizations.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2>Get In Touch</h2>
-            <p>Have a question or want to work together? Send me a message!</p>
-            <form class="contact-form">
-                <input type="text" placeholder="Your Name" required>
-                <input type="email" placeholder="Your Email" required>
-                <textarea placeholder="Your Message" rows="5" required></textarea>
-                <button type="submit">Send Message</button>
-            </form>
+    <section id="contact" class="bg-gray-50 py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-gray-900 mb-12">Get In Touch</h2>
+            <div class="bg-white p-8 rounded-lg border border-gray-200">
+                <p class="text-lg text-gray-700 mb-8">
+                    For inquiries about research collaboration, speaking engagements, or academic partnerships, please reach out.
+                </p>
+                <form class="space-y-6" id="contact-form">
+                    <div>
+                        <label class="block text-gray-900 font-medium mb-2">Name</label>
+                        <input type="text" placeholder="Your Name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition">
+                    </div>
+                    <div>
+                        <label class="block text-gray-900 font-medium mb-2">Email</label>
+                        <input type="email" placeholder="your@email.com" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition">
+                    </div>
+                    <div>
+                        <label class="block text-gray-900 font-medium mb-2">Subject</label>
+                        <input type="text" placeholder="Subject" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition">
+                    </div>
+                    <div>
+                        <label class="block text-gray-900 font-medium mb-2">Message</label>
+                        <textarea placeholder="Your message" rows="6" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                        Send Message
+                    </button>
+                </form>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 My Website. All rights reserved.</p>
+    <footer class="bg-gray-900 text-gray-300 py-12 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="border-t border-gray-700 pt-8">
+                <p class="text-center text-gray-400">
+                    &copy; 2026 Dr. Mohammedwesam Amer. All rights reserved.
+                </p>
+            </div>
         </div>
     </footer>
 
