@@ -1,6 +1,6 @@
-# Dr. Mohammedwesam Amer — Personal Academic Website
+# Dr. Wesam Amer — Personal Academic Website
 
-A modern, responsive, and research-focused personal website designed to present the academic profile, research agenda, publications, teaching, professional activities, and public engagement of **Dr. Mohammedwesam Amer**.
+A modern, responsive, and research-focused personal website designed to present the academic profile, research agenda, publications, teaching, professional activities, and public engagement of **Dr. Wesam Amer**.
 
 ## Overview
 
@@ -180,7 +180,7 @@ index.html
 #### 1. Hero Section (Home)
 Edit the main title and subtitle in `index.html`:
 ```html
-<h1>Dr. Mohammedwesam Amer</h1>
+<h1>Dr. Wesam Amer</h1>
 <p>Scholar of Media, Communication, and Digital Culture</p>
 ```
 
@@ -338,4 +338,4 @@ For inquiries about the website or to report issues:
 
 **Last Updated:** August 27, 2026
 
-**Maintained by:** Dr. Mohammedwesam Amer
+**Maintained by:** Dr. Wesam Amer
