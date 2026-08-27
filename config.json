@@ -8,7 +8,7 @@
     "version": "1.0.0"
   },
   "contact": {
-    "email": "your-email@example.com",
+    "email": "wesaam.amer@gmail.com",
     "phone": "+1 (555) 123-4567",
     "affiliation": "University Name",
     "location": "City, Country"
@@ -164,8 +164,8 @@
     }
   },
   "social-media": {
+    "linkedin": "https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/",
     "twitter": "https://twitter.com/username",
-    "linkedin": "https://linkedin.com/in/username",
     "researchgate": "https://researchgate.net/profile/username",
     "academia": "https://academia.edu/profile/username",
     "github": "https://github.com/mwamer"
