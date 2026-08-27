@@ -41,18 +41,154 @@ The website follows a **Sophisticated Editorial** design philosophy that combine
 
 ---
 
-## 📋 Content Structure
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Website Content Structure</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1 {
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            color: #111;
+        }
+        ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        ul {
+            list-style-type: disc;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+        ul li {
+            margin-bottom: 4px;
+            font-weight: normal;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
 
-### Sections
+    <div class="container">
+        <h1>📋 Content Structure</h1>
+        <p>Comprehensive layout for an academic portfolio and research website.</p>
 
-1. **Home/Hero** — Introduction and tagline
-2. **About** — Professional background and research focus areas
-3. **Research Programme** — Detailed research themes and intellectual agenda
-4. **Publications** — Journal articles, book chapters, reports
-5. **Professional Activities** — Teaching, supervision, collaboration, service
-6. **Contact** — Inquiry form for academic partnerships and collaborations
-7. **Footer** — Copyright and site information
+        <ol>
+            <li>Home
+                <ul>
+                    <li>1.1. Welcome Message</li>
+                </ul>
+            </li>
+            <li>News</li>
+            <li>Research
+                <ul>
+                    <li>3.1. Research Agenda</li>
+                    <li>3.2. Research Themes</li>
+                    <li>3.3. Research Projects</li>
+                    <li>3.4. Intellectual Trajectory &amp; Featured Projects</li>
+                </ul>
+            </li>
+            <li>Publications
+                <ul>
+                    <li>4.1. Peer-Reviewed Journal Articles</li>
+                    <li>4.2. Books and Book Chapters</li>
+                    <li>4.3. Working Papers and Works in Progress</li>
+                    <li>4.4. Research Reports and Other Publications</li>
+                </ul>
+            </li>
+            <li>Teaching &amp; Supervision
+                <ul>
+                    <li>5.1. Teaching Overview</li>
+                    <li>5.2. Courses (Graduate Courses / Undergraduate Courses)</li>
+                    <li>5.3. Supervision &amp; Examination (Doctoral Supervision, Master's Supervision, Thesis Examination and Academic Mentorship)</li>
+                </ul>
+            </li>
+            <li>Academic Leadership &amp; Service
+                <ul>
+                    <li>6.1. Academic Leadership</li>
+                    <li>6.2. Academic Service</li>
+                    <li>6.3. Academic Networks and Professional Memberships</li>
+                </ul>
+            </li>
+            <li>Media and Public Engagement
+                <ul>
+                    <li>7.1. Conferences and Events (Conference Organisation, Symposia and Workshops, Invited Talks and Presentations)</li>
+                    <li>7.2. Media Appearances and Interviews</li>
+                    <li>7.3. Public Lectures and Keynote Addresses</li>
+                    <li>7.4. Policy and Knowledge Exchange</li>
+                </ul>
+            </li>
+            <li>About / Biography
+                <ul>
+                    <li>8.1. Short Biography</li>
+                    <li>8.2. Academic Journey</li>
+                    <li>8.3. Fellowships &amp; Appointments</li>
+                </ul>
+            </li>
+            <li>CV
+                <ul>
+                    <li>9.1. Web CV</li>
+                    <li>9.2. Download CV</li>
+                </ul>
+            </li>
+            <li>Services and Offers
+                <ul>
+                    <li>10.1. Research and Academic Consultancy</li>
+                    <li>10.2. Training and Workshops</li>
+                    <li>10.3. Research Design and Methodological Support</li>
+                    <li>10.4. Media and Communication Consultancy</li>
+                    <li>10.5. Invited Lectures and Speaking Engagements</li>
+                </ul>
+            </li>
+            <li>Testimonials
+                <ul>
+                    <li>11.1. Academic Collaborators</li>
+                    <li>11.2. Students and Mentees</li>
+                    <li>11.3. Professional and Institutional Partners</li>
+                </ul>
+            </li>
+            <li>Contact
+                <ul>
+                    <li>12.1. Get in Touch</li>
+                    <li>12.2. Institutional Affiliation</li>
+                    <li>12.3. Professional Enquiries</li>
+                </ul>
+            </li>
+            <li>Social Media &amp; Academic Profiles
+                <ul>
+                    <li>13.1. Google Scholar</li>
+                    <li>13.2. ORCID</li>
+                    <li>13.3. ResearchGate</li>
+                    <li>13.4. LinkedIn</li>
+                    <li>13.5. Other Professional Profiles</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
 
+</body>
+</html>
 ### Research Focus Areas
 
 - Media and Communication Studies
