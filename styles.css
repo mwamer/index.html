@@ -325,3 +325,736 @@ textarea:focus-visible {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--accent-dark);
 }
+
+/* ============================================================
+   About / Biography Page
+   ============================================================ */
+
+#about {
+    scroll-margin-top: 84px;
+}
+
+#academic-profile {
+    scroll-margin-top: 84px;
+}
+
+#contact {
+    scroll-margin-top: 84px;
+}
+
+.about-section {
+    padding: clamp(1rem, 3vw, 2rem) 0 clamp(2rem, 5vw, 4rem);
+}
+
+.about-block {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+}
+
+/* Display type */
+.kicker {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-blue);
+    margin-bottom: 0.75rem;
+}
+
+.about-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2.2rem, 6vw, 3.1rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    color: var(--primary-dark);
+    margin-bottom: 0.6rem;
+}
+
+.about-descriptor {
+    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    color: var(--accent-dark);
+    margin-bottom: 1.25rem;
+}
+
+.about-intro {
+    color: #4b5563;
+    max-width: 60ch;
+    line-height: 1.75;
+    margin-bottom: 0;
+}
+
+/* Headings with a short accent rule */
+.about-heading {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.6rem, 4vw, 2.05rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+}
+
+.about-heading::after {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 2px;
+    background: var(--accent-blue);
+    margin-top: 0.75rem;
+}
+
+.about-block__intro {
+    color: #4b5563;
+    max-width: 68ch;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+}
+
+/* --- Hero: photo left, text right (stacks on mobile) --- */
+.about-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 360px) 1fr;
+    gap: clamp(2rem, 6vw, 4rem);
+    align-items: start;
+}
+
+.about-hero__text {
+    padding-top: 0.25rem;
+}
+
+/* --- Photograph placeholders (exactly two) --- */
+.about-photo {
+    margin: 0;
+}
+
+.about-photo__placeholder {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    background-color: #f8fafc;
+    background-image: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 10px, #f1f5f9 10px, #f1f5f9 20px);
+    border: 1px dashed #cbd5e1;
+    border-radius: 4px;
+}
+
+.about-photo__placeholder span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.about-photo--secondary {
+    float: right;
+    width: 240px;
+    margin: 0.4rem 0 1.5rem 2rem;
+}
+
+/* --- In Brief --- */
+.about-lead {
+    font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+    line-height: 1.7;
+    color: var(--primary-dark);
+    max-width: 68ch;
+    border-left: 3px solid var(--accent-blue);
+    padding-left: 1.4rem;
+    margin-bottom: 0;
+}
+
+/* --- Research pillars --- */
+.pillars {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+}
+
+.pillar {
+    border-top: 2px solid var(--accent-dark);
+    padding-top: 1.25rem;
+}
+
+.pillar__kicker {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-blue);
+    margin-bottom: 0.6rem;
+}
+
+.pillar__title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--primary-dark);
+    margin-bottom: 0.9rem;
+}
+
+.pillar__intro {
+    color: #4b5563;
+    font-size: 0.97rem;
+    line-height: 1.7;
+    margin-bottom: 1.1rem;
+}
+
+.pillar__themes {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+}
+
+.pillar__themes li {
+    position: relative;
+    padding: 0.32rem 0 0.32rem 1.2rem;
+    color: #4b5563;
+    font-size: 0.93rem;
+    line-height: 1.5;
+}
+
+.pillar__themes li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+}
+
+.pillar__link {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--accent-dark);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.pillar__link:hover {
+    border-bottom-color: var(--accent-dark);
+}
+
+/* --- Connective statement between the pillars --- */
+.pillars-connection {
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    max-width: 62ch;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.pillars-connection p:last-child {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #374151;
+    margin-bottom: 0;
+}
+
+/* --- Extended biography --- */
+.bio {
+    max-width: 72ch;
+}
+
+.bio h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--primary-dark);
+    margin: 2.2rem 0 0.9rem;
+}
+
+.bio p {
+    color: #374151;
+    line-height: 1.75;
+    margin-bottom: 1.15rem;
+}
+
+.bio::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+/* --- Timeline --- */
+.timeline-heading {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin: 2.2rem 0 0.4rem;
+}
+
+.timeline {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+}
+
+.timeline__item {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    align-items: baseline;
+}
+
+.timeline__dates {
+    flex: 0 0 7.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--primary-dark);
+}
+
+.timeline__body {
+    flex: 1 1 auto;
+}
+
+.timeline__role {
+    font-weight: 600;
+    color: var(--primary-dark);
+    line-height: 1.5;
+}
+
+.timeline__place {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+}
+
+.timeline__note {
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.timeline__tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-dark);
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+    margin-left: 0.55rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* --- Fellowships list --- */
+.fellowships {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+}
+
+.fellowships li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.97rem;
+    color: #374151;
+}
+
+.fellowships__years {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    white-space: nowrap;
+}
+
+/* --- Responsive: tablet & mobile --- */
+@media (max-width: 900px) {
+    .about-hero {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .about-hero__text {
+        order: 1;
+    }
+
+    .about-photo--main {
+        order: 2;
+        max-width: 360px;
+    }
+
+    .pillars {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .about-photo--secondary {
+        float: none;
+        width: min(240px, 80%);
+        margin: 2rem auto 1.5rem;
+    }
+
+    .timeline__item {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .timeline__tag {
+        margin-left: 0;
+        margin-top: 0.35rem;
+    }
+
+    .fellowships li {
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+}
+
+/* ============================================================
+   Research Page
+   ============================================================ */
+
+#research,
+#res-overview, #res-agenda, #res-pillars, #res-frameworks,
+#res-programmes, #res-methods, #res-regional-focus, #res-trajectory {
+    scroll-margin-top: 84px;
+}
+
+.research-section {
+    padding: clamp(1rem, 3vw, 2rem) 0 clamp(2rem, 5vw, 4rem);
+}
+
+/* --- Hero --- */
+.research-hero {
+    max-width: 68ch;
+}
+
+.research-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2rem, 5.5vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: var(--primary-dark);
+    margin-bottom: 1.25rem;
+}
+
+.research-lede {
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+    line-height: 1.75;
+    color: #4b5563;
+    max-width: 60ch;
+    margin-bottom: 0;
+}
+
+/* --- In-page navigation strip --- */
+.research-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.research-nav a {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.15rem 0;
+}
+
+.research-nav a:hover {
+    color: var(--accent-dark);
+}
+
+/* --- Blocks --- */
+.res-block {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+}
+
+.res-block > p {
+    color: #374151;
+    max-width: 72ch;
+    margin-bottom: 1.15rem;
+}
+
+.res-heading {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.6rem, 4vw, 2.05rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+}
+
+.res-heading::after {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 2px;
+    background: var(--accent-blue);
+    margin-top: 0.75rem;
+}
+
+.res-subhead {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--primary-dark);
+    margin: 2rem 0 0.9rem;
+}
+
+/* --- Research agenda questions --- */
+.agenda-question {
+    margin-bottom: 2rem;
+}
+
+.agenda-question__title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--primary-dark);
+    max-width: 60ch;
+    margin-bottom: 0.6rem;
+}
+
+.agenda-question > p:not(.pillar__kicker) {
+    color: #374151;
+    max-width: 72ch;
+}
+
+/* --- Pillar extras (base grid reuses the About .pillars system) --- */
+.pillar__subhead {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin: 1.5rem 0 0.75rem;
+}
+
+.pillar__theme {
+    margin-bottom: 1.05rem;
+}
+
+.pillar__theme strong {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.25rem;
+    line-height: 1.45;
+}
+
+.pillar__theme p {
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0;
+}
+
+/* --- Flagship programmes --- */
+.programme {
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.programme:first-of-type {
+    border-top: none;
+}
+
+.programme > .programme__kicker {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+}
+
+.programme__title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--primary-dark);
+    border-left: 3px solid var(--accent-blue);
+    padding-left: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+.programme > .programme__meta {
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.programme p {
+    color: #374151;
+    max-width: 72ch;
+    margin-bottom: 1rem;
+}
+
+.programme__link {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--accent-dark);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.programme__link:hover {
+    border-bottom-color: var(--accent-dark);
+}
+
+/* --- Methods grid --- */
+.methods {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+    margin-top: 0.5rem;
+}
+
+.method-group {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.1rem;
+}
+
+.method-group h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.8rem;
+}
+
+.method-group--tools {
+    grid-column: 1 / -1;
+}
+
+.method-group > p {
+    color: #374151;
+    max-width: 72ch;
+    margin-bottom: 1rem;
+}
+
+/* --- Regional focus --- */
+.region {
+    margin-bottom: 1.75rem;
+}
+
+.region h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
+}
+
+.region > p {
+    color: #374151;
+    max-width: 72ch;
+}
+
+/* --- Intellectual trajectory (reuses the About .timeline system) --- */
+.trajectory__phase-dates {
+    flex: 0 0 8.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.trajectory__phase-num {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent-blue);
+}
+
+.trajectory__phase-years {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.trajectory__phase-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--primary-dark);
+    margin-bottom: 0.6rem;
+}
+
+.trajectory__phase .timeline__body > p:not(.trajectory__phase-title) {
+    color: #374151;
+    max-width: 68ch;
+    margin-bottom: 0.9rem;
+}
+
+/* --- Related work --- */
+.res-related {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    border-top: 1px solid var(--border-color);
+    padding-top: clamp(2rem, 5vw, 3rem);
+}
+
+.res-related__links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.res-related > p {
+    color: #374151;
+    max-width: 72ch;
+    margin-bottom: 1.15rem;
+}
+
+.res-related__links a {
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: var(--accent-dark);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.res-related__links a:hover {
+    border-bottom-color: var(--accent-dark);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .methods {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .trajectory__phase-dates {
+        flex-direction: row;
+        gap: 0.6rem;
+        align-items: baseline;
+    }
+}
