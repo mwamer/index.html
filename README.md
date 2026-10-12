@@ -1,10 +1,12 @@
-# Dr. Wesam Amer — Personal Academic Website
+# Dr Wesam Amer — personal academic website
 
-A modern, responsive, and research-focused personal website designed to present the academic profile, research agenda, publications, teaching, professional activities, and public engagement of **Dr. Wesam Amer**.
+A nine-page static website presenting the academic profile, research programme, publications, teaching, professional services and public engagement of **Dr Wesam Amer**, a scholar of media, communication and political discourse.
+
+---
 
 ## Overview
 
-This website serves as a comprehensive digital presence for an academic researcher, designed for an audience that includes:
+The site communicates a coherent academic identity, intellectual trajectory and research programme. It is not intended to work as an online CV. It is written for:
 
 - Researchers and academic collaborators
 - Universities and research institutions
@@ -14,332 +16,190 @@ This website serves as a comprehensive digital presence for an academic research
 - NGOs and civil society organisations
 - Professional and institutional partners
 
-The website is not intended to function simply as an online CV. Its primary purpose is to communicate a coherent **academic identity, intellectual trajectory, research programme, and broader professional contribution**.
+The website has no build step and no server-side code. It is plain HTML, one stylesheet and a small amount of JavaScript.
 
 ---
 
-## 🎨 Design Philosophy
+## 📄 Site structure
 
-The website follows a **Sophisticated Editorial** design philosophy that combines:
+Every page carries the same navigation header and the same footer. Each page covers one primary topic, and details are cross-linked rather than repeated across pages.
 
-- **Academic Credibility** — Professional presentation appropriate for scholarly audiences
-- **Modern Digital Experience** — Clean, contemporary design that feels current and accessible
-- **Clear Communication** — Structured presentation of complex academic information
-- **Responsive Design** — Seamless experience across desktop, tablet, and mobile devices
-- **Accessibility** — High contrast, readable typography, keyboard navigation support
+Navigation order, on desktop and in the mobile menu: **Home, About, Research, Publications, Teaching, Academic Profile, News & Engagement, Services, Contact.**
 
-### Visual Design Principles
+| Page | Purpose |
+| --- | --- |
+| `index.html` — Home | Hero with the name, role and a short introduction; the four headline statistics; summaries of the four service areas and the four research areas; four selected publications with a link to the full list; a closing invitation to make contact. |
+| `about.html` — About | Short biography, research focus, academic biography, intellectual development and research trajectory, international experience, and personal academic perspective. |
+| `research.html` — Research | Research philosophy and overview, two research pillars, guiding research questions, the research agenda, theoretical and conceptual frameworks, methodologies, flagship programmes, regional and empirical focus, intellectual trajectory, and related outputs. |
+| `publications.html` — Publications | The full publication record in five categories: journal articles; books and edited volumes; book chapters; research reports and policy outputs; theses and dissertations. Entries run in reverse chronological order within each category. |
+| `teaching.html` — Teaching and supervision | Teaching experience, areas of teaching expertise, postgraduate supervision, and examination. |
+| `academic-profile.html` — Academic profile | Academic appointments and institutional affiliations, education and academic qualifications, fellowships, research funding and awards, and an academic career timeline. |
+| `news-engagement.html` — News and engagement | Presentations, talks and events; policy engagement and knowledge exchange; academic networks and service; peer review and advisory service. Entries run in reverse chronological order. |
+| `services.html` — Services | The four areas of academic and professional expertise, each with an explanation, the audience it serves, and the activities it covers. |
+| `contact.html` — Contact | The contact email, a note about arranging meetings, and links to the academic profile pages. |
 
-- Clean and minimalist layouts
-- Strong typography hierarchy
-- Generous whitespace
-- Clear navigation structure
-- High readability standards
-- Responsive mobile-first design
-- Accessible colour contrast
-- Refined visual polish
+### Research focus areas
 
----
-### Sections
+The site presents four research areas on the home page and develops them on the Research page:
 
-
-**Home/Hero** — Introduction and tagline
-
-**About** — Professional background and research focus areas
-
-**Research Programme** — Detailed research themes and intellectual agenda
-
-**Publications** — Journal articles, book chapters, reports
-
-**Professional Activities** — Teaching, supervision, collaboration, service
-
-**Contact** — Inquiry form for academic partnerships and collaborations
-
-**Footer** — Copyright and site information
-
-### Research Focus Areas
-
-- Media and Communication Studies
-- Digital Media and Platforms
-- Political Communication
-- Conflict and War Communication
-- Critical Discourse Analysis
-- Algorithmic Communication
-- Artificial Intelligence and Communication
-- Higher Education and Scholasticide
+- Hypermedia warfare and conflict communication
+- AI-mediated communication
+- Platform governance and visibility
+- Higher education in conflict zones
 
 ---
 
-## 🛠️ Technology Stack
+## 🎨 Design
 
-The website uses a lightweight, maintainable front-end architecture:
+### Colour palette
 
-### Core Technologies
+The palette is defined as CSS custom properties in `styles.css`. Tailwind's default utility colours are re-pointed at these tokens, so the palette stays consistent wherever Tailwind classes are used.
 
-- **HTML5** — Semantic markup
-- **Tailwind CSS** — Utility-first CSS framework via CDN
-- **Vanilla JavaScript** — No heavy dependencies
-- **CSS3** — Custom animations and enhancements
+| Token | Value | Role |
+| --- | --- | --- |
+| `--ivory` | `#F7F5F0` | Page background |
+| `--navy` | `#24384A` | Headings and strong text |
+| `--slate` | `#53616B` | Body text |
+| `--terracotta` | `#A66B50` | Accent colour for links and labels |
+| `--terracotta-dark` | `#8C5640` | Accent hover states and emphasis |
+| `--stone` | `#DED9D0` | Borders and dividers |
+| `--white` | `#FFFFFF` | Surfaces and cards |
 
-### Key Features
+### Typography
 
-- Responsive layouts (mobile-first design)
-- Smooth scrolling navigation
-- Contact form with validation
-- Scroll-triggered animations
-- Mobile menu toggle
-- Accessibility enhancements
-- Performance optimizations
+- **Headings:** `Georgia, 'Times New Roman', serif`.
+- **Body:** the system sans-serif stack, beginning with `-apple-system` and `BlinkMacSystemFont`.
+
+### Layout
+
+Serif headings carry the academic character, and sans-serif body text keeps long passages readable. The design uses generous whitespace, subtle dividers, and restrained use of cards, shadows and icons. Headings scale with viewport width through `clamp()`.
+
+Breakpoints:
+
+- The navigation collapses to a menu button below 1024px.
+- The homepage statistics grid shows four columns above 1000px, two columns from 601 to 1000px, and one column at 600px and below.
+- Service and research area grids collapse to a single column below 900px.
+
+### Accessibility
+
+- High-contrast palette, with a stronger contrast option through `prefers-contrast`.
+- Semantic HTML with one `h1` per page and a logical heading order.
+- Visible focus outlines through `:focus-visible` for keyboard users.
+- Animation and transition effects honour `prefers-reduced-motion`.
+- Print styles for pages that users need to print or save as PDF.
 
 ---
 
-## 📁 Project Structure
+## 🛠️ Technology and architecture
+
+| Layer | Implementation |
+| --- | --- |
+| Markup | HTML5 |
+| Styling | Tailwind CSS through the CDN, plus `styles.css` for all custom styling |
+| Behaviour | A short inline script at the end of each page, which opens and closes the mobile menu |
+| Build | None. No dependencies, no bundler, no package manager |
+
+### Project files
 
 ```
-index.html
-├── index.html          # Main HTML file with semantic structure
-├── styles.css          # Custom CSS and Tailwind enhancements
-├── script.js           # JavaScript functionality and interactions
-└── README.md           # This file
+├── index.html                 # Home
+├── about.html                 # About
+├── research.html              # Research
+├── publications.html          # Publications
+├── teaching.html              # Teaching and supervision
+├── academic-profile.html      # Academic profile
+├── news-engagement.html       # News and engagement
+├── services.html              # Services
+├── contact.html               # Contact
+├── styles.css                 # Palette tokens, component styles, responsive rules, print and accessibility styles
+├── CNAME                      # Custom domain for GitHub Pages: wesamamer.com
+├── README.md                  # This file
+└── .github/workflows/         # SLSA provenance workflow; runs on a release, not on a push
 ```
 
-### File Descriptions
+Each page carries its own copy of the navigation header and the footer, and its own inline menu script. There is no shared template, so a change to navigation or the footer has to be applied to all nine pages.
 
-#### `index.html`
-- Semantic HTML5 structure
-- Tailwind CSS classes for responsive design
-- Navigation with smooth scrolling
-- All main content sections
-- Contact form
-- Mobile-responsive menu
-
-#### `styles.css`
-- Custom CSS enhancements to Tailwind
-- Color variables and typography
-- Animation keyframes
-- Hover effects and transitions
-- Print styles
-- Accessibility features
-- Responsive breakpoints
-
-#### `script.js`
-- Mobile menu toggle
-- Smooth scrolling navigation
-- Contact form validation and submission
-- Scroll-triggered animations
-- Navigation highlight on scroll
-- Keyboard navigation support
-- Performance monitoring
-- Notification system
+The pages show designed empty frames until approved photographs are supplied, so the site loads no images of its own.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Local development
 
-### Local Development
+1. Clone the repository:
 
-1. **Clone the repository:**
    ```bash
    git clone https://github.com/mwamer/index.html.git
    cd index.html
    ```
 
-2. **Open in browser:**
-   - Simply open `index.html` in your web browser
-   - No build process or dependencies required
+2. Serve the folder and open it in a browser:
 
-3. **Edit content:**
-   - Modify `index.html` for content changes
-   - Update `styles.css` for styling adjustments
-   - Enhance `script.js` for functionality improvements
-
-### Deployment with Replit
-
-1. **Create Replit project:**
-   - Import from GitHub repository
-   - Or create a new HTML/CSS/JS project
-
-2. **Push changes:**
    ```bash
-   git push origin main
+   python3 -m http.server 8000
    ```
 
-3. **View live:**
-   - Replit provides automatic hosting
-   - Access via your Replit project URL
+   Then visit `http://localhost:8000`. Opening `index.html` directly from the file system also works, but a local server tests relative links more accurately.
 
-### Deployment with GitHub Pages
-
-1. **Enable GitHub Pages:**
-   - Go to repository Settings → Pages
-   - Select `main` branch as source
-   - Site will be available at `https://mwamer.github.io/index.html`
+3. Edit the file you need, then reload the browser. No build or compile step is required.
 
 ---
 
-## 🎯 Customization Guide
+## 🌐 Publishing
 
-### Updating Content
+- **Live site:** [wesamamer.com](https://wesamamer.com/)
+- **Repository:** [github.com/mwamer/index.html](https://github.com/mwamer/index.html)
+- **Hosting:** GitHub Pages, publishing the `main` branch root folder
+- **Custom domain:** `wesamamer.com`, configured through the `CNAME` file in the repository root
 
-#### 1. Hero Section (Home)
-Edit the main title and subtitle in `index.html`:
-```html
-<h1>Dr. Wesam Amer</h1>
-<p>Scholar of Media, Communication, and Digital Culture</p>
-```
+The home page is at `https://wesamamer.com/`. Every other page sits directly beside it, for example `https://wesamamer.com/about.html`. The `www.wesamamer.com` address redirects to `wesamamer.com`, and `mwamer.github.io/index.html` redirects to the custom domain as well.
 
-#### 2. About Section
-Update professional background and research areas in the About section.
-
-#### 3. Research Programme
-Modify research themes and descriptions in the Research section.
-
-#### 4. Publications
-Add publication details in the Publications section (currently placeholder).
-
-#### 5. Contact Information
-Modify contact form and footer with actual contact details.
-
-### Color Customization
-
-Edit CSS variables in `styles.css`:
-```css
-:root {
-    --primary-dark: #1F2937;      /* Dark charcoal text */
-    --accent-blue: #2563EB;       /* Accent color */
-    --primary-light: #F9FAFB;     /* Light background */
-}
-```
-
-### Typography
-
-Modify font families and sizes in `styles.css`:
-```css
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', ...;
-}
-```
-
----
-
-## ✨ Features
-
-### Responsive Design
-- Mobile-first approach
-- Tablet and desktop optimizations
-- Flexible grid layouts
-- Touch-friendly navigation
-
-### Accessibility
-- High contrast text (WCAG AA compliance)
-- Semantic HTML elements
-- Keyboard navigation support
-- Focus-visible states for keyboard users
-- Reduced motion support for accessibility
-
-### Performance
-- Lightweight vanilla JavaScript (no frameworks)
-- CSS animations instead of JavaScript where possible
-- Optimized images and assets
-- Smooth scrolling using native browser API
-- Efficient event delegation
-
-### Interactivity
-- Smooth scrolling navigation
-- Mobile menu toggle
-- Scroll-triggered animations
-- Contact form validation
-- Navigation highlighting
-- Notification system
+GitHub Pages republishes the site on every push to `main`, so review changes locally before you push. The workflow in `.github/workflows/` generates SLSA provenance when you create a release, and does not run on a push.
 
 ---
 
 ## 🔧 Maintenance
 
-### Regular Updates
-
-1. **Content Updates:**
-   - Edit `index.html` directly for content changes
-   - Commit changes to GitHub
-
-2. **Styling Updates:**
-   - Modify `styles.css` for design changes
-   - Test across browsers and devices
-
-3. **Functionality Enhancements:**
-   - Update `script.js` for new features
-   - Test thoroughly before deployment
-
-### Adding New Sections
-
-1. Add HTML structure in `index.html`
-2. Style with Tailwind classes and custom CSS
-3. Add JavaScript interactivity if needed
-4. Test responsiveness on all devices
-
-### Performance Optimization
-
-- Monitor page load performance
-- Optimize images if added
-- Minimize CSS/JavaScript if needed
-- Use CDN for external resources (Tailwind CSS)
+- **Publications:** edit `publications.html`. Keep entries in reverse chronological order within their category, and add a publisher link only after you verify the record against the publisher.
+- **Academic profile:** edit `academic-profile.html` for appointments, qualifications, fellowships, funding, awards and timeline entries.
+- **News and engagement:** edit `news-engagement.html`, keeping entries in reverse chronological order.
+- **Styling:** edit `styles.css`. Change the palette in one place, at the `:root` block, and the whole site follows.
+- **A new page:** copy an existing page, then update the navigation and footer in all nine pages, because no shared template exists.
+- **Photographs:** add an image and replace the designed empty frame on the page that needs it. Never repeat one portrait across pages.
+- **Testing:** check desktop, tablet and mobile widths before you push.
 
 ---
 
-## 🌐 Browser Support
+## 📌 Outstanding items
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+- **CV PDF.** The CV is not published. The download button on the home page and the download block on the Academic Profile page stay disabled until the approved PDF is supplied. Do not add a link until then.
+- **Photographs.** Page photographs are pending, so the pages show designed empty frames.
+- **Unverified links.** Publication records without a verified publisher link are left unlinked rather than guessed.
+
+---
+
+## ✅ Browser support
+
+Chrome and Edge (latest), Firefox (latest), Safari (latest), and the mobile browsers on iOS and Android.
 
 ---
 
 ## 📝 License
 
-This project is personal and maintained by Dr. Mohammedwesam Amer. All rights reserved.
+This project is personal. Copyright © Dr Mohammedwesam Amer. All rights reserved.
 
 ---
 
-## 📞 Support & Contact
+## 📞 Contact
 
-For inquiries about the website or to report issues:
-- Use the contact form on the website
-- Email: [your-email@example.com]
-- GitHub: [github.com/mwamer](https://github.com/mwamer)
+Email: **wesaam.amer@gmail.com**
 
----
+Academic profiles:
 
-## 📚 Resources & References
-
-### Tailwind CSS
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Tailwind CSS CDN](https://cdn.tailwindcss.com)
-
-### Web Standards
-- [MDN Web Docs](https://developer.mozilla.org/)
-- [HTML5 Specification](https://html.spec.whatwg.org/)
-- [CSS Specification](https://www.w3.org/TR/CSS/)
-
-### Accessibility
-- [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/WCAG21/quickref/)
-- [MDN Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+- [ORCID](https://orcid.org/0000-0002-8796-9097)
+- [Google Scholar](https://scholar.google.com/citations?user=CNgZsPQAAAAJ&hl=en)
+- [LinkedIn](https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/)
+- [University of Cambridge](https://research.sociology.cam.ac.uk/profile/dr-wesam-amer)
 
 ---
 
-## 🔄 Version History
-
-### v1.0.0 (Current)
-- Initial academic website launch
-- Responsive design with Tailwind CSS
-- Contact form with validation
-- Smooth scrolling navigation
-- Mobile menu support
-- Scroll animations
-- Accessibility enhancements
-
----
-
-**Last Updated:** August 27, 2026
-
-**Maintained by:** Dr. Wesam Amer
+**Documentation date:** October 12, 2026
