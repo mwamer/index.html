@@ -1825,6 +1825,11 @@ section#home .hero__text p {
     width: 100%;
     background: var(--stone);
     box-shadow: inset 0 0 0 1px rgba(36, 56, 74, 0.06);
+    /* A real photograph fills its slot rather than stretching to it. The crop
+       is weighted towards the upper part of the frame, which keeps head-and-
+       shoulders subjects in view when a tall photograph meets a wide slot. */
+    object-fit: cover;
+    object-position: center 30%;
 }
 
 img.news-photo {
@@ -1906,6 +1911,28 @@ img.news-photo {
 .news-detail__lede {
     max-width: var(--measure);
     margin: 1.4rem 0 0;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--slate);
+}
+
+/* A news headline runs longer than a page title, so it sits one step down
+   the type scale and takes the extra line length that needs. */
+.news-detail__title {
+    max-width: 34ch;
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    line-height: var(--lh-heading);
+    letter-spacing: var(--track-heading);
+    color: var(--navy);
+}
+
+/* Article paragraphs beneath the standfirst. */
+.news-detail__body {
+    max-width: var(--measure);
+    margin: 1.1rem 0 0;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     color: var(--slate);
