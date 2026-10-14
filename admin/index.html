@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News panel - Dr Wesam Amer</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        :root { --pn-line: #DED9D0; --pn-ink: #24384A; --pn-soft: #F7F5F0; }
+        body { background: var(--pn-soft); }
+        .pn-bar { position: sticky; top: 0; z-index: 20; display: flex; gap: 12px; align-items: center;
+                  padding: 12px 20px; background: var(--pn-ink); color: #fff; flex-wrap: wrap; }
+        .pn-bar strong { font-weight: 600; white-space: nowrap; }
+        .pn-bar a { color: #fff; text-decoration: underline; white-space: nowrap; }
+        .pn-bar button { white-space: nowrap; }
+        .pn-bar__spacer { flex: 1; }
+        .pn-main { max-width: 1180px; margin: 0 auto; padding: 24px 20px 80px; }
+        .pn-card { background: #fff; border: 1px solid var(--pn-line); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .pn-card h2 { font-size: 1.15rem; margin: 0 0 8px; }
+        .pn-card h3 { font-size: 1rem; margin: 22px 0 6px; color: var(--pn-ink); }
+        .pn-help { color: #53616B; font-size: 0.9rem; }
+        .pn-cols { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 860px) { .pn-cols { grid-template-columns: 1fr; } }
+        .pn-list { max-height: 62vh; overflow: auto; border: 1px solid var(--pn-line); border-radius: 6px; }
+        .pn-list button { display: block; width: 100%; text-align: left; padding: 10px 12px; border: 0;
+                          border-bottom: 1px solid var(--pn-line); background: #fff; cursor: pointer; font: inherit; }
+        .pn-list button:hover { background: var(--pn-soft); }
+        .pn-list button[aria-current="true"] { background: #EDF1F4; box-shadow: inset 3px 0 0 var(--pn-ink); }
+        .pn-list .pn-list__date { display: block; font-size: 0.8rem; color: #A66B50; font-weight: 600; }
+        .pn-list .pn-list__place { display: block; font-size: 0.82rem; color: #53616B; }
+        button, .pn-btn { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--pn-line);
+                          background: #fff; cursor: pointer; color: var(--pn-ink); }
+        button:hover { border-color: var(--pn-ink); }
+        button[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .pn-btn--primary { background: var(--pn-ink); border-color: var(--pn-ink); color: #fff; }
+        .pn-btn--danger { color: #8a2b2b; }
+        .pn-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+        .pn-status { margin: 0; font-size: 0.9rem; color: #53616B; }
+        .pn-field { display: block; margin: 14px 0 0; }
+        .pn-field > span { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+        .pn-field em { font-weight: 400; color: #53616B; font-style: normal; font-size: 0.85rem; }
+        input[type="text"], input[type="url"], select, textarea {
+            width: 100%; font: inherit; padding: 8px 10px; border: 1px solid var(--pn-line); border-radius: 6px;
+            background: #fff; color: #24384A; box-sizing: border-box; }
+        textarea { resize: vertical; }
+        .pn-row { display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; flex-wrap: wrap; }
+        /* Long enough to type into, short enough that the buttons beside it still fit on a phone. */
+        .pn-row input { flex: 1 1 6rem; min-width: 0; }
+        /* A file control has a natural width of its own and will not shrink, so cap it:
+           otherwise its width, not the screen, decides how wide the page is. */
+        input[type="file"] { width: 100%; max-width: 100%; font: inherit; }
+        .pn-photo { display: grid; grid-template-columns: 132px 1fr; gap: 12px; padding: 12px 0;
+                    border-top: 1px solid var(--pn-line); }
+        .pn-photo > * { min-width: 0; }
+        .pn-photo img, .pn-photo .pn-space { width: 132px; height: 74px; object-fit: cover; background: var(--pn-line);
+                    border-radius: 4px; display: block; }
+        .pn-photo .pn-space { display: flex; align-items: center; justify-content: center; font-size: 0.72rem;
+                    color: #53616B; text-align: center; padding: 4px; }
+        .pn-notes { margin: 8px 0 0; padding-left: 18px; font-size: 0.88rem; color: #53616B; }
+        .pn-log { background: #24384A; color: #E8E6E1; padding: 12px; border-radius: 6px; font-size: 0.82rem;
+                  white-space: pre-wrap; margin-top: 12px; }
+        .pn-preview { position: fixed; inset: 0; background: rgba(36,56,74,0.75); display: flex; flex-direction: column;
+                      z-index: 50; padding: 20px; }
+        .pn-preview__head { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; color: #fff; flex-wrap: wrap; }
+        .pn-preview iframe { flex: 1; width: 100%; border: 0; border-radius: 8px; background: #fff; margin: 0 auto; }
+        .pn-pill { display: inline-block; font-size: 0.72rem; padding: 2px 7px; border-radius: 999px;
+                   background: #EDF1F4; color: #53616B; margin-left: 6px; }
+        .pn-steps { margin: 10px 0 0; padding-left: 20px; font-size: 0.92rem; line-height: 1.6; }
+        .pn-save-bar { position: sticky; bottom: 0; background: var(--pn-soft); padding: 12px 0; display: flex;
+                       gap: 10px; align-items: center; border-top: 1px solid var(--pn-line); flex-wrap: wrap; }
+        code { background: #EDF1F4; padding: 1px 5px; border-radius: 4px; font-size: 0.88em; }
+        .pn-session { font-size: 0.82rem; opacity: 0.8; }
+        .pn-session[data-state="in"] { opacity: 1; }
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body>
+
+<header class="pn-bar">
+    <strong>News panel</strong>
+    <span class="pn-session" id="pn-session" data-state="out">Checking sign-in…</span>
+    <span class="pn-bar__spacer"></span>
+    <a href="../news-engagement.html" target="_blank" rel="noopener">See the news page</a>
+    <button data-act="sign-out" hidden>Sign out</button>
+</header>
+
+<main class="pn-main">
+
+    <section class="pn-card" id="pn-gate">
+        <h2>Sign in to edit</h2>
+        <p class="pn-help">Cloudflare looks after the sign-in, so there is no key to copy and nothing to set up on a
+            second device. It emails you a one-time code, and the session lasts 24 hours.</p>
+        <ol class="pn-steps">
+            <li>Press <strong>Sign in</strong>. A tab opens on <code>api.wesamamer.com</code>.</li>
+            <li>Type the email address you are authorised with, then the code Cloudflare emails you.</li>
+            <li>That tab will say you are signed in. Close it.</li>
+            <li>Come back here and press <strong>Check again</strong>.</li>
+        </ol>
+        <div class="pn-actions" style="margin-top:14px">
+            <button class="pn-btn--primary" data-act="sign-in">Sign in</button>
+            <button data-act="check-session">Check again</button>
+        </div>
+        <p class="pn-status" id="pn-gate-status">Not signed in. The entries below can still be read from this computer,
+            but nothing reaches the live site until you sign in.</p>
+    </section>
+
+    <section id="pn-work">
+        <div class="pn-actions">
+            <button class="pn-btn--primary" data-act="add">Add a news entry</button>
+            <button data-act="reload">Reload from the site</button>
+            <button data-act="check">Check the live site</button>
+            <button data-act="undo">Undo the last save</button>
+        </div>
+        <p class="pn-status" id="pn-status"></p>
+        <div class="pn-log" id="pn-log" hidden></div>
+        <div class="pn-cols">
+            <aside class="pn-card">
+                <h2>Your entries</h2>
+                <input type="text" id="pn-search" aria-label="Search entries by place, role or date"
+                       placeholder="Search by place, role or date">
+                <div class="pn-list" id="pn-list"></div>
+            </aside>
+            <section class="pn-card" id="pn-editor">
+                <p class="pn-help">Choose an entry on the left, or add a new one. Nothing is published until you
+                    press <strong>Save and publish</strong>, and every save can be undone with one click.</p>
+            </section>
+        </div>
+    </section>
+
+</main>
+
+<div class="pn-preview" id="pn-preview" hidden>
+    <div class="pn-preview__head">
+        <strong id="pn-preview-title">Preview</strong>
+        <span class="pn-help" style="color:#E8E6E1">This is the real page, rendered with your unsaved changes.</span>
+        <span style="flex:1"></span>
+        <button data-act="preview-news">News page</button>
+        <button data-act="preview-record">Full record page</button>
+        <button data-act="preview-narrow">Phone width</button>
+        <button data-act="preview-wide">Full width</button>
+        <button class="pn-btn--primary" data-act="preview-close">Close</button>
+    </div>
+    <iframe id="pn-frame" title="Preview"></iframe>
+</div>
+
+<script type="module">
+// The ?v= stamp makes a browser fetch these files again after a change, instead
+// of serving an older panel out of its cache.
+import {
+    CATEGORIES, ACTIVITY_TYPES, ROLES, NEWS_PATH,
+    parseNewsPage, renderNewsPage, renderCard, buildCard, parseRecordPage,
+    renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
+    noteComments, slugify,
+} from './panel.js?v=2';
+import { describe, gitHub } from './api-worker.js?v=2';
+
+const $ = (selector, scope = document) => scope.querySelector(selector);
+
+const state = {
+    raw: '',
+    page: null,
+    drafts: new Map(),      // card index -> edited values
+    added: [],              // new entries, unsaved
+    removed: [],
+    featuredIndex: undefined,
+    selected: null,
+    draft: null,
+    record: null,           // parsed record page for the selected entry
+    template: '',           // a record page used as the shell for new ones
+    remote: null,           // { text, sha } of the live news page
+    local: '',              // the copy served from this computer
+    session: 'checking',    // 'checking' | 'signed-in' | 'signed-out'
+    dirty: false,           // edits made since the last load or save
+};
+
+// Every read and every change to the website goes through this one object. It
+// holds no key: the GitHub token lives in the Worker, and the session lives with
+// Cloudflare Access.
+const api = gitHub();
+
+const SITE = new URL('../', location.href).href;
+const esc = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const say = (message) => { $('#pn-status').textContent = message; };
+
+// ── signing in ───────────────────────────────────────────────────────────
+//
+// Cloudflare Access holds the session, and this page only notices it. While
+// signed out the panel still reads the copies on this computer, so the entries
+// can be looked at, but nothing can be saved.
+
+function setSession(status, message) {
+    state.session = status;
+    const chip = $('#pn-session');
+    chip.textContent = message;
+    chip.dataset.state = status === 'signed-in' ? 'in' : 'out';
+    $('#pn-gate').hidden = status === 'signed-in';
+    $('[data-act="sign-out"]').hidden = status !== 'signed-in';
+}
+
+function signIn() {
+    window.open(api.signedInUrl, '_blank', 'noopener');
+    $('#pn-gate-status').textContent = 'Waiting for you to finish signing in, in the other tab…';
+}
+
+function signOut() {
+    window.open(api.signedOutUrl, '_blank', 'noopener');
+    setSession('signed-out', 'Signed out');
+    $('#pn-gate-status').textContent = 'Signed out on this device. Press Sign in when you want to edit again.';
+}
+
+/** Ask the Worker who we are. It answers only with a verified Access session. */
+/** Say something in the sign-in box, where a person is already looking. */
+function setGateMessage(text) {
+    $('#pn-gate-status').textContent = text;
+}
+
+/** Ask the Worker who we are. It answers only with a verified Access session,
+    and it is the only place that knows both the email and whether writing is
+    allowed, so the box says whichever of those is true. */
+async function checkSession({ reload = false } = {}) {
+    try {
+        const who = await api.verify();
+        if (!who.canWrite) {
+            setSession('signed-out', 'Read-only session');
+            setGateMessage(`Signed in as ${who.email}, but that account cannot write to ${who.repo}. `
+                + 'Check the GitHub token\'s permission on the repository.');
+            return false;
+        }
+        setSession('signed-in', `Signed in as ${who.email}`);
+        setGateMessage('Signed in. Saves go straight to the live site.');
+        if (reload) await load();
+        return true;
+    } catch (error) {
+        // Being unable to reach the API and having no session need different
+        // fixes, so find out which one this is before saying anything.
+        let reachability = '';
+        if (error.code !== 'signed-out') {
+            try { await api.health(); } catch { reachability = 'unreachable'; }
+        }
+        if (reachability) {
+            setSession('signed-out', 'API unreachable');
+            setGateMessage(describe(error));
+        } else {
+            setSession('signed-out', 'Not signed in');
+            setGateMessage(error.code === 'signed-out'
+                ? 'Not signed in. The entries below are the copies on this computer, so they can be read, '
+                    + 'but nothing reaches the live site until you sign in.'
+                : describe(error));
+        }
+        return false;
+    }
+}
+
+/** Stop a change that needs a session, with a message that says so. */
+function requireSession() {
+    if (state.session !== 'signed-in') {
+        throw Object.assign(new Error('not signed in'), { status: 401, code: 'signed-out' });
+    }
+}
+
+async function fetchText(path) {
+    const response = await fetch(path, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${path} could not be read (${response.status})`);
+    return response.text();
+}
+
+/** A page's current text from the live site, falling back to this computer. */
+async function readPage(apiPath) {
+    if (state.session === 'signed-in') {
+        try { return (await api.read(apiPath)).text; } catch { /* fall back below */ }
+    }
+    return fetchText(`../${apiPath}`);
+}
+
+/** The fields a record page is rendered from. One place, so the preview and the
+    save always show and write the same thing.
+
+    The summary is the same value in both places by design: the card on the news
+    page and the opening sentence of the full record page. */
+function recordValues(entry) {
+    return {
+        categoryLabel: (CATEGORIES.find((c) => c.id === entry.category) || CATEGORIES[0]).label,
+        title: entry.recordTitle || entry.place,
+        date: entry.date, place: entry.place, role: entry.role,
+        activityType: entry.activityType,
+        description: entry.description, lede: entry.description,
+        bodies: entry.bodies, links: entry.links,
+        photos: entry.photos.length ? entry.photos : [{ kind: 'space' }],
+        dropNotes: entry.dropRecordNotes || [],
+    };
+}
+
+/** A page's text straight from the live site. A save reads through this, never
+    through the working copy, so it cannot overwrite a page with older text. */
+async function readLive(apiPath) {
+    requireSession();
+    return (await api.read(apiPath)).text;
+}
+
+/** An existing record page, used as the nav/footer shell for brand new ones. */
+async function loadTemplate() {
+    const preferred = ['engagement-lmu-munich', 'engagement-ica-2026', 'engagement-gaza-centre'];
+    for (const slug of preferred) {
+        try { return await readPage(`${slug}.html`); } catch { /* try the next */ }
+    }
+    throw new Error('No record page was found to use as a template.');
+}
+
+async function load() {
+    say('Reading the news page…');
+    state.local = await fetchText('../news-engagement.html').catch(() => '');
+    state.remote = null;
+    if (state.session === 'signed-in') {
+        try {
+            state.remote = await api.read(NEWS_PATH);
+        } catch (error) {
+            // The live page could not be read, so the copy on this computer stands
+            // in. A session that has ended is worth saying out loud.
+            if (error.code === 'signed-out') setSession('signed-out', 'Session ended');
+        }
+    }
+    state.raw = state.remote ? state.remote.text : state.local;
+    state.page = parseNewsPage(state.raw);
+    state.drafts.clear();
+    state.added = [];
+    state.removed = [];
+    state.featuredIndex = undefined;
+    state.selected = null;
+    state.draft = null;
+    state.record = null;
+    renderList();
+    $('#pn-editor').innerHTML = '<p class="pn-help">Choose an entry on the left, or add a new one.</p>';
+    const outOfStep = state.local && state.remote && state.local !== state.remote.text;
+    if (outOfStep) {
+        say(`${state.page.cards.length} entries loaded. Heads up: the copy on this computer is different from the live `
+            + 'site, which means some work here has not been published yet, and the panel is editing the live version.');
+    } else {
+        say(`${state.page.cards.length} entries loaded. Nothing is published until you press Save and publish.`);
+    }
+    state.dirty = false;
+}
+
+// ── the entry list ───────────────────────────────────────────────────────
+
+function renderList() {
+    const term = ($('#pn-search').value || '').toLowerCase();
+    const rows = [];
+    state.page.cards.forEach((card, index) => {
+        if (state.removed.includes(index)) return;
+        const values = state.drafts.get(index) || card.values;
+        const id = String(index);
+        const haystack = `${values.date} ${values.role} ${values.place} ${values.activityType}`.toLowerCase();
+        if (term && !haystack.includes(term)) return;
+        const flags = [
+            values.recordSlug ? '' : '<span class="pn-pill">no full record</span>',
+            (state.featuredIndex === index) ? '<span class="pn-pill">featured</span>' : '',
+            values.photos.some((photo) => photo.kind === 'space') ? '<span class="pn-pill">needs a photo</span>' : '',
+        ].join('');
+        rows.push(`<button data-select="${id}" aria-current="${state.selected === id}">
+            <span class="pn-list__date">${esc(values.date)}${flags}</span>
+            ${esc(values.role)} — <span class="pn-list__place">${esc(values.place)}</span></button>`);
+    });
+    state.added.forEach((entry, i) => {
+        const id = `new-${i}`;
+        rows.push(`<button data-select="${id}" aria-current="${state.selected === id}">
+            <span class="pn-list__date">${esc(entry.date || 'no date yet')}<span class="pn-pill">new, not saved</span></span>
+            ${esc(entry.role || '')} — <span class="pn-list__place">${esc(entry.place || '')}</span></button>`);
+    });
+    $('#pn-list').innerHTML = rows.join('') || '<p class="pn-help" style="padding:12px">Nothing matches that search.</p>';
+}
+
+// ── the editor ───────────────────────────────────────────────────────────
+
+function blankEntry() {
+    return {
+        id: '', recordSlug: '', newRecordPage: true, recordExists: false,
+        date: '', category: 'conferences-events', activityType: 'Conference', role: '', place: '',
+        description: '', recordTitle: '', bodies: [], links: [], photos: [],
+        cardNotes: [], recordNotes: [], featured: false,
+        touched: new Set(),     // which record-page fields this person has edited
+    };
+}
+
+async function select(id) {
+    state.selected = id;
+    if (String(id).startsWith('new-')) {
+        const entry = state.added[Number(String(id).slice(4))];
+        if (!entry) return;
+        state.record = null;
+        state.draft = { ...blankEntry(), ...entry, id };
+        renderList();
+        renderEditor();
+        return;
+    }
+    const index = Number(id);
+    const card = state.page.cards[index];
+    const draft = state.drafts.get(index) || {
+        ...blankEntry(),
+        id,
+        recordSlug: card.recordSlug || '',
+        recordExists: Boolean(card.recordSlug),
+        newRecordPage: false,
+        date: card.values.date,
+        category: card.values.category,
+        activityType: card.values.activityType,
+        role: card.values.role,
+        place: card.values.place,
+        description: card.values.description,
+        links: card.values.links.map((link) => ({ ...link })),
+        photos: card.values.photos.map((photo) => ({ ...photo })),
+        cardNotes: card.notes.map((note) => note.text),
+        dropCardNotes: [],
+        dropRecordNotes: [],
+        featured: state.page.featured ? state.page.featured.slug === card.recordSlug : false,
+    };
+
+    state.record = null;
+    if (card.recordSlug) {
+        say('Reading the full record page…');
+        try {
+            const html = await readPage(`${card.recordSlug}.html`);
+            state.record = parseRecordPage(html);
+            const values = state.record.values;
+            draft.recordTitle = values.title;
+            draft.bodies = [...values.bodies];
+            if (!draft.description) draft.description = values.lede;
+            if (values.links.length > draft.links.length) draft.links = values.links.map((link) => ({ ...link }));
+            if (values.photos.length > draft.photos.length) draft.photos = values.photos.map((photo) => ({ ...photo }));
+            draft.recordNotes = noteComments(state.record.raw).map((note) => note.text);
+            say('');
+        } catch (error) {
+            say(`${card.recordSlug}.html could not be read: ${error.message}`);
+        }
+    }
+    state.draft = draft;
+    renderList();
+    renderEditor();
+}
+
+function photoRow(photo, index) {
+    const preview = photo.kind === 'photo'
+        ? `<img src="../${esc(photo.src)}" alt="">`
+        : '<div class="pn-space">reserved space — no photograph yet</div>';
+    return `<div class="pn-photo">
+        ${preview}
+        <div>
+            <label class="pn-field" style="margin-top:0"><span>Replace this photograph</span>
+                <input type="file" accept="image/*" data-photo-file="${index}"></label>
+            <label class="pn-field"><span>Caption <em>the line under the photograph</em></span>
+                <input type="text" data-photo-caption="${index}" value="${esc(photo.caption || '')}"></label>
+            <label class="pn-field"><span>Description for screen readers</span>
+                <input type="text" data-photo-alt="${index}" value="${esc(photo.alt || photo.label || '')}"></label>
+            <div class="pn-actions" style="margin:10px 0 0">
+                ${index > 0 ? `<button data-act="photo-up" data-index="${index}">Move up</button>` : ''}
+                <button class="pn-btn--danger" data-act="photo-remove" data-index="${index}">Remove</button>
+            </div>
+        </div></div>`;
+}
+
+function renderEditor() {
+    const draft = state.draft;
+    if (!draft) return;
+    const isNew = String(draft.id).startsWith('new-');
+    const options = CATEGORIES.map((category) =>
+        `<option value="${esc(category.id)}"${category.id === draft.category ? ' selected' : ''}>${esc(category.label)}</option>`).join('');
+    const suggestions = (list) => list.map((item) => `<option value="${esc(item)}">`).join('');
+
+    $('#pn-editor').innerHTML = `
+        <h2>${isNew ? 'New entry' : 'Edit entry'}</h2>
+        <label class="pn-field"><span>When it happened</span>
+            <input type="text" data-field="date" value="${esc(draft.date)}" placeholder="for example 5 May 2026, June 2026, or From July 2026">
+            <em class="pn-help">Free text, so month-only dates like “May 2026” are fine.</em></label>
+
+        <label class="pn-field"><span>Category <em>the five labels on the news page</em></span>
+            <select data-field="category">${options}</select></label>
+
+        <label class="pn-field"><span>Kind of activity</span>
+            <input type="text" data-field="activityType" list="pn-tags" value="${esc(draft.activityType)}">
+            <datalist id="pn-tags">${suggestions(ACTIVITY_TYPES)}</datalist></label>
+
+        <label class="pn-field"><span>Your role</span>
+            <input type="text" data-field="role" list="pn-roles" value="${esc(draft.role)}">
+            <datalist id="pn-roles">${suggestions(ROLES)}</datalist></label>
+
+        <label class="pn-field"><span>Where <em>event and place, as readers should see it</em></span>
+            <input type="text" data-field="place" value="${esc(draft.place)}"></label>
+
+        <label class="pn-field"><span>Summary <em>the sentence on the news page and the opening line of the full record</em></span>
+            <textarea data-field="description" rows="4">${esc(draft.description)}</textarea></label>
+
+        <h3>Full record page</h3>
+        <p class="pn-help">${draft.recordExists || draft.newRecordPage
+            ? 'Every entry has its own page, the one the “Full record” link opens.'
+            : 'This entry has no full record page yet. Fill in the short name below to create one.'}</p>
+        <label class="pn-field"><span>Short name for the link <em>letters, numbers and dashes</em></span>
+            <input type="text" data-field="recordSlug" value="${esc(draft.recordSlug)}" placeholder="for example cardiff-university-2027">
+            <em class="pn-help">The page address becomes <code>${esc(draft.recordSlug ? `${draft.recordSlug}.html` : 'engagement-…​.html')}</code></em></label>
+        <label class="pn-field"><span>Heading on the full record</span>
+            <input type="text" data-field="recordTitle" value="${esc(draft.recordTitle)}"></label>
+
+        <h3>The report itself</h3>
+        <p class="pn-help">Exactly two paragraphs. Lead Paragraph first, The Body Paragraph second. Clear a box to remove that paragraph.</p>
+        <div id="pn-bodies">
+            ${draft.bodies.slice(0,2).map((paragraph, i) => `<label class="pn-field"><span>${i===0 ? 'Lead Paragraph' : 'The Body Paragraph'}</span>
+                <textarea data-body="${i}" rows="6">${esc(paragraph)}</textarea></label>`).join('')}
+            ${Array(Math.max(0, 2 - draft.bodies.length)).fill(0).map((_, i) => {
+                const idx = draft.bodies.length + i;
+                return `<label class="pn-field"><span>${idx===0 ? 'Lead Paragraph' : 'The Body Paragraph'}</span>
+                    <textarea data-body="${idx}" rows="6"></textarea></label>`;
+            }).join('')}
+        </div>
+        <div class="pn-actions" hidden><button data-act="body-add">Add a paragraph</button></div>
+
+        <h3>Links to the source</h3>
+        <p class="pn-help">Links open the other site in a new tab; nothing is copied onto your page. The news card
+            shows the first two, the full record shows all of them.</p>
+        <div id="pn-links">
+            ${draft.links.map((link, i) => `<div class="pn-row">
+                <input type="text" data-link-label="${i}" value="${esc(link.label)}" placeholder="What the reader sees"
+                       aria-label="Link ${i + 1}: what the reader sees">
+                <input type="url" data-link-href="${i}" value="${esc(link.href)}" placeholder="https://…"
+                       aria-label="Link ${i + 1}: the address">
+                <button class="pn-btn--danger" data-act="link-remove" data-index="${i}">Remove</button></div>`).join('')}
+        </div>
+        <div class="pn-actions"><button data-act="link-add">Add a link</button></div>
+
+        <h3>Photographs</h3>
+        <p class="pn-help">The first photograph appears on the news card; the full record page shows them all.
+            Choose a file to replace one.</p>
+        <div id="pn-photos">${draft.photos.map(photoRow).join('')}</div>
+        <div class="pn-actions"><button data-act="photo-add">Add a photograph</button></div>
+
+        <h3>Presentation</h3>
+        <label class="pn-field" style="margin-top:6px"><span>
+            <input type="checkbox" data-field="featured" ${draft.featured ? 'checked' : ''}>
+            Show this entry in the large panel at the top of the news page</span></label>
+
+        ${draft.cardNotes.length ? `<h3>Notes left in the news page entry</h3>
+            <p class="pn-help">These notes remind you that a date or a caption is provisional. Tick one to delete it
+                once you have confirmed the detail.</p>
+            <ul class="pn-notes">${draft.cardNotes.map((note, i) => `<li>
+                <label><input type="checkbox" data-note-card="${i}" ${(draft.dropCardNotes || []).includes(i) ? 'checked' : ''}>
+                ${esc(note)}</label></li>`).join('')}</ul>` : ''}
+        ${draft.recordNotes && draft.recordNotes.length ? `<h3>Notes left in the full record</h3>
+            <ul class="pn-notes">${draft.recordNotes.map((note, i) => `<li>
+                <label><input type="checkbox" data-note-record="${i}" ${(draft.dropRecordNotes || []).includes(i) ? 'checked' : ''}>
+                ${esc(note)}</label></li>`).join('')}</ul>` : ''}
+
+
+
+        <div class="pn-save-bar">
+            <button class="pn-btn--primary" data-act="save">Save and publish</button>
+            <button data-act="preview">Preview</button>
+            <span style="flex:1"></span>
+            ${isNew ? '<button class="pn-btn--danger" data-act="discard-new">Discard this new entry</button>'
+                    : '<button class="pn-btn--danger" data-act="delete">Delete this entry</button>'}
+        </div>`;
+}
+
+// ── editing ──────────────────────────────────────────────────────────────
+
+/** Note which part of the full record page the person has touched.
+ *
+ * A save writes back the touched parts and leaves the rest of the page
+ * byte-for-byte as GitHub has it. Without this, saving one field could restyle
+ * another: the news card and the record page do not always punctuate the same
+ * value the same way. */
+function touch(...names) {
+    const draft = state.draft;
+    if (!draft) return;
+    if (!draft.touched) draft.touched = new Set();
+    for (const name of names) draft.touched.add(name);
+    state.dirty = true;
+}
+
+function remember() {
+    const draft = state.draft;
+    if (!draft) return;
+    state.dirty = true;
+    if (String(draft.id).startsWith('new-')) {
+        state.added[Number(String(draft.id).slice(4))] = { ...draft };
+    } else {
+        state.drafts.set(Number(draft.id), draft);
+        if (draft.featured) state.featuredIndex = Number(draft.id);
+        else if (state.featuredIndex === Number(draft.id)) state.featuredIndex = -1;
+    }
+    renderList();
+}
+
+// Which record-page field each editor field writes to. A field that is not
+// here (the category, the photograph list) is the news card's alone.
+const RECORD_FIELD_OF = {
+    date: 'date', place: 'place', role: 'role',
+    description: 'lede', recordTitle: 'title', activityType: 'activityType',
+};
+
+function setField(field, value) {
+    state.draft[field] = value;
+    const recordField = RECORD_FIELD_OF[field];
+    if (recordField) touch(recordField);
+    remember();
+}
+
+/** Read a chosen file's pixel size, which the page needs for each photograph. */
+function measure(file) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => { URL.revokeObjectURL(url); resolve({ width: image.naturalWidth, height: image.naturalHeight }); };
+        image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That file is not an image the browser can read.')); };
+        image.src = url;
+    });
+}
+
+async function onFile(index, file) {
+    if (!file) return;
+    try {
+        const size = await measure(file);
+        state.draft.photos[index] = {
+            ...state.draft.photos[index],
+            kind: 'photo', file, width: size.width, height: size.height,
+        };
+        touch('photos');
+        remember();
+        renderEditor();
+        say(`New photograph ready: ${file.name} (${size.width} × ${size.height}). It uploads when you save.`);
+    } catch (error) {
+        say(error.message);
+    }
+}
+
+// ── preview ──────────────────────────────────────────────────────────────
+
+function cardPreviewHtml() {
+    const draft = state.draft;
+    const edited = {
+        ...draft,
+        dropNotes: draft.dropCardNotes || [],
+        photos: draft.photos.length ? draft.photos : [{ kind: 'space' }],
+    };
+    const body = String(draft.id).startsWith('new-')
+        ? buildCard(edited)
+        : renderCard(state.page.cards[Number(draft.id)], edited).html;
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+        <base href="${SITE}"><link rel="stylesheet" href="styles.css">
+        <style>body{padding:24px;background:#F7F5F0}
+        .news-archive{grid-template-columns:1fr!important}</style></head>
+        <body><ul class="news-archive">${body}</ul></body></html>`;
+}
+
+function recordPreviewHtml() {
+    const draft = state.draft;
+    const values = recordValues(draft);
+    let html = '';
+    if (state.record) {
+        html = renderRecordPage(state.record, { ...state.record.values, ...values }, draft.touched).html;
+    } else if (state.template) {
+        html = buildRecordPage(retitleRecordShell(recordShell(state.template),
+            { name: values.title, description: values.description }), values);
+    } else {
+        return '<p style="padding:24px">There is no record page template to preview from.</p>';
+    }
+    return html.replace('<head>', `<head><base href="${SITE}">`);
+}
+
+let previewKind = 'news';
+function showPreview(kind = previewKind) {
+    if (!state.draft) return;
+    previewKind = kind;
+    $('#pn-preview-title').textContent = kind === 'news' ? 'Preview — news page entry' : 'Preview — full record page';
+    $('#pn-frame').srcdoc = kind === 'news' ? cardPreviewHtml() : recordPreviewHtml();
+    $('#pn-frame').style.maxWidth = '100%';
+    $('#pn-preview').hidden = false;
+    state.previewNarrow = false;
+}
+
+// ── saving ───────────────────────────────────────────────────────────────
+
+function collect() {
+    const values = new Map(state.drafts);
+    if (state.draft && String(state.draft.id).startsWith('new-')) {
+        state.added[Number(String(state.draft.id).slice(4))] = { ...state.draft };
+    }
+    const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const uploads = [];
+    const recordEdits = [];
+    const added = [];
+
+    const prepare = (draft) => {
+        const photos = draft.photos.map((photo, i) => {
+            if (!photo.file) return photo;
+            const base = photo.src
+                ? photo.src.replace(/^images\//, '').replace(/\.[a-z0-9]+$/i, '')
+                : `${slugify(draft.recordSlug || draft.place || 'entry')}-${String(i + 1).padStart(2, '0')}`;
+            const extension = (photo.file.name.split('.').pop() || 'jpg').toLowerCase();
+            const path = `images/${base}-${stamp}.${extension}`;
+            uploads.push({ path, file: photo.file });
+            return { ...photo, src: path, file: undefined };
+        });
+        const slug = slugify(draft.recordSlug || '');
+        const links = draft.links.filter((link) => link.href && link.label);
+        return { ...draft, photos, recordSlug: slug, links };
+    };
+
+    for (const [index, draft] of values) {
+        const prepared = prepare(draft);
+        values.set(index, prepared);
+        if (prepared.recordSlug) recordEdits.push(prepared);
+    }
+    for (const entry of state.added) {
+        const prepared = prepare(entry);
+        added.push(prepared);
+        if (prepared.recordSlug) recordEdits.push(prepared);
+    }
+
+    const edited = {};
+    for (const [index, draft] of values) {
+        edited[index] = {
+            ...draft,
+            dropNotes: draft.dropCardNotes || [],
+            photos: draft.photos.length ? draft.photos : state.page.cards[index].values.photos,
+        };
+    }
+    const news = renderNewsPage(state.page, {
+        values: edited,
+        added,
+        removed: state.removed,
+        featuredIndex: state.featuredIndex,
+    });
+    return { news, values, added, recordEdits, uploads };
+}
+
+/** Hand one file to the Worker. Only a commit sha from GitHub counts as a save.
+
+    Returns what an undo needs to be safe: the commit GitHub made, whether this
+    write created the file, and the sha the file had before it. */
+async function commit(path, { text, bytes, message }) {
+    requireSession();
+    let previousSha = null;
+    let created = true;
+    try {
+        // The sha is all this needs, so ask for nothing else: an image does not
+        // have to come back as a megabyte of base64 to be replaced.
+        previousSha = (await api.read(path, { meta: true })).sha;
+        created = false;
+    } catch (error) {
+        if (error.code === 'signed-out') throw error;
+        // Only a real 404 means the file is new. Any other failure is reported
+        // rather than guessed at, so a write cannot create a second copy of a
+        // file that is already there.
+        if (error.status !== 404) throw error;
+    }
+    const result = await api.write(path, { text, bytes, message, sha: previousSha || undefined });
+    if (!result || !result.commit) throw new Error('the Worker did not confirm a commit');
+    return { path, commit: result.commit, created, previousSha };
+}
+
+/** What this browser wrote, kept for "Undo the last save".
+
+    Recorded after each file lands, not at the end, so a save that stops halfway
+    still leaves the files it did write undoable. Undo checks the commit recorded
+    here against GitHub before it touches anything. */
+function saveRecordFile(record, file) {
+    if (!record.commit) record.commit = file.commit;
+    record.files.push({
+        path: file.path, commit: file.commit,
+        created: file.created, previousSha: file.previousSha,
+    });
+    localStorage.setItem('news-panel-last-save', JSON.stringify(record));
+}
+
+async function save() {
+    const log = $('#pn-log');
+    log.hidden = false;
+    const line = (message) => { log.textContent += `${message}\n`; log.scrollTop = log.scrollHeight; };
+    if (state.session !== 'signed-in') {
+        setSession('signed-out', 'Not signed in');
+        line('Saving needs a signed-in session. Use the Sign in box at the top of the page, then press Save and publish again.');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
+    const changes = collect();
+
+    // Work out exactly which files differ, so a save leaves GitHub history quiet.
+    line('Checking what has changed…');
+    const writes = [];
+    for (const entry of changes.recordEdits) {
+        const values = recordValues(entry);
+        let fresh = null;
+        try { fresh = parseRecordPage(await readLive(`${entry.recordSlug}.html`)); } catch { fresh = null; }
+        if (!fresh) {
+            if (!state.template) state.template = await loadTemplate();
+            const shell = retitleRecordShell(recordShell(state.template),
+                { name: values.title, description: values.description });
+            writes.push({ slug: entry.recordSlug, html: buildRecordPage(shell, values), isNew: true });
+            continue;
+        }
+        const rendered = renderRecordPage(fresh, { ...fresh.values, ...values }, entry.touched);
+        if (rendered.changed) writes.push({ slug: entry.recordSlug, html: rendered.html, isNew: false });
+    }
+
+    const plan = [];
+    if (changes.news.changed) plan.push('news-engagement.html (the list and the featured panel)');
+    for (const page of writes) plan.push(`${page.slug}.html${page.isNew ? ' (new page)' : ''}`);
+    for (const upload of changes.uploads) plan.push(`${upload.path} (photograph)`);
+    if (!plan.length) {
+        line('Nothing has changed yet, so there is nothing to save.');
+        return;
+    }
+    line('This changes the live site. The files on this computer are not touched.');
+    if (!confirm(`This will publish:\n\n• ${plan.join('\n• ')}\n\nIt appears on wesamamer.com within about a minute. Go ahead?`)) {
+        line('Cancelled. Nothing was published.');
+        return;
+    }
+
+    log.textContent = '';
+    const record = { at: new Date().toISOString(), commit: '', files: [] };
+    try {
+        for (const upload of changes.uploads) {
+            line(`Uploading ${upload.path}…`);
+            const bytes = new Uint8Array(await upload.file.arrayBuffer());
+            saveRecordFile(record, await commit(upload.path, { bytes, message: `Add photograph ${upload.path.split('/').pop()}` }));
+            line(`  done.`);
+        }
+        if (changes.news.changed) {
+            line('Saving the news page…');
+            const saved = await commit(NEWS_PATH, { text: changes.news.html, message: 'Update news entries from the panel' });
+            saveRecordFile(record, saved);
+            line('  done.');
+        }
+        for (const page of writes) {
+            line(`Saving ${page.slug}.html…`);
+            const saved = await commit(`${page.slug}.html`, { text: page.html, message: `Update ${page.slug.replace(/^engagement-/, '')} from the panel` });
+            saveRecordFile(record, saved);
+            line('  done.');
+        }
+        line('\nPublished. The site updates within about a minute. Use “Undo the last save” if anything looks wrong.');
+        state.template = '';
+        await load();
+    } catch (error) {
+        line(`\nStopped: ${describe(error)}`);
+        if (error.code === 'signed-out') {
+            setSession('signed-out', 'Session ended');
+            line('Your Cloudflare session has ended. Press Sign in at the top of the page, then save again.');
+            return;
+        }
+        if (error.status === 409 || error.status === 422) {
+            line('The site changed while this panel was open, so GitHub refused the write to protect that change.');
+        }
+        line('Nothing after this point was written. Anything already written can be undone with “Undo the last save”.');
+    }
+}
+
+/** Put the files the last save wrote back as they were.
+
+    Before it changes anything it works the whole undo out, and stops with an
+    explanation if any file cannot be restored safely:
+
+      - a file this save created is deleted, but only when GitHub's history for
+        it is exactly the one commit this save made;
+      - a file this save replaced is put back from the version that was in the
+        repository before that commit, read from GitHub itself;
+      - a file that has changed since the save is never written to at all.
+
+    Nothing is guessed from a short history, and no file is deleted on the
+    strength of missing information. */
+async function undo() {
+    const saved = JSON.parse(localStorage.getItem('news-panel-last-save') || 'null');
+    if (!saved) { say('There is no save from this browser to undo.'); return; }
+    const files = Array.isArray(saved.files) ? saved.files : [];
+    if (!files.length) {
+        say('That save was made by an older version of this panel, which did not record which files it wrote. '
+            + 'Nothing was changed.');
+        return;
+    }
+    if (!confirm(`Undo the save from ${new Date(saved.at).toLocaleString()}?\n\nThis puts ${files.length} file(s) back as they were.`)) return;
+    say('Undoing…');
+    try {
+        requireSession();
+        const work = [];
+        for (const file of files) {
+            const current = await api.read(file.path, { meta: true }).catch(() => null);
+            if (!current) { work.push({ path: file.path, kind: 'gone' }); continue; }
+
+            const history = await api.history(file.path, 2);
+            const newest = history[0] ? history[0].sha : '';
+            if (!newest || newest !== file.commit) {
+                throw new Error(`${file.path} has changed on GitHub since that save, so putting it back would `
+                    + 'overwrite a change made after it. Nothing was changed.');
+            }
+            if (file.created) {
+                if (history.length !== 1) {
+                    throw new Error(`${file.path} has a history from before that save, so this browser will not `
+                        + 'delete it. Nothing was changed.');
+                }
+                work.push({ path: file.path, kind: 'remove', sha: current.sha });
+                continue;
+            }
+            const previous = history[1];
+            if (!previous) {
+                throw new Error(`GitHub does not show which version ${file.path} had before that save, so it cannot `
+                    + 'be put back safely. Nothing was changed.');
+            }
+            work.push({ path: file.path, kind: 'restore', sha: current.sha, text: await api.readAt(file.path, previous.sha) });
+        }
+
+        for (const item of work) {
+            if (item.kind === 'remove') {
+                await api.remove(item.path, item.sha, `Remove ${item.path}, added by mistake`);
+            } else if (item.kind === 'restore') {
+                await api.write(item.path, {
+                    text: item.text,
+                    message: `Restore ${item.path} before ${saved.commit.slice(0, 7)}`,
+                    sha: item.sha,
+                });
+            }
+        }
+        say('Restored the earlier version.');
+        localStorage.removeItem('news-panel-last-save');
+        await load();
+    } catch (error) {
+        say(`Could not undo: ${describe(error)}`);
+    }
+}
+
+async function checkLive() {
+    say('Comparing with the live site…');
+    try {
+        requireSession();
+        state.remote = await api.read(NEWS_PATH);
+        const same = state.remote.text === state.raw;
+        say(same
+            ? 'The live site matches this copy. Saving will change only what you edited.'
+            : 'The live site is behind this copy. Saving would publish every entry in this copy, including ones not yet on the site. Push your local work first, or reload from the site.');
+    } catch (error) {
+        say(`Could not read the live site: ${describe(error)}`);
+    }
+}
+
+// ── wiring ───────────────────────────────────────────────────────────────
+
+document.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-act], [data-select]');
+    if (!button) return;
+    const selectId = button.dataset.select;
+    if (selectId !== undefined) { await select(selectId); return; }
+    const act = button.dataset.act;
+    const draft = state.draft;
+    const index = Number(button.dataset.index);
+
+    if (act === 'sign-in') return signIn();
+    if (act === 'sign-out') return signOut();
+    if (act === 'check-session') {
+        setGateMessage('Checking with the API…');
+        await checkSession({ reload: true });
+        return;
+    }
+    if (act === 'reload') return load();
+    if (act === 'check') return checkLive();
+    if (act === 'undo') return undo();
+    if (act === 'add') {
+        const entry = { ...blankEntry(), date: '', id: `new-${state.added.length}` };
+        state.added.push(entry);
+        state.dirty = true;
+        await select(entry.id);
+        return;
+    }
+    if (act === 'discard-new') {
+        state.added.splice(Number(String(draft.id).slice(4)), 1);
+        state.added.forEach((entry, i) => { entry.id = `new-${i}`; });
+        state.selected = null;
+        state.draft = null;
+        state.dirty = true;
+        renderList();
+        $('#pn-editor').innerHTML = '<p class="pn-help">Choose an entry on the left, or add a new one.</p>';
+        return;
+    }
+    if (act === 'delete') {
+        const number = Number(draft.id);
+        if (!confirm('Delete this entry from the news page? Its own page stays in the repository, and you can undo with “Undo the last save” after saving.')) return;
+        state.removed.push(number);
+        state.drafts.delete(number);
+        state.selected = null;
+        state.draft = null;
+        state.dirty = true;
+        renderList();
+        $('#pn-editor').innerHTML = '<p class="pn-help">That entry is marked for deletion. Press Save and publish to finish.</p>';
+        return;
+    }
+    if (act === 'body-add') { if (draft.bodies.length < 2) { draft.bodies.push(''); touch('bodies'); remember(); renderEditor(); } return; }
+    if (act === 'link-add') { draft.links.push({ label: '', href: '', external: true }); touch('links'); remember(); renderEditor(); return; }
+    if (act === 'link-remove') { draft.links.splice(index, 1); touch('links'); remember(); renderEditor(); return; }
+    if (act === 'photo-add') { draft.photos.push({ kind: 'space', caption: '', alt: '', hint: false }); touch('photos'); remember(); renderEditor(); return; }
+    if (act === 'photo-remove') { draft.photos.splice(index, 1); touch('photos'); remember(); renderEditor(); return; }
+    if (act === 'photo-up') {
+        const [photo] = draft.photos.splice(index, 1);
+        draft.photos.splice(index - 1, 0, photo);
+        touch('photos');
+        remember();
+        renderEditor();
+        return;
+    }
+    if (act === 'save') return save();
+    if (act === 'preview') return showPreview('news');
+    if (act === 'preview-news') return showPreview('news');
+    if (act === 'preview-record') return showPreview('record');
+    if (act === 'preview-close') { $('#pn-preview').hidden = true; return; }
+    if (act === 'preview-narrow') { $('#pn-frame').style.maxWidth = '390px'; return; }
+    if (act === 'preview-wide') { $('#pn-frame').style.maxWidth = '100%'; return; }
+});
+
+document.addEventListener('input', (event) => {
+    const target = event.target;
+    if (target.id === 'pn-search') return renderList();
+    const draft = state.draft;
+    if (!draft) return;
+    if (target.dataset.field) {
+        setField(target.dataset.field, target.type === 'checkbox' ? target.checked : target.value);
+        return;
+    }
+    if (target.dataset.body !== undefined) { draft.bodies[Number(target.dataset.body)] = target.value; touch('bodies'); remember(); }
+    if (target.dataset.linkLabel !== undefined) { draft.links[Number(target.dataset.linkLabel)].label = target.value; touch('links'); remember(); }
+    if (target.dataset.linkHref !== undefined) { draft.links[Number(target.dataset.linkHref)].href = target.value; touch('links'); remember(); }
+    if (target.dataset.photoCaption !== undefined) { draft.photos[Number(target.dataset.photoCaption)].caption = target.value; touch('photos'); remember(); }
+    if (target.dataset.photoAlt !== undefined) {
+        const photo = draft.photos[Number(target.dataset.photoAlt)];
+        if (photo.kind === 'photo') photo.alt = target.value;
+        else photo.label = target.value;
+        touch('photos');
+        remember();
+    }
+    if (target.dataset.noteCard !== undefined) {
+        const i = Number(target.dataset.noteCard);
+        draft.dropCardNotes = draft.dropCardNotes || [];
+        draft.dropCardNotes = target.checked
+            ? [...new Set([...draft.dropCardNotes, i])]
+            : draft.dropCardNotes.filter((n) => n !== i);
+        remember();
+    }
+    if (target.dataset.noteRecord !== undefined) {
+        const i = Number(target.dataset.noteRecord);
+        draft.dropRecordNotes = draft.dropRecordNotes || [];
+        draft.dropRecordNotes = target.checked
+            ? [...new Set([...draft.dropRecordNotes, i])]
+            : draft.dropRecordNotes.filter((n) => n !== i);
+        remember();
+    }
+});
+
+document.addEventListener('change', async (event) => {
+    const target = event.target;
+    if (target.dataset.photoFile !== undefined && target.files && target.files[0]) {
+        await onFile(Number(target.dataset.photoFile), target.files[0]);
+    }
+});
+
+// ── start ────────────────────────────────────────────────────────────────
+
+setSession('checking', 'Checking sign-in…');
+setGateMessage('Checking with the API for a session…');
+
+checkSession()
+    .then(() => load())
+    .catch((error) => {
+        $('#pn-status').textContent = `The entries could not be read: ${describe(error)}`;
+    });
+
+// Coming back from the sign-in tab is the moment a session appears, so it is
+// worth looking again then rather than asking for another button press.
+window.addEventListener('focus', async () => {
+    if (state.session === 'signed-in') return;
+    if (await checkSession()) await load();
+});
+
+// Leaving with unsaved edits asks first. The browser supplies the wording.
+window.addEventListener('beforeunload', (event) => {
+    if (!state.dirty) return;
+    event.preventDefault();
+    event.returnValue = '';
+});
+</script>
+</body>
+</html>

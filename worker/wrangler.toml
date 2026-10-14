@@ -1,0 +1,37 @@
+name = "wesam-personal-website-api"
+main = "worker.js"
+compatibility_date = "2025-10-14"
+
+# A workers.dev route would bypass the Cloudflare Access gate in front of this Worker.
+workers_dev = false
+
+# The API hostname. Deploying this attaches the custom domain and its
+# certificate, so this line and `workers_dev = false` must travel together:
+# deploying one without the other leaves the Worker with no way in.
+routes = [
+    { pattern = "api.wesamamer.com", custom_domain = true }
+]
+
+[vars]
+REPO_OWNER = "mwamer"
+REPO_NAME = "index.html"
+REPO_BRANCH = "main"
+
+# The only website allowed to call this API. Local development lives in
+# .dev.vars, which is never deployed.
+ALLOWED_ORIGINS = "https://wesamamer.com"
+
+# Cloudflare Access. Until these are set the Worker refuses every protected
+# route, so a deployment that has not been finished cannot be used by accident.
+#
+#   ACCESS_TEAM_DOMAIN  "<team>.cloudflareaccess.com", exactly as the dashboard
+#                       shows it. Zero Trust > Settings > General. The Worker
+#                       adds the scheme, because an Access JWT always carries one
+#                       in `iss`.
+#   ACCESS_AUD          The Audience tag of this application. Zero Trust > Access
+#                       > Applications > Wesam Personal Website API > Overview.
+#   ALLOWED_EMAILS      The only addresses that may edit, comma-separated. It is
+#                       a secret, not a var, because this repository is public:
+#                       npx wrangler secret put ALLOWED_EMAILS
+ACCESS_TEAM_DOMAIN = "fancy-feather-d3cc.cloudflareaccess.com"
+ACCESS_AUD = "c8641b6f466258759f0e3782e4a66b4ac27837bb56b2722621166ce150de397f"
