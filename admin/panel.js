@@ -788,6 +788,15 @@ export function slugify(value) {
         .slice(0, 60);
 }
 
+/** Report text with nowhere to go: a full record is written to
+    `engagement-<short name>.html`, so text typed without a short name cannot be
+    published at all. The save stops on these entries and names them, rather than
+    dropping what the person wrote. */
+export function needsShortName(entry) {
+    if (entry.recordSlug) return false;
+    return [entry.recordTitle, ...(entry.bodies || [])].some((value) => String(value || '').trim() !== '');
+}
+
 /** The address a record page is published at.
 
     The Worker only writes record pages named `engagement-*.html`, so the
