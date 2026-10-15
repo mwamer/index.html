@@ -153,7 +153,8 @@ import {
     parseNewsPage, renderNewsPage, renderCard, buildCard, parseRecordPage,
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
-} from './panel.js?v=4';
+    PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
+} from './panel.js?v=5';
 import { describe, gitHub } from './api-worker.js?v=2';
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -448,7 +449,7 @@ function photoRow(photo, index) {
         ${preview}
         <div>
             <label class="pn-field" style="margin-top:0"><span>Replace this photograph</span>
-                <input type="file" accept="image/*" data-photo-file="${index}"></label>
+                <input type="file" accept="${PHOTO_EXTENSIONS.map((e) => `.${e}`).join(',')}" data-photo-file="${index}"></label>
             <label class="pn-field"><span>Caption <em>the line under the photograph</em></span>
                 <input type="text" data-photo-caption="${index}" value="${esc(photo.caption || '')}"></label>
             <label class="pn-field"><span>Description for screen readers</span>
@@ -636,6 +637,15 @@ function measure(file) {
 
 async function onFile(index, file) {
     if (!file) return;
+    // The picker already offers these, but a file can arrive other ways, and the
+    // Worker refuses the rest. Say so now, while nothing is waiting on it.
+    const extension = photoExtension(file.name);
+    if (!PHOTO_EXTENSIONS.includes(extension)) {
+        const kind = extension ? extension.toUpperCase() : 'a file with no extension';
+        say(`${file.name} is ${kind}. Photographs can be ${PHOTO_FORMATS.join(', ')}. `
+            + 'Save the picture in one of those formats, then add it again.');
+        return;
+    }
     try {
         const size = await measure(file);
         state.draft.photos[index] = {
@@ -815,6 +825,19 @@ async function save() {
         line('');
         line('Open each one and fill in “Short name for the link” (for example hypermedia-warfare),');
         line('or clear the report boxes to drop that text. Nothing has been published.');
+        return;
+    }
+
+    // A photograph the Worker would refuse must be caught here: uploads run
+    // before the pages, so refusing one part-way through would leave the
+    // photographs before it committed and the entry unpublished.
+    const unsupported = changes.uploads.filter((upload) => !photoPathAllowed(upload.path));
+    if (unsupported.length) {
+        line('Stopped. These photographs are in a format the site does not publish, so nothing was written:');
+        for (const upload of unsupported) line(`  • ${upload.file.name}`);
+        line('');
+        line(`Photographs can be ${PHOTO_FORMATS.join(', ')}. Save the picture in one of those formats,`);
+        line('add it to the entry again, and press Save and publish.');
         return;
     }
 

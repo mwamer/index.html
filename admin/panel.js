@@ -788,6 +788,25 @@ export function slugify(value) {
         .slice(0, 60);
 }
 
+/** The photograph formats the Worker writes. It stays the authority: this list
+    only lets the panel say so before anything has been written. */
+export const PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+export const PHOTO_FORMATS = ['JPEG', 'PNG', 'WebP', 'AVIF'];
+
+/** The extension of a file or path, lowercased and without the dot. */
+export function photoExtension(name) {
+    const match = String(name || '').match(/\.([A-Za-z0-9]+)$/);
+    return match ? match[1].toLowerCase() : '';
+}
+
+/** Whether the Worker will write a photograph at this path. An upload runs
+    before the pages do, so a file it would refuse has to be caught before the
+    first one goes, rather than leaving the plan half written. */
+export function photoPathAllowed(path) {
+    if (!PHOTO_EXTENSIONS.includes(photoExtension(path))) return false;
+    return /^images\/[A-Za-z0-9][A-Za-z0-9-]{0,80}-\d{8}\.[a-z0-9]+$/.test(path);
+}
+
 /** Report text with nowhere to go: a full record is written to
     `engagement-<short name>.html`, so text typed without a short name cannot be
     published at all. The save stops on these entries and names them, rather than
