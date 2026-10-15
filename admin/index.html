@@ -151,8 +151,8 @@ import {
     CATEGORIES, ACTIVITY_TYPES, ROLES, NEWS_PATH,
     parseNewsPage, renderNewsPage, renderCard, buildCard, parseRecordPage,
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
-    noteComments, slugify,
-} from './panel.js?v=2';
+    noteComments, slugify, recordPageSlug,
+} from './panel.js?v=3';
 import { describe, gitHub } from './api-worker.js?v=2';
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -420,7 +420,7 @@ async function select(id) {
     if (card.recordSlug) {
         say('Reading the full record page…');
         try {
-            const html = await readPage(`${card.recordSlug}.html`);
+            const html = await readPage(`${recordPageSlug(card.recordSlug)}.html`);
             state.record = parseRecordPage(html);
             const values = state.record.values;
             draft.recordTitle = values.title;
@@ -431,7 +431,7 @@ async function select(id) {
             draft.recordNotes = noteComments(state.record.raw).map((note) => note.text);
             say('');
         } catch (error) {
-            say(`${card.recordSlug}.html could not be read: ${error.message}`);
+            say(`${recordPageSlug(card.recordSlug)}.html could not be read: ${error.message}`);
         }
     }
     state.draft = draft;
@@ -496,7 +496,7 @@ function renderEditor() {
             : 'This entry has no full record page yet. Fill in the short name below to create one.'}</p>
         <label class="pn-field"><span>Short name for the link <em>letters, numbers and dashes</em></span>
             <input type="text" data-field="recordSlug" value="${esc(draft.recordSlug)}" placeholder="for example cardiff-university-2027">
-            <em class="pn-help">The page address becomes <code>${esc(draft.recordSlug ? `${draft.recordSlug}.html` : 'engagement-…​.html')}</code></em></label>
+            <em class="pn-help">The page address becomes <code>${esc(draft.recordSlug ? `${recordPageSlug(draft.recordSlug)}.html` : 'engagement-…​.html')}</code></em></label>
         <label class="pn-field"><span>Heading on the full record</span>
             <input type="text" data-field="recordTitle" value="${esc(draft.recordTitle)}"></label>
 
@@ -692,14 +692,14 @@ function collect() {
         const photos = draft.photos.map((photo, i) => {
             if (!photo.file) return photo;
             const base = photo.src
-                ? photo.src.replace(/^images\//, '').replace(/\.[a-z0-9]+$/i, '')
+                ? photo.src.replace(/^images\//, '').replace(/\.[a-z0-9]+$/i, '').replace(/(?:-\d{8})+$/, '')
                 : `${slugify(draft.recordSlug || draft.place || 'entry')}-${String(i + 1).padStart(2, '0')}`;
             const extension = (photo.file.name.split('.').pop() || 'jpg').toLowerCase();
             const path = `images/${base}-${stamp}.${extension}`;
             uploads.push({ path, file: photo.file });
             return { ...photo, src: path, file: undefined };
         });
-        const slug = slugify(draft.recordSlug || '');
+        const slug = recordPageSlug(draft.recordSlug);
         const links = draft.links.filter((link) => link.href && link.label);
         return { ...draft, photos, recordSlug: slug, links };
     };
@@ -824,15 +824,18 @@ async function save() {
             saveRecordFile(record, await commit(upload.path, { bytes, message: `Add photograph ${upload.path.split('/').pop()}` }));
             line(`  done.`);
         }
-        if (changes.news.changed) {
-            line('Saving the news page…');
-            const saved = await commit(NEWS_PATH, { text: changes.news.html, message: 'Update news entries from the panel' });
-            saveRecordFile(record, saved);
-            line('  done.');
-        }
+        // Record pages before the news page, which links to them. Each file is
+        // its own commit, so a failure part-way through must never leave a link
+        // on the news page pointing at a page that was not written.
         for (const page of writes) {
             line(`Saving ${page.slug}.html…`);
             const saved = await commit(`${page.slug}.html`, { text: page.html, message: `Update ${page.slug.replace(/^engagement-/, '')} from the panel` });
+            saveRecordFile(record, saved);
+            line('  done.');
+        }
+        if (changes.news.changed) {
+            line('Saving the news page…');
+            const saved = await commit(NEWS_PATH, { text: changes.news.html, message: 'Update news entries from the panel' });
             saveRecordFile(record, saved);
             line('  done.');
         }

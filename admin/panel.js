@@ -479,6 +479,10 @@ export function parseFeatured(html) {
         media: find(element(body, '<div class="news-featured__media">', 'div')),
     };
     if (featured.title) {
+        // The marker stops before the tag's closing ">", so everything from here
+        // to "</h2>" covers the tag's own attributes as well as its content.
+        const open = title.text.indexOf('>') + 1;
+        featured.titleInner = { start: section.start + title.start + open, end: section.start + title.end, text: title.text.slice(open) };
         const link = between(title.text, '<a class="news-card__link" href="', '">');
         if (link) {
             const textStart = link.end + 2;
@@ -486,7 +490,7 @@ export function parseFeatured(html) {
             featured.titleHref = { start: section.start + title.start + link.start, end: section.start + title.start + link.end, text: link.text };
             featured.titleText = { start: section.start + title.start + textStart, end: section.start + title.start + textEnd, text: title.text.slice(textStart, textEnd) };
         } else {
-            featured.titleText = featured.title;
+            featured.titleText = featured.titleInner;
         }
     }
     featured.slug = featured.titleHref ? featured.titleHref.text.replace(/\.html$/, '') : '';
@@ -501,11 +505,13 @@ function renderFeatured(featured, values) {
     replaceIfChanged(reps, raw, shift(featured.date), encode(values.date));
     replaceIfChanged(reps, raw, shift(featured.role), encode(values.role));
     replaceIfChanged(reps, raw, shift(featured.tag), encode(values.activityType));
-    if (featured.titleText && featured.titleHref) {
+    if (featured.titleHref && values.recordSlug) {
         replaceIfChanged(reps, raw, shift(featured.titleText), encode(values.place));
         replaceIfChanged(reps, raw, shift(featured.titleHref), encodeAttr(`${values.recordSlug}.html`));
-    } else if (featured.titleText) {
-        replaceIfChanged(reps, raw, shift(featured.titleText), encode(values.place));
+    } else if (featured.titleInner) {
+        // Either the page never linked, or the entry has no record page now.
+        // Replacing the whole inner title is what removes a stale anchor.
+        replaceIfChanged(reps, raw, shift(featured.titleInner), encode(values.place));
     }
     replaceIfChanged(reps, raw, shift(featured.desc), encode(values.description));
     const inner = featured.linksRow
@@ -780,6 +786,17 @@ export function slugify(value) {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
         .slice(0, 60);
+}
+
+/** The address a record page is published at.
+
+    The Worker only writes record pages named `engagement-*.html`, so the
+    prefix belongs here rather than in the hands of whoever is typing. An entry
+    with no short name has no record page, and returns an empty string. */
+export function recordPageSlug(value) {
+    const slug = slugify(value);
+    if (!slug) return '';
+    return slug.startsWith('engagement-') ? slug : `engagement-${slug}`;
 }
 
 // ── base64 ───────────────────────────────────────────────────────────────
