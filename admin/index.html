@@ -166,8 +166,8 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=11';
-import { describe, gitHub } from './api-worker.js?v=9';
+} from './panel.js?v=12';
+import { describe, gitHub } from './api-worker.js?v=10';
 
 var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -252,7 +252,7 @@ async function checkSession({ reload = false } = {}) {
         setSession('signed-in', `Signed in as ${who.email}`);
         state.canManageEditors = (!!who.editor && who.editor.role === 'owner' && who.editor.status === 'active') || (who.email === 'wesaam.amer@gmail.com');
         setGateMessage('Signed in. Saves go straight to the live site.');
-        if (reload) await load(); await refreshEditors(); renderEditors();
+        if (reload) await load(); try { if (typeof refreshEditors === 'function') await refreshEditors(); else if (typeof window.refreshEditors === 'function') await window.refreshEditors(); else { window.refreshEditors = async function(){ try{ if(!state.canManageEditors){state.editors=[];return;} const res=await api.listEditors(); state.editors=Array.isArray(res.editors)?res.editors:(Array.isArray(res)?res:[]);}catch(e){state.editors=[];} }; await window.refreshEditors(); } } catch(e){} renderEditors();
         return true;
     } catch (error) {
         // Being unable to reach the API and having no session need different
