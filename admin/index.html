@@ -1118,7 +1118,10 @@ document.addEventListener('click', async (event) => {
     if (act === 'preview-narrow') { $('#pn-frame').style.maxWidth = '390px'; return; }
     if (act === 'preview-wide') { $('#pn-frame').style.maxWidth = '100%'; return; }
     if (act === 'add-editor') {
-        if (!state.canManageEditors) return;
+        if (!state.canManageEditors) {
+            setGateMessage('Not authorized to manage editors');
+            return;
+        }
         const name = prompt('Editor name');
         if (!name || !name.trim()) return;
         const email = prompt('Editor email');
