@@ -1122,12 +1122,16 @@ document.addEventListener('click', async (event) => {
             setGateMessage('Not authorized to manage editors');
             return;
         }
-        const name = prompt('Editor name');
-        if (!name || !name.trim()) return;
-        const email = prompt('Editor email');
-        if (!email || !email.trim()) return;
+        const nameInput = $('#pn-editor-name');
+        const emailInput = $('#pn-editor-email');
+        const name = nameInput ? nameInput.value : '';
+        const email = emailInput ? emailInput.value : '';
+        if (!name || !name.trim()) { setGateMessage('Name required'); return; }
+        if (!email || !email.trim()) { setGateMessage('Email required'); return; }
         try {
             await api.addEditor({ name: name.trim(), email: email.trim().toLowerCase(), role: 'news-editor', status: 'pending' });
+            if (nameInput) nameInput.value = '';
+            if (emailInput) emailInput.value = '';
             await refreshEditors();
             setGateMessage('Editor added');
         } catch (e) {
