@@ -20,6 +20,7 @@
         .pn-card h2 { font-size: 1.15rem; margin: 0 0 8px; }
         .pn-card h3 { font-size: 1rem; margin: 22px 0 6px; color: var(--pn-ink); }
         .pn-help { color: #53616B; font-size: 0.9rem; }
+        .pn-help--warn { color: #8a2b2b; font-weight: 600; }
         .pn-cols { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
         @media (max-width: 860px) { .pn-cols { grid-template-columns: 1fr; } }
         .pn-list { max-height: 62vh; overflow: auto; border: 1px solid var(--pn-line); border-radius: 6px; }
@@ -105,6 +106,18 @@
             but nothing reaches the live site until you sign in.</p>
     </section>
 
+    <section class="pn-card" id="pn-editors" hidden>
+        <h2>Manage Editors</h2>
+        <p class="pn-help">Owner-only. Add and remove editors. Pending editors appear until activated.</p>
+        <div class="pn-row">
+            <input type="text" id="pn-editor-name" placeholder="Name">
+            <input type="email" id="pn-editor-email" placeholder="Email">
+            <button data-act="add-editor">Add Editor</button>
+        </div>
+        <div id="pn-editors-list" style="margin-top:12px"></div>
+        <div style="margin-top:12px"><button data-act="refresh-editors">Refresh</button></div>
+    </section>
+
     <section id="pn-work">
         <div class="pn-actions">
             <button class="pn-btn--primary" data-act="add">Add a news entry</button>
@@ -151,9 +164,10 @@ import {
     CATEGORIES, ACTIVITY_TYPES, ROLES, NEWS_PATH,
     parseNewsPage, renderNewsPage, renderCard, buildCard, parseRecordPage,
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
-    noteComments, slugify,
-} from './panel.js?v=2';
-import { describe, gitHub } from './api-worker.js?v=2';
+    noteComments, slugify, recordPageSlug, needsShortName,
+    PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
+} from './panel.js?v=6';
+import { describe, gitHub } from './api-worker.js?v=4';
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 
@@ -172,6 +186,8 @@ const state = {
     local: '',              // the copy served from this computer
     session: 'checking',    // 'checking' | 'signed-in' | 'signed-out'
     dirty: false,           // edits made since the last load or save
+    canManageEditors: false,
+    editors: [],
 };
 
 // Every read and every change to the website goes through this one object. It
@@ -229,8 +245,9 @@ async function checkSession({ reload = false } = {}) {
             return false;
         }
         setSession('signed-in', `Signed in as ${who.email}`);
+        state.canManageEditors = !!who.editor && who.editor.role === 'owner' && who.editor.status === 'active';
         setGateMessage('Signed in. Saves go straight to the live site.');
-        if (reload) await load();
+        if (reload) await load(); await refreshEditors(); renderEditors();
         return true;
     } catch (error) {
         // Being unable to reach the API and having no session need different
@@ -306,6 +323,19 @@ async function loadTemplate() {
         try { return await readPage(`${slug}.html`); } catch { /* try the next */ }
     }
     throw new Error('No record page was found to use as a template.');
+}
+
+
+function renderEditors() {
+    const section = $('#pn-editors');
+    if (state.canManageEditors) section.hidden = false;
+    else { section.hidden = true; return; }
+    const list = $('#pn-editors-list');
+    if (!state.editors || !state.editors.length) {
+        list.innerHTML = '<p class="pn-help">No editors.</p>';
+        return;
+    }
+    list.innerHTML = state.editors.map(e => `<div class="pn-row"><span>${esc(e.name)} &lt;${esc(e.email)}&gt; — ${esc(e.role)}/${esc(e.status)}</span>${e.role==='owner' && e.status==='active' ? '' : `<button class="pn-btn--danger" data-act="remove-editor" data-email="${esc(e.email)}">Remove</button>`}</div>`).join('');
 }
 
 async function load() {
@@ -420,7 +450,7 @@ async function select(id) {
     if (card.recordSlug) {
         say('Reading the full record page…');
         try {
-            const html = await readPage(`${card.recordSlug}.html`);
+            const html = await readPage(`${recordPageSlug(card.recordSlug)}.html`);
             state.record = parseRecordPage(html);
             const values = state.record.values;
             draft.recordTitle = values.title;
@@ -431,12 +461,13 @@ async function select(id) {
             draft.recordNotes = noteComments(state.record.raw).map((note) => note.text);
             say('');
         } catch (error) {
-            say(`${card.recordSlug}.html could not be read: ${error.message}`);
+            say(`${recordPageSlug(card.recordSlug)}.html could not be read: ${error.message}`);
         }
     }
     state.draft = draft;
     renderList();
     renderEditor();
+    renderEditors();
 }
 
 function photoRow(photo, index) {
@@ -447,7 +478,7 @@ function photoRow(photo, index) {
         ${preview}
         <div>
             <label class="pn-field" style="margin-top:0"><span>Replace this photograph</span>
-                <input type="file" accept="image/*" data-photo-file="${index}"></label>
+                <input type="file" accept="${PHOTO_EXTENSIONS.map((e) => `.${e}`).join(',')}" data-photo-file="${index}"></label>
             <label class="pn-field"><span>Caption <em>the line under the photograph</em></span>
                 <input type="text" data-photo-caption="${index}" value="${esc(photo.caption || '')}"></label>
             <label class="pn-field"><span>Description for screen readers</span>
@@ -496,7 +527,8 @@ function renderEditor() {
             : 'This entry has no full record page yet. Fill in the short name below to create one.'}</p>
         <label class="pn-field"><span>Short name for the link <em>letters, numbers and dashes</em></span>
             <input type="text" data-field="recordSlug" value="${esc(draft.recordSlug)}" placeholder="for example cardiff-university-2027">
-            <em class="pn-help">The page address becomes <code>${esc(draft.recordSlug ? `${draft.recordSlug}.html` : 'engagement-…​.html')}</code></em></label>
+            <em class="pn-help">The page address becomes <code>${esc(draft.recordSlug ? `${recordPageSlug(draft.recordSlug)}.html` : 'engagement-…​.html')}</code></em></label>
+        <em class="pn-help pn-help--warn" id="pn-slug-warning" hidden></em>
         <label class="pn-field"><span>Heading on the full record</span>
             <input type="text" data-field="recordTitle" value="${esc(draft.recordTitle)}"></label>
 
@@ -557,6 +589,23 @@ function renderEditor() {
             ${isNew ? '<button class="pn-btn--danger" data-act="discard-new">Discard this new entry</button>'
                     : '<button class="pn-btn--danger" data-act="delete">Delete this entry</button>'}
         </div>`;
+    showShortNameWarning();
+}
+
+/** Say, while the person is typing, that report text needs a short name. The
+    save refuses to publish it, so the warning is better said before they press
+    the button and wonder where it went. */
+function showShortNameWarning() {
+    const warning = $('#pn-slug-warning');
+    if (!warning) return;
+    if (!state.draft || !needsShortName(state.draft)) {
+        warning.hidden = true;
+        warning.textContent = '';
+        return;
+    }
+    warning.hidden = false;
+    warning.textContent = 'Required: this entry has text in the report below, so it needs a short name. '
+        + 'Nothing is published for the report without one.';
 }
 
 // ── editing ──────────────────────────────────────────────────────────────
@@ -587,6 +636,7 @@ function remember() {
         else if (state.featuredIndex === Number(draft.id)) state.featuredIndex = -1;
     }
     renderList();
+    showShortNameWarning();
 }
 
 // Which record-page field each editor field writes to. A field that is not
@@ -616,6 +666,15 @@ function measure(file) {
 
 async function onFile(index, file) {
     if (!file) return;
+    // The picker already offers these, but a file can arrive other ways, and the
+    // Worker refuses the rest. Say so now, while nothing is waiting on it.
+    const extension = photoExtension(file.name);
+    if (!PHOTO_EXTENSIONS.includes(extension)) {
+        const kind = extension ? extension.toUpperCase() : 'a file with no extension';
+        say(`${file.name} is ${kind}. Photographs can be ${PHOTO_FORMATS.join(', ')}. `
+            + 'Save the picture in one of those formats, then add it again.');
+        return;
+    }
     try {
         const size = await measure(file);
         state.draft.photos[index] = {
@@ -692,14 +751,14 @@ function collect() {
         const photos = draft.photos.map((photo, i) => {
             if (!photo.file) return photo;
             const base = photo.src
-                ? photo.src.replace(/^images\//, '').replace(/\.[a-z0-9]+$/i, '')
+                ? photo.src.replace(/^images\//, '').replace(/\.[a-z0-9]+$/i, '').replace(/(?:-\d{8})+$/, '')
                 : `${slugify(draft.recordSlug || draft.place || 'entry')}-${String(i + 1).padStart(2, '0')}`;
             const extension = (photo.file.name.split('.').pop() || 'jpg').toLowerCase();
             const path = `images/${base}-${stamp}.${extension}`;
             uploads.push({ path, file: photo.file });
             return { ...photo, src: path, file: undefined };
         });
-        const slug = slugify(draft.recordSlug || '');
+        const slug = recordPageSlug(draft.recordSlug);
         const links = draft.links.filter((link) => link.href && link.label);
         return { ...draft, photos, recordSlug: slug, links };
     };
@@ -783,6 +842,34 @@ async function save() {
     }
     const changes = collect();
 
+    // Report text with no short name has no address to be published at, and a
+    // save would drop it without a word. Stop first, and name what is missing.
+    const stranded = [...changes.values.values(), ...changes.added].filter(needsShortName);
+    if (stranded.length) {
+        line('Stopped. These entries have text in the full record but no short name, so there is');
+        line('nowhere to publish that text to:');
+        for (const entry of stranded) {
+            line(`  • ${entry.role || 'an entry'} — ${String(entry.place || 'no place given').slice(0, 90)}`);
+        }
+        line('');
+        line('Open each one and fill in “Short name for the link” (for example hypermedia-warfare),');
+        line('or clear the report boxes to drop that text. Nothing has been published.');
+        return;
+    }
+
+    // A photograph the Worker would refuse must be caught here: uploads run
+    // before the pages, so refusing one part-way through would leave the
+    // photographs before it committed and the entry unpublished.
+    const unsupported = changes.uploads.filter((upload) => !photoPathAllowed(upload.path));
+    if (unsupported.length) {
+        line('Stopped. These photographs are in a format the site does not publish, so nothing was written:');
+        for (const upload of unsupported) line(`  • ${upload.file.name}`);
+        line('');
+        line(`Photographs can be ${PHOTO_FORMATS.join(', ')}. Save the picture in one of those formats,`);
+        line('add it to the entry again, and press Save and publish.');
+        return;
+    }
+
     // Work out exactly which files differ, so a save leaves GitHub history quiet.
     line('Checking what has changed…');
     const writes = [];
@@ -824,15 +911,18 @@ async function save() {
             saveRecordFile(record, await commit(upload.path, { bytes, message: `Add photograph ${upload.path.split('/').pop()}` }));
             line(`  done.`);
         }
-        if (changes.news.changed) {
-            line('Saving the news page…');
-            const saved = await commit(NEWS_PATH, { text: changes.news.html, message: 'Update news entries from the panel' });
-            saveRecordFile(record, saved);
-            line('  done.');
-        }
+        // Record pages before the news page, which links to them. Each file is
+        // its own commit, so a failure part-way through must never leave a link
+        // on the news page pointing at a page that was not written.
         for (const page of writes) {
             line(`Saving ${page.slug}.html…`);
             const saved = await commit(`${page.slug}.html`, { text: page.html, message: `Update ${page.slug.replace(/^engagement-/, '')} from the panel` });
+            saveRecordFile(record, saved);
+            line('  done.');
+        }
+        if (changes.news.changed) {
+            line('Saving the news page…');
+            const saved = await commit(NEWS_PATH, { text: changes.news.html, message: 'Update news entries from the panel' });
             saveRecordFile(record, saved);
             line('  done.');
         }

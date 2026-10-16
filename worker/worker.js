@@ -1,3 +1,4 @@
+import { listEditors, getEditor, addEditor, updateEditor, removeEditor, ensureOwnerSeed } from "./registry.js";
 /* The News & Engagement panel's API.
 
    The panel runs in a browser, so it must never hold a GitHub token. Every read
@@ -154,7 +155,7 @@ async function verifyAccess(request, env) {
     const domain = teamDomain(env);
     const audience = String(env.ACCESS_AUD || '');
     const allowedEmails = list(env.ALLOWED_EMAILS).map((email) => email.toLowerCase());
-    if (!domain || !audience || !allowedEmails.length) {
+    if (!domain || !audience) {
         throw new HttpError('Cloudflare Access is not configured on this Worker yet', 503);
     }
 
@@ -186,11 +187,38 @@ async function verifyAccess(request, env) {
     if (!audiences.includes(audience)) throw new HttpError('Not signed in', 401);
 
     const email = String(claims.email || '').toLowerCase();
-    if (!email || !allowedEmails.includes(email)) {
-        throw new HttpError('Signed in, but this account is not allowed to edit the website', 403);
+    if (!email) throw new HttpError('Not signed in', 401);
+    let editor = null;
+    if (env.DB) {
+        try {
+            editor = await getEditor(env, email);
+            if (!editor && allowedEmails.includes(email)) {
+                editor = await ensureOwnerSeed(env, { email, name: claims.name || claims.email || email });
+            }
+        } catch (e) {
+            editor = null;
+        }
     }
-    return { email, claims };
+    if (!editor) {
+        if (!allowedEmails.length || !allowedEmails.includes(email)) {
+            throw new HttpError('Signed in, but this account is not allowed to edit the website', 403);
+        }
+        // fallback: treat as active news-editor if in allowlist but no DB record
+    } else {
+        if (editor.status !== 'active') {
+            throw new HttpError('Signed in, but this account is not allowed to edit the website', 403);
+        }
+    }
+    return { email, claims, editor };
 }
+async function requireOwner(caller, env) {
+    if (!caller) throw new HttpError('Not signed in', 401);
+    if (caller.editor && caller.editor.role === 'owner' && caller.editor.status === 'active') return caller.editor;
+    const editor = await getEditor(env, caller.email);
+    if (editor && editor.role === 'owner' && editor.status === 'active') return editor;
+    throw new HttpError('Not authorized', 403);
+}
+
 
 // ── GitHub ───────────────────────────────────────────────────────────────────
 
@@ -251,7 +279,7 @@ function isAllowedPath(path) {
     if (/[\u0000-\u001f\u007f]/.test(path)) return false;
     if (path === NEWS_PATH) return true;
     if (/^engagement-[a-z0-9][a-z0-9-]{0,80}\.html$/.test(path)) return true;
-    if (/^images\/[A-Za-z0-9][A-Za-z0-9-]{0,80}-\d{8}\.(jpe?g|png|webp)$/.test(path)) return true;
+    if (/^images\/[A-Za-z0-9][A-Za-z0-9-]{0,80}-\d{8}\.(jpe?g|png|webp|avif)$/.test(path)) return true;
     return false;
 }
 
@@ -259,9 +287,11 @@ const assertPath = (path) => {
     if (!isAllowedPath(path)) throw new HttpError(`This Worker does not write ${JSON.stringify(path)}`, 400);
 };
 
-/** The first bytes of a file, as a check that an image really is one. */
+/** The first bytes of a file, as a check that an image really is one. Sixty-four
+    base64 characters is forty-eight bytes, enough to read the brands inside an
+    AVIF "ftyp" box, which is where that format says what it is. */
 function fileHead(base64) {
-    const chunk = base64.replace(/\s/g, '').slice(0, 16);
+    const chunk = base64.replace(/\s/g, '').slice(0, 64);
     if (chunk.length < 8) return new Uint8Array();
     try { return base64ToBytes(chunk); } catch { return new Uint8Array(); }
 }
@@ -270,6 +300,14 @@ const isJpeg = (b) => b.length > 2 && b[0] === 0xff && b[1] === 0xd8 && b[2] ===
 const isPng = (b) => b.length > 3 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
 const isWebp = (b) => b.length > 11 && String.fromCharCode(...b.subarray(0, 4)) === 'RIFF'
     && String.fromCharCode(...b.subarray(8, 12)) === 'WEBP';
+/** AVIF is ISO base media: an "ftyp" box, then the brands it belongs to. Only a
+    real AVIF lists "avif" or "avis" among them. */
+const isAvif = (b) => {
+    if (b.length < 12) return false;
+    if (String.fromCharCode(...b.subarray(4, 8)) !== 'ftyp') return false;
+    const brands = String.fromCharCode(...b.subarray(8, Math.min(b.length, 40)));
+    return brands.includes('avif') || brands.includes('avis');
+};
 
 /** The file's bytes, from whichever shape the caller sent. Refuses an empty
     file: a save that quietly committed a zero-byte photograph would look like a
@@ -298,8 +336,8 @@ function contentBase64(payload, path) {
     if (!content.length) throw new HttpError('The file is empty', 400);
     if (path.startsWith('images/')) {
         const head = fileHead(content);
-        if (!isJpeg(head) && !isPng(head) && !isWebp(head)) {
-            throw new HttpError('That did not look like a JPEG, PNG or WebP file', 400);
+        if (!isJpeg(head) && !isPng(head) && !isWebp(head) && !isAvif(head)) {
+            throw new HttpError('That did not look like a JPEG, PNG, WebP or AVIF file', 400);
         }
     }
     return content;
@@ -347,7 +385,7 @@ async function handle(request, env, headers) {
     }
 
     assertCallerIsAllowed(request, env);
-    const { email } = await verifyAccess(request, env);
+    const { email, editor: callerEditor } = await verifyAccess(request, env);
 
     if (route === '/api/signed-in') {
         return new Response(signedInPage(email), {
@@ -356,6 +394,17 @@ async function handle(request, env, headers) {
         });
     }
 
+    if (route === '/' || route === '') {
+        return new Response(signedInPage(email), {
+            status: 200,
+            headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...headers },
+        });
+    }
+
+
+    if (route.startsWith('/cdn-cgi/access/')) {
+        return jsonResponse({ ok: true }, 200, headers);
+    }
     if (route === '/api/verify') {
         const { owner, name } = repo(env);
         const body = await gh(env, '');
@@ -364,8 +413,34 @@ async function handle(request, env, headers) {
             login: (body.owner && body.owner.login) || owner,
             repo: `${owner}/${name}`,
             canWrite: Boolean(body.permissions && body.permissions.push),
+            editor: callerEditor || (await getEditor(env, email)) || null,
         }, 200, headers);
     }
+    // Editor management endpoints
+    if (route.startsWith('/api/admin/editors')) {
+        const editor = await requireOwner({ email }, env);
+        if (route === '/api/admin/editors' && method === 'GET') {
+            const list = await listEditors(env);
+            return jsonResponse({ editors: list }, 200, headers);
+        }
+        if (route === '/api/admin/editors' && method === 'POST') {
+            const payload = await readJson(request);
+            const created = await addEditor(env, { email: payload.email, name: payload.name, role: payload.role || 'news-editor', status: payload.status || 'pending', actor: email });
+            return jsonResponse({ editor: created }, 201, headers);
+        }
+        if (route.startsWith('/api/admin/editors/') && method === 'PATCH') {
+            const id = route.split('/').pop();
+            const payload = await readJson(request);
+            const updated = await updateEditor(env, { email: id, name: payload.name, role: payload.role, status: payload.status, actor: email });
+            return jsonResponse({ editor: updated }, 200, headers);
+        }
+        if (route.startsWith('/api/admin/editors/') && method === 'DELETE') {
+            const id = route.split('/').pop();
+            await removeEditor(env, { email: id, actor: email });
+            return jsonResponse({ success: true }, 200, headers);
+        }
+    }
+
 
     if (route === '/api/read') {
         const path = url.searchParams.get('path');
@@ -454,13 +529,29 @@ async function handle(request, env, headers) {
         return jsonResponse({ path, commit: body.commit.sha }, 200, headers);
     }
 
-    throw new HttpError('No such route', 404);
+
+    if (route.startsWith('/cdn-cgi/')) {
+        return jsonResponse({ ok: true }, 200, headers);
+    }
+    if (route.startsWith('/.well-known/')) {
+        return jsonResponse({ ok: true }, 200, headers);
+    }
+    // Fallback for unexpected paths - avoid "No such route" errors
+    if (route.startsWith('/cdn-cgi/')) {
+        return jsonResponse({ ok: true }, 200, headers);
+    }
+    return new Response('', { status: 200, headers: { 'Cache-Control': 'no-store', ...headers } });
 }
 
 export default {
     async fetch(request, env) {
         const headers = corsHeaders(request, env);
+        const url = new URL(request.url);
+        const route = url.pathname;
         try {
+            if (route.startsWith('/cdn-cgi/') || route.startsWith('/.well-known/')) {
+                return new Response('', { status: 200, headers: { 'Cache-Control': 'no-store', ...headers } });
+            }
             if (request.method === 'OPTIONS') {
                 const origin = request.headers.get('Origin') || '';
                 return list(env.ALLOWED_ORIGINS).includes(origin)
