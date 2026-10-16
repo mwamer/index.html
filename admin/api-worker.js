@@ -96,7 +96,7 @@ export function gitHub(options = {}) {
         /** Open this to start the Cloudflare Access one-time-PIN sign-in. */
         signedInUrl: `${base}${SIGNED_IN_PATH}`,
         /** Access clears its own session here. */
-        signedOutUrl: `${origin}${SIGNED_OUT_PATH}`,
+        signedOutUrl: `${origin}${SIGNED_OUT_PATH}?redirect_url=https://wesamamer.com/admin/`,
 
         async verify() {
             return call('/api/verify');
@@ -124,6 +124,18 @@ export function gitHub(options = {}) {
         async readAt(path, ref) {
             const body = await call(`/api/read-at?path=${encodeURIComponent(path)}&ref=${encodeURIComponent(ref)}`);
             return body.text;
+        },
+        async listEditors() {
+            return call('/api/admin/editors');
+        },
+        async addEditor(data = {}) {
+            return call('/api/admin/editors', { method: 'POST', body: JSON.stringify(data) });
+        },
+        async updateEditor(id, data = {}) {
+            return call(`/api/admin/editors/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) });
+        },
+        async removeEditor(id) {
+            return call(`/api/admin/editors/${encodeURIComponent(id)}`, { method: 'DELETE' });
         },
     };
 }
