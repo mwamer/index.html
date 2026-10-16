@@ -166,9 +166,10 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=9';
-import { describe, gitHub } from './api-worker.js?v=7';
+} from './panel.js?v=10';
+import { describe, gitHub } from './api-worker.js?v=8';
 
+var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
 
 const state = {
@@ -344,7 +345,7 @@ async function refreshEditors() {
         setGateMessage('Could not load editors: ' + (error && error.message ? error.message : String(error)));
     }
 }
-
+refreshEditors = refreshEditors; // ensure global
 function renderEditors() {
     const section = $('#pn-editors');
     if (state.canManageEditors) section.hidden = false;
