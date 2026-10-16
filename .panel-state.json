@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "updated": "2026-10-16T23:05:22.715Z",
+    "updated": "2026-10-16T23:18:22.715Z",
     "files": {
         "engagement-abc-radio-national-2025.html": "5a33f72abb971eb3952381bf094edcc6d840d112e948426b9230ab3dcbd0361e",
         "engagement-armistice-plan.html": "80c6dd915bb83788184452982a059fa9a71750fca40e22a54e0affaacbfe976b",
@@ -29,7 +29,7 @@
         "engagement-paydesk.html": "2e76c0837ca3dcb8f6ebcce63687052bbda277109c157699a7a2a54ed277b101",
         "engagement-uxil-paris.html": "3fe6a35c039ca85f92e79bc491236c1fca73eb1c37a73ca718b711314657a698",
         "engagement-world-beyond-war-silenced.html": "d37d793ec7eac36e27a373bd89f200cb532cbb1ac32422e0cf8d25eb15b7c16a",
-        "news-engagement.html": "2119362923f5c8cb8a54b7bfa2be81594d74425f0e9fe94d25e6d675b927cd68"
+        "news-engagement.html": "c3f967f507c55b7c6de135c40c8a755402202b3d35c2cc3862fe02af08c94a1b"
     },
     "deleted": []
 }
