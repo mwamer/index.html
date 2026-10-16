@@ -225,7 +225,7 @@ GitHub Pages republishes the site on every push to `main`, so review changes loc
 - **The panel or the API:** run the tests before changing either.
 
   ```bash
-  node --test admin/ tools/ worker/    # 143 checks, no network, no credentials
+  node --test admin/ tools/ worker/    # 145 checks, no network, no credentials
   ```
 
 - **The guard itself:** `tools/content-guard.mjs` decides what counts as a legitimate change. `tools/publishing-flow.test.mjs` drives it on a throwaway repository, so a change to the panel's commit model shows up there.

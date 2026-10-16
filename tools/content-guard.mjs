@@ -290,6 +290,14 @@ export function report({ from, findings }, { base, head }) {
     const lines = [];
     lines.push(`Publishing guard: ${from.slice(0, 7)}..${head.slice(0, 7)}`);
     lines.push('');
+    // Say so when the check covered less than it was asked about. Substituting the
+    // range quietly would make green mean something narrower than it looks, which is
+    // the one thing a check must never do.
+    if (from !== base && !isZero(base)) {
+        lines.push(`The revision ${String(base).slice(0, 7)} is not in this repository, so only `
+            + `${from.slice(0, 7)}..${head.slice(0, 7)} was checked.`);
+        lines.push('');
+    }
     if (findings.failures.length) {
         lines.push(`${findings.failures.length} conflict(s) with the published state of the site:`);
         for (const item of findings.failures) {
@@ -318,6 +326,16 @@ export function report({ from, findings }, { base, head }) {
     return lines.join('\n');
 }
 
+/** Whether a revision names a commit in the repository the guard is looking at. */
+function resolvable(rev) {
+    try {
+        execFileSync('git', ['rev-parse', '--verify', '--quiet', rev], { stdio: 'ignore' });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 function main(argv) {
     const options = {};
     for (let i = 0; i < argv.length; i += 1) {
@@ -329,9 +347,20 @@ function main(argv) {
     try {
         result = guard({ base, head });
     } catch (error) {
-        // A repository the guard cannot read is not a reason to block a push
-        // that touches none of the published content.
-        process.stdout.write(`Publishing guard could not read this range: ${error.message}\n`);
+        // A range the guard cannot read cannot be judged, and a check that cannot run
+        // must not report success: staying quiet here would leave the publishing
+        // protection quietly absent, which is worse than a red run that explains
+        // itself. The one range that means nothing is a repository's first commit,
+        // which has nothing before it to compare against.
+        process.stdout.write(`Publishing guard could not read ${String(base).slice(0, 7)}..`
+            + `${String(head).slice(0, 7)}: ${error.message}\n`);
+        if (!resolvable(`${head}^{commit}`) || resolvable(`${head}^{commit}^`)) {
+            process.stdout.write('The published content could not be checked. '
+                + 'Fetch the full history, or check this range by hand.\n');
+            return 1;
+        }
+        process.stdout.write('Nothing earlier than this revision exists, '
+            + 'so there is no published state to compare it with.\n');
         return 0;
     }
     const text = report(result, { base, head });

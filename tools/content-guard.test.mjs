@@ -13,8 +13,9 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { guard, sha256Hex, STATE_PATH } from './content-guard.mjs';
+import { guard, report, sha256Hex, STATE_PATH } from './content-guard.mjs';
 
 const NEWS = 'news-engagement.html';
 const RECORD = 'engagement-books-not-bombs.html';
@@ -269,4 +270,52 @@ test('an unrelated push touching no published content still passes', () => {
     const { findings } = guard({ base, head, dir: repo.dir });
     assert.deepEqual(findings.failures, []);
     assert.deepEqual(findings.warnings, []);
+});
+
+test('a report says so when it checked a narrower range than it was asked about', () => {
+    // Green has to mean the same thing every time. When the revision the range began
+    // at is gone — a rewritten branch, an old clone — the guard can only check part
+    // of that range, and the part it did not check has to be on the record.
+    const findings = { failures: [], warnings: [] };
+
+    const substituted = report({ from: 'aaaaaaa1111', findings }, { base: 'bbbbbbb2222', head: 'aaaaaaa1111' });
+    assert.match(substituted, /The revision bbbbbbb is not in this repository/);
+    assert.match(substituted, /only aaaaaaa\.\.aaaaaaa was checked/);
+
+    const exact = report({ from: 'aaaaaaa1111', findings }, { base: 'aaaaaaa1111', head: 'aaaaaaa1111' });
+    assert.doesNotMatch(exact, /was checked/);
+
+    // The first push of a branch asks about a range that cannot exist yet. That is
+    // the ordinary case, not a substitution, so it stays quiet.
+    const first = report({ from: 'aaaaaaa1111', findings }, { base: '0'.repeat(40), head: 'aaaaaaa1111' });
+    assert.doesNotMatch(first, /was checked/);
+});
+
+test('a range the guard cannot read fails instead of passing quietly', () => {
+    // The guard's whole promise is that it fails loudly. A run that cannot read the
+    // range has no business reporting success, because success would mean the
+    // publishing protection was simply not there.
+    const repo = freshRepo();
+    repo.git('commit', '-q', '--allow-empty', '-m', 'first');
+    const cli = fileURLToPath(new URL('./content-guard.mjs', import.meta.url));
+    const run = (...args) => {
+        try {
+            const out = execFileSync(process.execPath, [cli, ...args],
+                { cwd: repo.dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+            return { status: 0, out };
+        } catch (error) {
+            return { status: error.status, out: `${error.stdout || ''}${error.stderr || ''}` };
+        }
+    };
+
+    // A repository's first commit has nothing before it to compare against, so there
+    // is genuinely nothing to check. That is an honest pass.
+    const firstCommit = run('--base', '0'.repeat(40), '--head', 'HEAD');
+    assert.equal(firstCommit.status, 0, firstCommit.out);
+    assert.match(firstCommit.out, /Nothing earlier than this revision exists/);
+
+    // A revision that cannot be read at all is a real failure, and says so.
+    const unreadable = run('--base', 'HEAD', '--head', '0'.repeat(40));
+    assert.equal(unreadable.status, 1, unreadable.out);
+    assert.match(unreadable.out, /could not read/);
 });
