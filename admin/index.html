@@ -166,8 +166,8 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=10';
-import { describe, gitHub } from './api-worker.js?v=8';
+} from './panel.js?v=11';
+import { describe, gitHub } from './api-worker.js?v=9';
 
 var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -332,20 +332,18 @@ async function loadTemplate() {
 
 
 
-async function refreshEditors() {
+
+window.refreshEditors = async function refreshEditors() {
     try {
-        if (!state.canManageEditors) {
-            state.editors = [];
-            return;
-        }
+        if (!state.canManageEditors) { state.editors = []; return; }
         const res = await api.listEditors();
         state.editors = Array.isArray(res.editors) ? res.editors : (Array.isArray(res) ? res : []);
-    } catch (error) {
+    } catch (e) {
         state.editors = [];
-        setGateMessage('Could not load editors: ' + (error && error.message ? error.message : String(error)));
+        try { setGateMessage('Could not load editors'); } catch {}
     }
-}
-refreshEditors = refreshEditors; // ensure global
+};
+
 function renderEditors() {
     const section = $('#pn-editors');
     if (state.canManageEditors) section.hidden = false;
