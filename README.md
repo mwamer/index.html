@@ -111,15 +111,66 @@ Breakpoints:
 ├── news-engagement.html       # News and engagement
 ├── services.html              # Services
 ├── contact.html               # Contact
+├── engagement-*.html          # One page per news entry that has a full record
+├── .panel-state.json          # What the panel has published, and what it deleted
 ├── styles.css                 # Palette tokens, component styles, responsive rules, print and accessibility styles
 ├── CNAME                      # Custom domain for GitHub Pages: wesamamer.com
 ├── README.md                  # This file
-└── .github/workflows/         # SLSA provenance workflow; runs on a release, not on a push
+├── admin/                     # The editing panel (see below)
+├── worker/                    # The API the panel writes through (see worker/README.md)
+├── tools/                     # The publishing guard, and the tool that records a hand edit
+├── hooks/pre-push             # Runs the guard on your machine before a push
+└── .github/workflows/         # The publishing guard on every push, and SLSA provenance on a release
 ```
 
 Each page carries its own copy of the navigation header and the footer, and its own inline menu script. There is no shared template, so a change to navigation or the footer has to be applied to all nine pages.
 
 The pages show designed empty frames until approved photographs are supplied, so the site loads no images of its own.
+
+---
+
+## 🖊️ The admin panel
+
+News entries can be edited in a browser at [wesamamer.com/admin/](https://wesamamer.com/admin/) — signing in through Cloudflare Access, editing, and pressing **Save and publish**. Two people can use it: the owner and the editors the owner adds.
+
+Each save is published as **one commit**. The news page, the record pages it links to, the photographs they use, and `.panel-state.json` all land together or not at all, so the site is never readable in a half-changed state. If the site moved while the panel was open, the save is refused rather than allowed to overwrite the other person's work — and the panel keeps what you were writing.
+
+**Deleting an entry is permanent.** Marking an entry for deletion removes its card, deletes its record page if it has one, and removes any photograph no other page uses. An ordinary save can be undone with one click; a deletion cannot.
+
+The panel is three files, with no build step:
+
+| File | Role |
+| --- | --- |
+| `admin/index.html` | the page itself, and the glue |
+| `admin/panel.js` | the pure logic: parsing and rendering a page, deciding what a save holds, what an undo may restore |
+| `admin/api-worker.js` | the client for the API |
+| `admin/panel.test.mjs` | the pure logic, checked directly |
+| `admin/page.test.mjs` | the page's own glue, run against a stand-in browser so it is exercised rather than merely read |
+
+### Who may publish, and where that is kept
+
+The list of editors lives in a Cloudflare D1 database, not in the code. Only the owner may change it, from **Manage editors** in the panel. A new editor starts **pending**: they can sign in and look, but cannot publish until the owner activates them.
+
+Cloudflare Access holds a second copy of who may sign in, and the Worker keeps it in step with the registry after every editor change. Both copies matter: Access is the gate, the registry is the authority.
+
+---
+
+## 🛡️ The publishing guard
+
+A clone that is behind can restore an article that was deliberately deleted, and a merge does it quietly. The guard compares the site against `.panel-state.json` on every push and fails the build when a page no longer matches what the panel published.
+
+It **reports and never rewrites**. A deliberate hand edit is legitimate; recording it is what makes it so:
+
+```bash
+node tools/content-state.mjs    # record what you have just edited
+git add -A && git commit && git push
+```
+
+The same check runs in two places — `.github/workflows/content-guard.yml` on every push, and `hooks/pre-push` on your machine if you enable it once per clone:
+
+```bash
+git config core.hooksPath hooks
+```
 
 ---
 
@@ -166,6 +217,18 @@ GitHub Pages republishes the site on every push to `main`, so review changes loc
 - **A new page:** copy an existing page, then update the navigation and footer in all nine pages, because no shared template exists.
 - **Photographs:** add an image and replace the designed empty frame on the page that needs it. Never repeat one portrait across pages.
 - **Testing:** check desktop, tablet and mobile widths before you push.
+
+### The panel and the guard
+
+- **A news entry:** use the [admin panel](https://wesamamer.com/admin/) rather than editing `news-engagement.html` by hand. The panel keeps the news page, the record pages, the photographs and `.panel-state.json` together.
+- **A hand edit to the published content:** run `node tools/content-state.mjs` and commit the updated state file in the same push, or the guard stops the push.
+- **The panel or the API:** run the tests before changing either.
+
+  ```bash
+  node --test admin/ tools/ worker/    # 143 checks, no network, no credentials
+  ```
+
+- **The guard itself:** `tools/content-guard.mjs` decides what counts as a legitimate change. `tools/publishing-flow.test.mjs` drives it on a throwaway repository, so a change to the panel's commit model shows up there.
 
 ---
 

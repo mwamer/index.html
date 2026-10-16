@@ -28,3 +28,14 @@ CREATE TABLE IF NOT EXISTS audit (
 );
 
 CREATE INDEX IF NOT EXISTS audit_recent ON audit (id DESC);
+
+-- What Cloudflare Access was last told, and what came of it. See
+-- migrations/0002_access_sync.sql for why this is kept.
+CREATE TABLE IF NOT EXISTS access_sync (
+    id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    at     TEXT NOT NULL,
+    state  TEXT NOT NULL CHECK (state IN ('ok', 'skipped', 'failed')),
+    detail TEXT NOT NULL DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS access_sync_recent ON access_sync (id DESC);

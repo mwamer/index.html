@@ -1,5 +1,7 @@
-# Wrangler's local cache holds the Cloudflare account identity.
-worker/.wrangler/
+# Wrangler's local cache holds the Cloudflare account identity. `wrangler d1`
+# writes it at the repository root as well as under `worker/`, so the rule
+# matches either place rather than only the one that was noticed.
+.wrangler/
 
 # Local development values for `wrangler dev`. Never deployed.
 worker/.dev.vars

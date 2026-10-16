@@ -117,6 +117,18 @@ export function gitHub(options = {}) {
         async remove(path, sha, message) {
             return call('/api/remove', { method: 'POST', body: JSON.stringify({ path, sha, message }) });
         },
+        /** Write everything a save changed as one commit.
+            
+            `base` is the revision this panel was reading from. The Worker refuses
+            the save when the site has moved on, and says so, instead of writing
+            over whatever arrived in the meantime. */
+        async commit({ base, message, changes }) {
+            return call('/api/commit', { method: 'POST', body: JSON.stringify({ base, message, changes }) });
+        },
+        /** The revision the site is on now, which a save must name as its base. */
+        async head() {
+            return call('/api/head');
+        },
         async history(path, count = 3) {
             const body = await call(`/api/history?path=${encodeURIComponent(path)}&count=${count}`);
             return body.history || [];
@@ -136,6 +148,14 @@ export function gitHub(options = {}) {
         },
         async removeEditor(id) {
             return call(`/api/admin/editors/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        },
+        /** What Cloudflare Access is being told, and when it was last told. */
+        async accessState() {
+            return call('/api/admin/access');
+        },
+        /** Ask for the Access policy to be brought back into step now. */
+        async reconcileAccess() {
+            return call('/api/admin/access', { method: 'POST', body: '{}' });
         },
     };
 }

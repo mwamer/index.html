@@ -1,0 +1,44 @@
+# Refuse a push that would undo what the panel published.
+#
+# A clone that is behind can restore a deleted article, and a merge does it
+# quietly: the merge keeps the stale side. The hook in `hooks/pre-push` catches
+# that on the machine doing the pushing, but a hook can be bypassed and only
+# exists where it was configured. This workflow is the enforcement.
+#
+# It reports and fails. It never rewrites the repository, because a deliberate
+# hand edit is legitimate and must not be discarded silently.
+
+name: Publishing guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      # The whole history: the guard compares against the state file's own past
+      # to tell a deliberate edit from an old copy coming back.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check the content against the published state
+        run: |
+          base="${{ github.event.before }}"
+          head="${{ github.event.after || github.sha }}"
+          # A first push, or a rewritten branch, has no usable base.
+          case "$base" in
+            ""|0000000000000000000000000000000000000000) base="${head}^" ;;
+          esac
+          node tools/content-guard.mjs --base "$base" --head "$head"

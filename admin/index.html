@@ -108,13 +108,19 @@
 
     <section class="pn-card" id="pn-editors" hidden>
         <h2>Manage Editors</h2>
-        <p class="pn-help">Owner-only. Add and remove editors. Pending editors appear until activated.</p>
+        <p class="pn-help">Owner-only. Add an editor and they start pending, so they can sign in and see the
+            panel but cannot publish until you activate them. The owner account cannot be suspended or removed.</p>
         <div class="pn-row">
             <input type="text" id="pn-editor-name" placeholder="Name">
             <input type="email" id="pn-editor-email" placeholder="Email">
             <button data-act="add-editor">Add Editor</button>
         </div>
-        <div id="pn-editors-list" style="margin-top:12px"></div>
+        <h3>Editors</h3>
+        <div id="pn-editors-list"></div>
+        <h3>Cloudflare Access</h3>
+        <p class="pn-help">Cloudflare Access decides who may sign in. It holds a copy of the active editors
+            above, and this keeps it in step.</p>
+        <div id="pn-access"></div>
         <div style="margin-top:12px"><button data-act="refresh-editors">Refresh</button></div>
     </section>
 
@@ -126,6 +132,7 @@
             <button data-act="undo">Undo the last save</button>
         </div>
         <p class="pn-status" id="pn-status"></p>
+        <div id="pn-conflict"></div>
         <div class="pn-log" id="pn-log" hidden></div>
         <div class="pn-cols">
             <aside class="pn-card">
@@ -158,18 +165,21 @@
 </div>
 
 <script type="module">
-// The ?v= stamp makes a browser fetch these files again after a change, instead
-// of serving an older panel out of its cache.
+// The ?v= stamp is the digest of the file it names, so a browser fetches the
+// current version instead of serving an older panel out of its cache. It cannot
+// be left behind by accident: `admin/panel.test.mjs` fails when a file changes
+// and its stamp does not, and says what the stamp should be.
 import {
-    CATEGORIES, ACTIVITY_TYPES, ROLES, NEWS_PATH,
+    CATEGORIES, ACTIVITY_TYPES, ROLES, NEWS_PATH, STATE_PATH,
     parseNewsPage, renderNewsPage, renderCard, buildCard, parseRecordPage,
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=19';
-import { describe, gitHub } from './api-worker.js?v=16';
+    isRecordPagePath, recordPageTargetForCard, mergeState, serializeState,
+    sha256Hex, imagesToRemove, saveChanges, undoPlan, undoRefusal, bytesToBase64,
+} from './panel.js?v=965b997e';
+import { describe, gitHub } from './api-worker.js?v=28afdf55';
 
-var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
 
 const state = {
@@ -177,7 +187,11 @@ const state = {
     page: null,
     drafts: new Map(),      // card index -> edited values
     added: [],              // new entries, unsaved
-    removed: [],
+    removed: [],            // card indices marked for deletion
+    // The record page each removed card owns, worked out when it was marked. Kept
+    // beside the index because an index means a different card after a reload, and
+    // a deletion target must not move once it has been agreed.
+    deleteTargets: new Map(),
     featuredIndex: undefined,
     selected: null,
     draft: null,
@@ -187,8 +201,15 @@ const state = {
     local: '',              // the copy served from this computer
     session: 'checking',    // 'checking' | 'signed-in' | 'signed-out'
     dirty: false,           // edits made since the last load or save
+    // The registry's record for this account, from /api/verify: role and status.
+    // A pending or suspended editor may read the panel but not publish.
+    editor: null,
+    // The revision the site was on when this panel last read it. A save names it
+    // so the Worker can refuse a save that would overwrite someone else's.
+    head: '',
     canManageEditors: false,
     editors: [],
+    access: null,           // what Cloudflare Access is being told, owner-only
 };
 
 // Every read and every change to the website goes through this one object. It
@@ -197,6 +218,13 @@ const state = {
 const api = gitHub();
 
 const SITE = new URL('../', location.href).href;
+
+// The pages outside the news section. A photograph can be shared with any of
+// them, so each is read before one is offered for removal. The API only reads
+// paths it writes, so these come from the published site instead.
+const OTHER_PAGES = ['index.html', 'about.html', 'academic-profile.html', 'publications.html',
+    'research.html', 'services.html', 'teaching.html', 'contact.html'];
+
 const esc = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const say = (message) => { $('#pn-status').textContent = message; };
@@ -231,10 +259,15 @@ function signOut() {
     $('#pn-gate-status').textContent = 'Signed out on this device. Press Sign in when you want to edit again.';
 }
 
-/** Ask the Worker who we are. It answers only with a verified Access session. */
 /** Say something in the sign-in box, where a person is already looking. */
 function setGateMessage(text) {
     $('#pn-gate-status').textContent = text;
+}
+
+/** Whether this account may publish. The registry decides, and the panel obeys:
+    a pending or suspended editor can look at the panel and nothing more. */
+function canPublish() {
+    return state.session === 'signed-in' && !!state.editor && state.editor.status === 'active';
 }
 
 /** Ask the Worker who we are. It answers only with a verified Access session,
@@ -243,16 +276,33 @@ function setGateMessage(text) {
 async function checkSession({ reload = false } = {}) {
     try {
         const who = await api.verify();
+        state.editor = who.editor || null;
+        state.head = who.head || '';
         if (!who.canWrite) {
             setSession('signed-out', 'Read-only session');
             setGateMessage(`Signed in as ${who.email}, but that account cannot write to ${who.repo}. `
                 + 'Check the GitHub token\'s permission on the repository.');
             return false;
         }
+        if (state.editor && state.editor.status !== 'active') {
+            // Signed in, and the registry says not to publish. Saying which state
+            // it is in is the whole point of letting a pending editor in.
+            setSession('signed-in', `Signed in as ${who.email}`);
+            setGateMessage(state.editor.status === 'pending'
+                ? `Signed in as ${who.email}. Your editor account is waiting for the owner to approve it, `
+                    + 'so the panel is read-only for now.'
+                : `Signed in as ${who.email}. Your editor account is suspended, so the panel is read-only. `
+                    + 'Ask the owner to reactivate it.');
+            await load();
+            renderEditors();
+            return true;
+        }
         setSession('signed-in', `Signed in as ${who.email}`);
-        state.canManageEditors = (!!who.editor && who.editor.role === 'owner' && who.editor.status === 'active') || (who.email === 'wesaam.amer@gmail.com');
+        state.canManageEditors = !!state.editor && state.editor.role === 'owner' && state.editor.status === 'active';
         setGateMessage('Signed in. Saves go straight to the live site.');
-        if (reload) await load(); try { if (typeof refreshEditors === 'function') await refreshEditors(); else if (typeof window.refreshEditors === 'function') await window.refreshEditors(); else { window.refreshEditors = async function(){ try{ if(!state.canManageEditors){state.editors=[];return;} const res=await api.listEditors(); state.editors=Array.isArray(res.editors)?res.editors:(Array.isArray(res)?res:[]);}catch(e){state.editors=[];} }; await window.refreshEditors(); } } catch(e){} renderEditors();
+        await refreshEditors();
+        renderEditors();
+        if (reload) await load();
         return true;
     } catch (error) {
         // Being unable to reach the API and having no session need different
@@ -333,45 +383,74 @@ async function loadTemplate() {
 
 
 
-window.refreshEditors = async function refreshEditors() {
+/** Load the editor list. Owner-only: anyone else gets an empty list, because
+    asking is refused. */
+async function refreshEditors() {
+    if (!state.canManageEditors) { state.editors = []; state.access = null; return; }
     try {
-        if (!state.canManageEditors) { state.editors = []; return; }
         const res = await api.listEditors();
-        state.editors = Array.isArray(res.editors) ? res.editors : (Array.isArray(res) ? res : []);
-    } catch (e) {
+        state.editors = Array.isArray(res.editors) ? res.editors : [];
+    } catch {
         state.editors = [];
-        try { setGateMessage('Could not load editors'); } catch {}
+        setGateMessage('Could not load the editor list. The registry may be unavailable.');
     }
-};
+    try {
+        state.access = await api.accessState();
+    } catch {
+        state.access = null;
+    }
+}
+
+/** The Access panel: what Cloudflare is being told, and the way to retry after a
+    reconciliation that did not go through.
+
+    The registry is committed before Access is told about it, so a failure here
+    leaves the truth intact and the copy stale. That is the safe direction to
+    drift, and this is where it becomes visible rather than silent. */
+function renderAccess() {
+    const box = $('#pn-access');
+    if (!state.canManageEditors || !state.access) { box.innerHTML = ''; return; }
+    const { desired = [], last = null, configured = false } = state.access;
+    const lines = [`Active editors: ${desired.length ? desired.join(', ') : 'none'}`];
+    if (!configured) {
+        lines.push('This Worker has no Cloudflare API credentials, so the Access policy is not being '
+            + 'kept in step automatically. Add CF_API_TOKEN and CF_ACCOUNT_ID to change that.');
+    } else if (!last) {
+        lines.push('The Access policy has not been reconciled yet.');
+    } else {
+        const when = last.at ? new Date(last.at).toLocaleString() : 'at an unknown time';
+        lines.push(`Last reconciled: ${last.state} — ${when}${last.detail ? ` (${last.detail})` : ''}`);
+    }
+    box.innerHTML = `<p class="pn-help">${lines.map(esc).join('<br>')}</p>`
+        + (configured ? '<button data-act="reconcile-access">Reconcile Access now</button>' : '');
+}
 
 function renderEditors() {
     const section = $('#pn-editors');
-    if (state.canManageEditors) section.hidden = false;
-    else { section.hidden = true; return; }
+    section.hidden = !state.canManageEditors;
+    if (!state.canManageEditors) return;
     const list = $('#pn-editors-list');
-    if (!state.editors || !state.editors.length) {
-        list.innerHTML = '<p class="pn-help">No editors.</p>';
-        return;
+    if (!state.editors.length) {
+        list.innerHTML = '<p class="pn-help">No editors yet.</p>';
+    } else {
+        list.innerHTML = state.editors.map((editor) => {
+            // The owner record is protected by the Worker as well as here, so the
+            // buttons are simply not offered for it.
+            const actions = editor.role === 'owner' ? '' : [
+                editor.status === 'pending' ? `<button data-act="activate-editor" data-email="${esc(editor.email)}">Activate</button>` : '',
+                editor.status === 'active' ? `<button data-act="suspend-editor" data-email="${esc(editor.email)}">Suspend</button>` : '',
+                editor.status === 'suspended' ? `<button data-act="reactivate-editor" data-email="${esc(editor.email)}">Reactivate</button>` : '',
+                `<button class="pn-btn--danger" data-act="remove-editor" data-email="${esc(editor.email)}">Remove</button>`,
+            ].filter(Boolean).join(' ');
+            return `<div class="pn-row"><span>${esc(editor.name)} &lt;${esc(editor.email)}&gt; — ${esc(editor.role)}, ${esc(editor.status)}</span> ${actions}</div>`;
+        }).join('');
     }
-    list.innerHTML = state.editors.map(e => {
-        const isSelf = e.role === 'owner' && e.status === 'active';
-        let actions = '';
-        if (!isSelf) {
-            if (e.status === 'pending') {
-                actions += `<button data-act="activate-editor" data-email="${esc(e.email)}">Activate</button> `;
-            } else if (e.status === 'active') {
-                actions += `<button data-act="suspend-editor" data-email="${esc(e.email)}">Suspend</button> `;
-            } else if (e.status === 'suspended') {
-                actions += `<button data-act="reactivate-editor" data-email="${esc(e.email)}">Reactivate</button> `;
-            }
-            actions += `<button class="pn-btn--danger" data-act="remove-editor" data-email="${esc(e.email)}">Remove</button>`;
-        }
-        return `<div class="pn-row"><span>${esc(e.name)} &lt;${esc(e.email)}&gt; — ${esc(e.role)}/${esc(e.status)}</span>${actions}</div>`;
-    }).join('');
+    renderAccess();
 }
 
 async function load() {
     say('Reading the news page…');
+    $('#pn-conflict').innerHTML = '';
     state.local = await fetchText('../news-engagement.html').catch(() => '');
     state.remote = null;
     if (state.session === 'signed-in') {
@@ -388,6 +467,7 @@ async function load() {
     state.drafts.clear();
     state.added = [];
     state.removed = [];
+    state.deleteTargets = new Map();
     state.featuredIndex = undefined;
     state.selected = null;
     state.draft = null;
@@ -834,56 +914,97 @@ function collect() {
         removed: state.removed,
         featuredIndex: state.featuredIndex,
     });
-    return { news, values, added, recordEdits, uploads };
+    return {
+        news, values, added, recordEdits, uploads,
+        // The card index goes to renderNewsPage, which numbers the cards; the
+        // resolved path goes to the deletion, so neither depends on the other.
+        deletions: state.removed.map((index) => ({ index, path: state.deleteTargets.get(index) || '' })),
+    };
 }
 
-/** Hand one file to the Worker. Only a commit sha from GitHub counts as a save.
+/** Publish a whole save as one commit.
 
-    Returns what an undo needs to be safe: the commit GitHub made, whether this
-    write created the file, and the sha the file had before it. */
-async function commit(path, { text, bytes, message }) {
+    Everything the save changes — the pages, the photographs, the state file and
+    every deletion — is sent together, so the site is never caught half-changed
+    and a failure writes nothing at all.
+
+    `base` is the revision this panel read from. The Worker refuses the save if
+    the site has moved since, which is what stops this panel from writing over a
+    colleague's work. That refusal leaves the draft exactly as it is. */
+async function publish({ base, message, changes }) {
     requireSession();
-    let previousSha = null;
-    let created = true;
-    try {
-        // The sha is all this needs, so ask for nothing else: an image does not
-        // have to come back as a megabyte of base64 to be replaced.
-        previousSha = (await api.read(path, { meta: true })).sha;
-        created = false;
-    } catch (error) {
-        if (error.code === 'signed-out') throw error;
-        // Only a real 404 means the file is new. Any other failure is reported
-        // rather than guessed at, so a write cannot create a second copy of a
-        // file that is already there.
-        if (error.status !== 404) throw error;
-    }
-    const result = await api.write(path, { text, bytes, message, sha: previousSha || undefined });
+    const result = await api.commit({ base, message, changes });
     if (!result || !result.commit) throw new Error('the Worker did not confirm a commit');
-    return { path, commit: result.commit, created, previousSha };
+    return result;
 }
 
-/** What this browser wrote, kept for "Undo the last save".
+/** Say that the site moved while this panel was open, and offer the two things
+    worth doing about it.
 
-    Recorded after each file lands, not at the end, so a save that stops halfway
-    still leaves the files it did write undoable. Undo checks the commit recorded
-    here against GitHub before it touches anything. */
-function saveRecordFile(record, file) {
-    if (!record.commit) record.commit = file.commit;
-    record.files.push({
-        path: file.path, commit: file.commit,
-        created: file.created, previousSha: file.previousSha,
-    });
-    localStorage.setItem('news-panel-last-save', JSON.stringify(record));
+    The Worker refused the save and wrote nothing, so the draft is untouched —
+    which is the whole reason this is a notice and not an error dialog. The draft
+    can be copied somewhere safe, and the site's version can be loaded, but only
+    after being told it replaces what is on screen. */
+function showConflict(error) {
+    const message = (error && error.message) || 'The site changed while this panel was open.';
+    $('#pn-conflict').innerHTML = '<div class="pn-conflict">'
+        + `<p class="pn-help">${esc(message)}</p>`
+        + '<p class="pn-help">Nothing was published. Your work is still in this browser.</p>'
+        + '<button data-act="copy-draft">Copy my work</button> '
+        + '<button data-act="reload-conflict">Load the site&rsquo;s version</button>'
+        + '</div>';
+    say(message);
+}
+
+/** Everything unsaved, as text a person can paste somewhere safe. */
+function draftJson() {
+    return JSON.stringify({
+        copiedAt: new Date().toISOString(),
+        drafts: [...state.drafts.entries()],
+        added: state.added,
+        removed: state.removed,
+    }, null, 2);
+}
+
+async function copyDraft() {
+    const text = draftJson();
+    try {
+        await navigator.clipboard.writeText(text);
+        say('Your unsaved work is on the clipboard. Paste it into a note before reloading.');
+        return;
+    } catch {
+        // Clipboard access is refused in some browsers; showing the text is
+        // better than telling someone their work is safe when it is not.
+    }
+    const box = document.createElement('textarea');
+    box.value = text;
+    box.style.width = '100%';
+    box.style.height = '8rem';
+    $('#pn-conflict').appendChild(box);
+    box.select();
+    say('Copy the text below before you reload.');
 }
 
 async function save() {
     const log = $('#pn-log');
     log.hidden = false;
+    $('#pn-conflict').innerHTML = '';
     const line = (message) => { log.textContent += `${message}\n`; log.scrollTop = log.scrollHeight; };
     if (state.session !== 'signed-in') {
         setSession('signed-out', 'Not signed in');
         line('Saving needs a signed-in session. Use the Sign in box at the top of the page, then press Save and publish again.');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
+    if (!canPublish()) {
+        // Signed in, but the registry has not approved this account. Saying which
+        // it is matters: one waits for the owner, the other waits for a decision
+        // the owner has already made.
+        const status = state.editor && state.editor.status;
+        line(status === 'pending'
+            ? 'Your editor account is waiting to be approved, so the panel cannot publish yet. '
+                + 'The owner can approve it from Manage editors.'
+            : 'Your editor account is suspended, so the panel cannot publish. Ask the owner to reactivate it.');
         return;
     }
     const changes = collect();
@@ -934,59 +1055,216 @@ async function save() {
         if (rendered.changed) writes.push({ slug: entry.recordSlug, html: rendered.html, isNew: false });
     }
 
+    // The pages this save deletes. The path was worked out when the entry was
+    // marked for deletion; it is checked again here against the pattern the
+    // Worker writes, so a path that was guessed at is never sent.
+    const deletions = changes.deletions.filter((item) => isRecordPagePath(item.path));
+
+    // What the entries being deleted hold, read while their pages are still
+    // there: a photograph can only go if no other page names it.
+    let candidates = [];
+    let stateFile = null;
+    let imagePlan = { remove: [], decisions: [] };
+    try {
+        candidates = await deletionCandidates(deletions);
+        // The state file this save publishes: a digest for every page it writes
+        // and a tombstone for every page it deletes. It is part of the same save,
+        // so the guard and the panel never disagree about what is published.
+        stateFile = await planStateFile({ changes, writes, deletions });
+        // Decided here and sent with everything else, so a photograph is never
+        // removed on its own, leaving a page that names it.
+        imagePlan = await planImageCleanup({
+            candidates,
+            line,
+            newsHtml: changes.news.changed ? changes.news.html : null,
+            state: stateFile ? stateFile.next : null,
+        });
+    } catch (error) {
+        line(`\nStopped before writing anything: ${describe(error)}`);
+        if (error.code === 'signed-out') setSession('signed-out', 'Session ended');
+        return;
+    }
+
     const plan = [];
-    if (changes.news.changed) plan.push('news-engagement.html (the list and the featured panel)');
-    for (const page of writes) plan.push(`${page.slug}.html${page.isNew ? ' (new page)' : ''}`);
     for (const upload of changes.uploads) plan.push(`${upload.path} (photograph)`);
-    if (!plan.length) {
+    for (const page of writes) plan.push(`${page.slug}.html${page.isNew ? ' (new page)' : ''}`);
+    if (changes.news.changed) plan.push(`${NEWS_PATH} (the list and the featured panel)`);
+    if (stateFile) plan.push(`${STATE_PATH} (the record of what is published)`);
+    if (!plan.length && !imagePlan.remove.length) {
         line('Nothing has changed yet, so there is nothing to save.');
         return;
     }
+
+    const removedPages = deletions.map((item) => item.path);
     line('This changes the live site. The files on this computer are not touched.');
-    if (!confirm(`This will publish:\n\n• ${plan.join('\n• ')}\n\nIt appears on wesamamer.com within about a minute. Go ahead?`)) {
+    const question = [`This will publish:\n\n• ${plan.join('\n• ')}`];
+    const goingForGood = [...removedPages, ...imagePlan.remove];
+    if (goingForGood.length) {
+        question.push(`\nThis will delete for good, and cannot be undone:\n\n• ${goingForGood.join('\n• ')}`);
+    }
+    question.push('\nIt appears on wesamamer.com within about a minute. Go ahead?');
+    if (!confirm(question.join('\n'))) {
         line('Cancelled. Nothing was published.');
         return;
     }
 
-    log.textContent = '';
-    const record = { at: new Date().toISOString(), commit: '', files: [] };
-    try {
-        for (const upload of changes.uploads) {
-            line(`Uploading ${upload.path}…`);
-            const bytes = new Uint8Array(await upload.file.arrayBuffer());
-            saveRecordFile(record, await commit(upload.path, { bytes, message: `Add photograph ${upload.path.split('/').pop()}` }));
-            line(`  done.`);
-        }
-        // Record pages before the news page, which links to them. Each file is
-        // its own commit, so a failure part-way through must never leave a link
-        // on the news page pointing at a page that was not written.
-        for (const page of writes) {
-            line(`Saving ${page.slug}.html…`);
-            const saved = await commit(`${page.slug}.html`, { text: page.html, message: `Update ${page.slug.replace(/^engagement-/, '')} from the panel` });
-            saveRecordFile(record, saved);
-            line('  done.');
-        }
-        if (changes.news.changed) {
-            line('Saving the news page…');
-            const saved = await commit(NEWS_PATH, { text: changes.news.html, message: 'Update news entries from the panel' });
-            saveRecordFile(record, saved);
-            line('  done.');
-        }
-        line('\nPublished. The site updates within about a minute. Use “Undo the last save” if anything looks wrong.');
-        state.template = '';
-        await load();
-    } catch (error) {
-        line(`\nStopped: ${describe(error)}`);
-        if (error.code === 'signed-out') {
-            setSession('signed-out', 'Session ended');
-            line('Your Cloudflare session has ended. Press Sign in at the top of the page, then save again.');
-            return;
-        }
-        if (error.status === 409 || error.status === 422) {
-            line('The site changed while this panel was open, so GitHub refused the write to protect that change.');
-        }
-        line('Nothing after this point was written. Anything already written can be undone with “Undo the last save”.');
+    // The photographs read into the form, as the bytes the API sends.
+    const uploads = [];
+    for (const upload of changes.uploads) {
+        const bytes = new Uint8Array(await upload.file.arrayBuffer());
+        uploads.push({ path: upload.path, contentBase64: bytesToBase64(bytes) });
     }
+
+    // Everything this save changes, as the one commit it becomes. Deletions —
+    // the record pages and the orphaned photographs — travel in the same request
+    // as the pages that stop referring to them.
+    const written = [
+        ...(changes.news.changed ? [{ path: NEWS_PATH, created: false }] : []),
+        ...writes.map((page) => ({ path: `${page.slug}.html`, created: page.isNew })),
+        ...uploads.map((upload) => ({ path: upload.path, created: true })),
+    ];
+    const batch = saveChanges({
+        news: changes.news.changed ? { path: NEWS_PATH, text: changes.news.html } : null,
+        records: writes.map((page) => ({ path: `${page.slug}.html`, text: page.html })),
+        uploads,
+        state: stateFile ? { text: stateFile.text } : null,
+        deletions: [...removedPages, ...imagePlan.remove],
+    });
+
+    log.textContent = '';
+    line(`Publishing ${batch.changes.length} file(s) as one commit…`);
+    let result;
+    try {
+        result = await publish({ base: state.head, message: batch.message, changes: batch.changes });
+    } catch (error) {
+        if (error.code === 'signed-out') setSession('signed-out', 'Session ended');
+        if (error.status === 409) { showConflict(error); return; }
+        line(`\nNothing was published: ${describe(error)}`);
+        line('The site is exactly as it was. Your work is still in this browser.');
+        return;
+    }
+
+    // What Undo needs. The state file is deliberately not part of it: undo puts
+    // the pages back and then records the state again, for what it restored.
+    localStorage.setItem('news-panel-last-save', JSON.stringify({
+        at: new Date().toISOString(),
+        commit: result.commit,
+        files: written.map((file) => ({ ...file, commit: result.commit })),
+        deletions: removedPages,
+    }));
+    state.head = result.head || result.commit;
+    state.dirty = false;
+
+    line('\nPublished, as one commit. The site updates within about a minute.');
+    if (imagePlan.remove.length) line(`Removed ${imagePlan.remove.length} photograph(s) no page uses any more.`);
+    if (!removedPages.length) line('Use “Undo the last save” if anything looks wrong.');
+    state.template = '';
+    await load();
+    return;
+}
+
+/** The photographs the entries being deleted used: the ones on their news cards
+    and the ones on their own pages.
+
+    Read before anything is removed, because a page that has been deleted cannot
+    be asked what it held. A page that will not read is not a reason to stop: its
+    photographs are simply not offered for cleaning up. */
+async function deletionCandidates(deletions) {
+    const candidates = new Set();
+    for (const deletion of deletions) {
+        const card = state.page.cards[deletion.index];
+        for (const photo of (card && card.values.photos) || []) if (photo.src) candidates.add(photo.src);
+        try {
+            const page = parseRecordPage((await api.read(deletion.path)).text);
+            for (const photo of (page && page.photos) || []) if (photo.src) candidates.add(photo.src);
+        } catch (error) {
+            if (error.code === 'signed-out') throw error;
+        }
+    }
+    return [...candidates];
+}
+
+/** The published state file as GitHub has it, or null when there is not one yet.
+
+    Only "there is no file" is treated as a first save. Any other failure is
+    raised, because writing over the record of what is published would hide it. */
+async function readStateFile() {
+    let text = '';
+    try {
+        text = (await api.read(STATE_PATH)).text;
+    } catch (error) {
+        if (error.code === 'signed-out') throw error;
+        if (error.status !== 404) throw error;
+    }
+    if (!text.trim()) return null;
+    try { return JSON.parse(text); } catch { return null; }
+}
+
+/** The published state file as this save will leave it, or null when nothing it
+    records has changed.
+
+    Read first so that everything already recorded is kept, and built through
+    `mergeState` so the panel and tools/content-state.mjs write one format. */
+async function planStateFile({ changes, writes, deletions }) {
+    if (!changes.news.changed && !writes.length && !deletions.length) return null;
+    const previous = await readStateFile();
+    const at = new Date().toISOString();
+    const published = {};
+    if (changes.news.changed) published[NEWS_PATH] = await sha256Hex(changes.news.html);
+    for (const page of writes) published[`${page.slug}.html`] = await sha256Hex(page.html);
+    const next = mergeState(previous, {
+        at, published,
+        deleted: deletions.map((item) => ({ path: item.path, at })),
+    });
+    return { text: serializeState(next), next };
+}
+
+/** Which photographs the save should delete, decided but not yet deleted.
+
+    Every page that could name a photograph is read first: the news page as this
+    save leaves it, every record page the site still has, and the pages outside
+    the news section. A page that cannot be read leaves the photographs where they
+    are, and so does a reference on any page. Each decision is written to the log,
+    so a retained photograph can be seen to have been kept on purpose.
+
+    Nothing is deleted here. The paths come back and travel with the rest of the
+    save, so a photograph leaves in the same commit as the card that stopped
+    naming it — never on its own, and never while a page still points at it. */
+async function planImageCleanup({ candidates, line, newsHtml, state }) {
+    if (!candidates.length) return { remove: [], decisions: [] };
+    const pages = [];
+    const unreadable = [];
+    // The news page exactly as this save published it. If it was not part of the
+    // save, it is read back, so a photograph it names is never missed.
+    if (typeof newsHtml === 'string') pages.push({ path: NEWS_PATH, html: newsHtml });
+    else {
+        try { pages.push({ path: NEWS_PATH, html: await readLive(NEWS_PATH) }); }
+        catch { unreadable.push(NEWS_PATH); }
+    }
+    const remaining = Object.keys((state && state.files) || {})
+        .filter((path) => isRecordPagePath(path));
+    for (const path of remaining) {
+        try { pages.push({ path, html: (await api.read(path)).text }); }
+        catch (error) {
+            if (error.code === 'signed-out') throw error;
+            unreadable.push(path);
+        }
+    }
+    // The API only reads the paths it writes, so the rest of the site comes from
+    // the published pages instead.
+    for (const path of OTHER_PAGES) {
+        try { pages.push({ path, html: await fetchText(`../${path}`) }); }
+        catch { unreadable.push(path); }
+    }
+
+    const verdict = imagesToRemove({ candidates, pages, unreadable });
+    for (const decision of verdict.decisions) {
+        line(`  ${decision.remove ? 'removing' : 'keeping'} ${decision.path} — ${decision.reason}`);
+    }
+    if (verdict.keep.length && unreadable.length) {
+        line(`  ${verdict.keep.length} photograph(s) kept because ${unreadable.length} page(s) could not be read.`);
+    }
+    return verdict;
 }
 
 /** Put the files the last save wrote back as they were.
@@ -994,6 +1272,8 @@ async function save() {
     Before it changes anything it works the whole undo out, and stops with an
     explanation if any file cannot be restored safely:
 
+      - a save that deleted a page is refused outright, because a deleted page
+        cannot come back and the news page around it must not come back without it;
       - a file this save created is deleted, but only when GitHub's history for
         it is exactly the one commit this save made;
       - a file this save replaced is put back from the version that was in the
@@ -1011,54 +1291,69 @@ async function undo() {
             + 'Nothing was changed.');
         return;
     }
+    // Refused before anything is read: a save that deleted a page is not a save
+    // that can be put back, and saying so is better than half of an undo.
+    const refused = undoRefusal(saved);
+    if (refused) { say(refused); return; }
     if (!confirm(`Undo the save from ${new Date(saved.at).toLocaleString()}?\n\nThis puts ${files.length} file(s) back as they were.`)) return;
     say('Undoing…');
     try {
         requireSession();
-        const work = [];
+        // What the repository says about each recorded file now. Read before
+        // anything is written, so the whole undo is decided in one go.
+        const looked = {};
         for (const file of files) {
             const current = await api.read(file.path, { meta: true }).catch(() => null);
-            if (!current) { work.push({ path: file.path, kind: 'gone' }); continue; }
-
-            const history = await api.history(file.path, 2);
-            const newest = history[0] ? history[0].sha : '';
-            if (!newest || newest !== file.commit) {
-                throw new Error(`${file.path} has changed on GitHub since that save, so putting it back would `
-                    + 'overwrite a change made after it. Nothing was changed.');
-            }
-            if (file.created) {
-                if (history.length !== 1) {
-                    throw new Error(`${file.path} has a history from before that save, so this browser will not `
-                        + 'delete it. Nothing was changed.');
-                }
-                work.push({ path: file.path, kind: 'remove', sha: current.sha });
-                continue;
-            }
-            const previous = history[1];
-            if (!previous) {
-                throw new Error(`GitHub does not show which version ${file.path} had before that save, so it cannot `
-                    + 'be put back safely. Nothing was changed.');
-            }
-            work.push({ path: file.path, kind: 'restore', sha: current.sha, text: await api.readAt(file.path, previous.sha) });
+            if (!current) { looked[file.path] = { missing: true }; continue; }
+            const history = (await api.history(file.path, 2)).map((item) => item.sha);
+            looked[file.path] = { sha: current.sha, history };
+            if (!file.created && history[1]) looked[file.path].text = await api.readAt(file.path, history[1]);
         }
 
-        for (const item of work) {
-            if (item.kind === 'remove') {
-                await api.remove(item.path, item.sha, `Remove ${item.path}, added by mistake`);
-            } else if (item.kind === 'restore') {
-                await api.write(item.path, {
-                    text: item.text,
-                    message: `Restore ${item.path} before ${saved.commit.slice(0, 7)}`,
-                    sha: item.sha,
-                });
-            }
+        const plan = undoPlan(saved, looked);
+        if (plan.refused) { say(`Could not undo: ${plan.refused}`); return; }
+
+        // The whole undo as one commit, for the same reason a save is: putting the
+        // pages back one at a time would leave the site readable in a state that
+        // never existed, with the state file describing neither version.
+        const changes = [];
+        for (const item of plan.actions) {
+            if (item.kind === 'remove') changes.push({ path: item.path, delete: true });
+            else if (item.kind === 'restore') changes.push({ path: item.path, text: item.text });
         }
+        changes.push({ path: STATE_PATH, text: await restoredStateText(plan.actions) });
+
+        const result = await publish({
+            base: state.head,
+            message: `Undo the save from ${new Date(saved.at).toISOString().slice(0, 16).replace('T', ' ')}`,
+            changes,
+        });
+        state.head = result.head || result.commit;
         say('Restored the earlier version.');
         localStorage.removeItem('news-panel-last-save');
         await load();
     } catch (error) {
+        if (error.status === 409) { showConflict(error); return; }
         say(`Could not undo: ${describe(error)}`);
     }
+}
+
+/** The state file as an undo leaves it.
+
+    Putting the pages back without this would leave the state file describing the
+    save that was undone, which the guard reads as the site having gone backwards.
+    Built before the commit so it describes the pages that will be on the site. */
+async function restoredStateText(actions) {
+    const previous = await readStateFile();
+    const at = new Date().toISOString();
+    const published = {};
+    for (const item of actions) {
+        if (item.kind === 'restore') published[item.path] = await sha256Hex(item.text);
+    }
+    const next = mergeState(previous, { at, published });
+    // A page this save created, and undo has removed, is no longer published.
+    for (const item of actions) if (item.kind === 'remove') delete next.files[item.path];
+    return serializeState(next);
 }
 
 async function checkLive() {
@@ -1093,7 +1388,19 @@ document.addEventListener('click', async (event) => {
         await checkSession({ reload: true });
         return;
     }
-    if (act === 'reload') return load();
+    if (act === 'reload') {
+        // A reload throws away whatever is in the form, so say so first when
+        // there is something to throw away.
+        if (state.dirty && !confirm('Loading the site\u2019s version discards the changes in this browser. '
+            + 'Copy your work first if you need it. Load anyway?')) return;
+        return load();
+    }
+    if (act === 'reload-conflict') {
+        if (!confirm('Loading the site\u2019s version discards the changes in this browser. Load anyway?')) return;
+        $('#pn-conflict').innerHTML = '';
+        return load();
+    }
+    if (act === 'copy-draft') return copyDraft();
     if (act === 'check') return checkLive();
     if (act === 'undo') return undo();
     if (act === 'add') {
@@ -1115,14 +1422,25 @@ document.addEventListener('click', async (event) => {
     }
     if (act === 'delete') {
         const number = Number(draft.id);
-        if (!confirm('Delete this entry from the news page? Its own page stays in the repository, and you can undo with “Undo the last save” after saving.')) return;
+        // Work the record page out now, from the card itself, and keep it: the
+        // target must not be re-derived later from an index that may have moved.
+        const target = recordPageTargetForCard(state.page.cards[number]);
+        const bullets = ['• Its news card is removed from the news page.'];
+        bullets.push(target.path
+            ? `• Its own page, ${target.path}, is deleted for good as well.`
+            : `• Its own page is left alone: ${target.reason}.`);
+        bullets.push('• Deleting cannot be undone.');
+        if (!confirm(`Delete this entry?\n\n${bullets.join('\n')}`)) return;
         state.removed.push(number);
+        state.deleteTargets.set(number, target.path);
         state.drafts.delete(number);
         state.selected = null;
         state.draft = null;
         state.dirty = true;
         renderList();
-        renderIdle('That entry is marked for deletion. Press Save and publish to finish.');
+        renderIdle(target.path
+            ? `That entry is marked for deletion. Press Save and publish to remove its card and delete ${target.path} for good.`
+            : 'That entry is marked for deletion. Press Save and publish to remove its card.');
         return;
     }
     if (act === 'body-add') { if (draft.bodies.length < 2) { draft.bodies.push(''); touch('bodies'); remember(); renderEditor(); } return; }
@@ -1168,17 +1486,36 @@ document.addEventListener('click', async (event) => {
         return;
     }
     if (act === 'refresh-editors') {
-        if (state.canManageEditors) await refreshEditors();
+        if (state.canManageEditors) { await refreshEditors(); renderEditors(); }
+        return;
+    }
+    if (act === 'reconcile-access') {
+        if (!state.canManageEditors) return;
+        button.disabled = true;
+        setGateMessage('Asking Cloudflare to update the Access policy…');
+        try {
+            const result = await api.reconcileAccess();
+            setGateMessage(result && result.changed
+                ? `Access updated: ${result.detail}`
+                : `Access left as it was: ${(result && result.detail) || 'nothing to change'}`);
+        } catch (error) {
+            setGateMessage(`Could not reconcile Access: ${describe(error)}`);
+        } finally {
+            button.disabled = false;
+            await refreshEditors();
+            renderEditors();
+        }
         return;
     }
     if (act === 'remove-editor') {
         if (!state.canManageEditors) return;
         const email = button.dataset.email;
         if (!email) return;
-        if (!confirm('Remove editor ' + email + '?')) return;
+        if (!confirm('Remove editor ' + email + '? They lose their record, and Access stops letting them in.')) return;
         try {
             await api.removeEditor(email);
             await refreshEditors();
+            renderEditors();
             setGateMessage('Editor removed');
         } catch (e) {
             setGateMessage('Failed to remove editor: ' + (e && e.message ? e.message : String(e)));
@@ -1186,28 +1523,20 @@ document.addEventListener('click', async (event) => {
         return;
     }
     if (act === 'activate-editor' || act === 'reactivate-editor') {
-        console.group('[activate] click');
-        console.log('canManageEditors=', state.canManageEditors, 'email=', button.dataset.email, 'who=', (window.__who||null));
-        if (!state.canManageEditors) { setGateMessage('Owner access is required.'); console.warn('[activate] blocked: not owner'); console.groupEnd(); return; }
+        if (!state.canManageEditors) { setGateMessage('Owner access is required.'); return; }
         const email = button.dataset.email;
-        if (!email) { console.warn('[activate] no email'); console.groupEnd(); return; }
+        if (!email) return;
         button.disabled = true;
-        setGateMessage('Activating ' + email + '...');
+        setGateMessage('Activating ' + email + '…');
         try {
-            console.log('[activate] calling api.updateEditor', email);
-            const res = await api.updateEditor(email, { status: 'active' });
-            console.log('[activate] response', res);
+            await api.updateEditor(email, { status: 'active' });
             await refreshEditors();
-            console.log('[activate] refreshed editors count=', state.editors && state.editors.length);
-            setGateMessage('Editor activated: ' + (res && res.editor ? res.editor.email : email));
-            console.debug('[editors] activated', res);
+            renderEditors();
+            setGateMessage('Editor activated: ' + email);
         } catch (e) {
-            console.error('[activate] EXCEPTION', e);
-            const msg = e && (e.message || e.toString());
-            setGateMessage('Failed to activate: ' + msg + (e && e.code ? ' (' + e.code + ')' : ''));
+            setGateMessage('Failed to activate: ' + (e && e.message ? e.message : String(e)));
         } finally {
             button.disabled = false;
-            console.groupEnd();
         }
         return;
     }
@@ -1220,6 +1549,7 @@ document.addEventListener('click', async (event) => {
         try {
             await api.updateEditor(email, { status: 'suspended' });
             await refreshEditors();
+            renderEditors();
             setGateMessage('Editor suspended.');
         } catch (e) {
             setGateMessage('Failed to suspend: ' + (e && e.message ? e.message : String(e)));

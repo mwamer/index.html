@@ -1,0 +1,45 @@
+#!/bin/sh
+# Refuse a push that would undo what the panel published.
+#
+# A clone that is behind can restore a deleted article, and a merge does it
+# quietly. This hook asks tools/content-guard.mjs about every ref being pushed
+# and stops the push when the content no longer matches the published state.
+#
+# It is a convenience, not the protection: a hook can be bypassed, and it only
+# runs where it is configured. `.github/workflows/content-guard.yml` runs the
+# same check on every push to main, and that one cannot be skipped.
+#
+# Enable it once per clone:
+#   git config core.hooksPath hooks
+
+set -e
+
+command -v node >/dev/null 2>&1 || {
+    echo "content-guard: node is not installed, so the publishing check was skipped." >&2
+    exit 0
+}
+
+status=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    # A branch being deleted carries nothing, so there is nothing to check.
+    case "$local_sha" in
+        0000000000000000000000000000000000000000) continue ;;
+    esac
+
+    # Only the published content matters here.
+    changed=$(git diff --name-only "$remote_sha" "$local_sha" 2>/dev/null \
+        | grep -E '^(news-engagement\.html|engagement-[a-z0-9-]+\.html|\.panel-state\.json)$' || true)
+    [ -z "$changed" ] && continue
+
+    if ! node "$(git rev-parse --show-toplevel)/tools/content-guard.mjs" \
+        --base "$remote_sha" --head "$local_sha"; then
+        echo "" >&2
+        echo "content-guard: the push was stopped. See the report above." >&2
+        echo "To push anyway (the workflow on main will still check it):" >&2
+        echo "  git push --no-verify" >&2
+        status=1
+    fi
+done
+
+exit $status

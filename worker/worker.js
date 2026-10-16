@@ -1,4 +1,5 @@
-import { listEditors, getEditor, addEditor, updateEditor, removeEditor, ensureOwnerSeed } from "./registry.js";
+import { listEditors, getEditor, addEditor, updateEditor, removeEditor, ensureOwnerSeed, audit, desiredAccessEmails, lastAccessSync } from "./registry.js";
+import { accessApiConfigured, reconcileAfterChange } from "./access.js";
 /* The News & Engagement panel's API.
 
    The panel runs in a browser, so it must never hold a GitHub token. Every read
@@ -18,7 +19,15 @@ import { listEditors, getEditor, addEditor, updateEditor, removeEditor, ensureOw
 
 const GITHUB_API = 'https://api.github.com';
 const NEWS_PATH = 'news-engagement.html';
+/* What the panel has published, and which articles it has deleted. Written by
+   the panel on every save and read by tools/content-guard.mjs, which refuses a
+   push that would take the published site backwards. */
+const PANEL_STATE_PATH = '.panel-state.json';
 const MAX_BODY = 8 * 1024 * 1024;
+/** One save can hold a news page, a state file, a record page and a handful of
+    photographs. The cap is here so a runaway caller cannot ask for a thousand
+    blobs in one request. */
+const MAX_CHANGES = 60;
 const JWT_LEEWAY = 60;
 const JWKS_TTL = 600;
 const GITHUB_API_VERSION = '2022-11-28';
@@ -30,13 +39,14 @@ class HttpError extends Error {
     }
 }
 
-// Registry errors (invalid input, duplicate editor, last-owner protection) are
-// all caller mistakes, so surface them as 400 rather than an opaque 500.
+// A caller mistake carries a status of its own; anything else is the registry
+// being unreachable, which must not be reported as the caller's fault.
 async function registryCall(fn) {
     try {
         return await fn();
     } catch (error) {
         if (error instanceof HttpError) throw error;
+        if (error && error.status) throw new HttpError(error.message, error.status);
         throw new HttpError(error && error.message ? error.message : 'The request failed', 400);
     }
 }
@@ -71,8 +81,8 @@ function corsHeaders(request, env) {
     if (origin && list(env.ALLOWED_ORIGINS).includes(origin)) {
         headers['Access-Control-Allow-Origin'] = origin;
         headers['Access-Control-Allow-Credentials'] = 'true';
-        headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-        headers['Access-Control-Allow-Headers'] = 'Content-Type';
+        headers['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, DELETE, OPTIONS';
+        headers['Access-Control-Allow-Headers'] = 'Content-Type, Cf-Access-Jwt-Assertion';
         headers['Access-Control-Max-Age'] = '86400';
     }
     return headers;
@@ -160,12 +170,13 @@ async function verifySignature(env, header, signed, signature) {
     if (!ok) throw new HttpError('Not signed in', 401);
 }
 
-/** Who is calling, proven rather than assumed. Returns the email Access
-    authenticated, or throws. */
-async function verifyAccess(request, env) {
+/** Who is calling, proven rather than assumed: the Access token is checked here
+    rather than trusted because a gate stood in front of the Worker. Returns the
+    email Access authenticated, or throws. This is authentication only; what the
+    caller may do is decided by verifyAccess, which reads the registry. */
+async function verifySession(request, env) {
     const domain = teamDomain(env);
     const audience = String(env.ACCESS_AUD || '');
-    const allowedEmails = list(env.ALLOWED_EMAILS).map((email) => email.toLowerCase());
     if (!domain || !audience) {
         throw new HttpError('Cloudflare Access is not configured on this Worker yet', 503);
     }
@@ -199,35 +210,61 @@ async function verifyAccess(request, env) {
 
     const email = String(claims.email || '').toLowerCase();
     if (!email) throw new HttpError('Not signed in', 401);
-    let editor = null;
-    if (env.DB) {
-        try {
-            editor = await getEditor(env, email);
-            if (!editor && allowedEmails.includes(email)) {
-                editor = await ensureOwnerSeed(env, { email, name: claims.name || claims.email || email });
-            }
-        } catch (e) {
-            editor = null;
+    return { email, claims };
+}
+
+/** Who is calling, and what the editor registry says they may do.
+
+    D1 is the authority, so this resolves the record from it and refuses when
+    there is none. A record that is pending or suspended is returned rather than
+    refused, so the panel can say which it is; requireActive and requireOwner
+    decide what may then be done with it.
+
+    A registry that cannot be read is a refusal, never a fallback. Treating an
+    outage as "not in the registry" would either lock everyone out or, worse,
+    let the allowlist stand in for a suspended record. */
+async function verifyAccess(request, env) {
+    const { email, claims } = await verifySession(request, env);
+    const allowedEmails = list(env.ALLOWED_EMAILS).map((value) => value.toLowerCase());
+    let editor;
+    try {
+        editor = await getEditor(env, email);
+        // The first owner. ALLOWED_EMAILS is read here and nowhere else: it seeds
+        // the registry, it does not replace it.
+        if (!editor && allowedEmails.includes(email)) {
+            editor = await ensureOwnerSeed(env, { email, name: claims.name || email });
         }
+    } catch (error) {
+        if (error && error.status) throw new HttpError(error.message, error.status);
+        throw new HttpError('The editor registry could not be read, so nothing can be published right now. '
+            + 'Check that the D1 migrations have been applied.', 503);
     }
     if (!editor) {
-        if (!allowedEmails.length || !allowedEmails.includes(email)) {
-            throw new HttpError('Signed in, but this account is not allowed to edit the website', 403);
-        }
-        // fallback: treat as active news-editor if in allowlist but no DB record
-    } else {
-        if (editor.status !== 'active') {
-            throw new HttpError('Signed in, but this account is not allowed to edit the website', 403);
-        }
+        throw new HttpError(`Signed in as ${email}, but this address is not an editor of this website`, 403);
     }
     return { email, claims, editor };
 }
-async function requireOwner(caller, env) {
-    if (!caller) throw new HttpError('Not signed in', 401);
-    if (caller.editor && caller.editor.role === 'owner' && caller.editor.status === 'active') return caller.editor;
-    const editor = await getEditor(env, caller.email);
-    if (editor && editor.role === 'owner' && editor.status === 'active') return editor;
-    throw new HttpError('Not authorized', 403);
+
+/** Publishing needs a record that says active. A pending or suspended record is
+    refused here, with a message that says which, so the panel can explain it. */
+function requireActive(caller) {
+    if (!caller || !caller.editor) throw new HttpError('Sign in before saving', 401);
+    if (caller.editor.status === 'pending') {
+        throw new HttpError('Your editor account is waiting to be approved by the owner, so nothing can be published yet', 403);
+    }
+    if (caller.editor.status !== 'active') {
+        throw new HttpError('Your editor account is suspended, so nothing can be published', 403);
+    }
+    return caller.editor;
+}
+
+/** Managing editors is the owner's alone. */
+function requireOwner(caller) {
+    if (!caller || !caller.editor) throw new HttpError('Sign in before managing editors', 401);
+    if (caller.editor.role !== 'owner' || caller.editor.status !== 'active') {
+        throw new HttpError('Only the owner can manage editors', 403);
+    }
+    return caller.editor;
 }
 
 
@@ -270,16 +307,97 @@ async function gh(env, path, init = {}) {
 
 const contentsPath = (env, path) => `/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
 
-/** The SHA GitHub wants for an update, or undefined for a file that does not
-    exist yet. A caller that already read the file sends its own. */
-async function existingSha(env, path) {
-    try {
-        const body = await gh(env, `${contentsPath(env, path)}?ref=${encodeURIComponent(repo(env).branch)}`);
-        return body.sha;
-    } catch (error) {
-        if (error.status === 404) return undefined;
-        throw error;
+// Reading a ref and moving one are different endpoints: GitHub spells the read
+// `/git/ref/{ref}` and the write `/git/refs/{ref}`.
+const refPath = (env) => `/git/ref/heads/${branchPath(env)}`;
+const refsPath = (env) => `/git/refs/heads/${branchPath(env)}`;
+const branchPath = (env) => repo(env).branch.split('/').map(encodeURIComponent).join('/');
+
+/** The commit the branch is on now. This is the value a save must name as the
+    revision it started from, which is what makes a stale save detectable. */
+async function headSha(env) {
+    const body = await gh(env, refPath(env));
+    return (body.object && body.object.sha) || '';
+}
+
+/** Write everything a save changed as one commit, or nothing at all.
+
+    This is what the panel uses, and it replaces a sequence of one-file commits.
+    It is better in two ways that matter:
+
+    - The site is never seen half-changed. A save that updates the news page,
+      the state file and a record page lands as a single revision, so no reader,
+      and no checker, can catch the site between two of those steps.
+    - A stale save cannot overwrite anyone. `base` is the revision the panel was
+      reading from. If main has moved since — because a colleague saved, or
+      another tab did — the commit is refused before anything is written, and
+      the panel keeps the draft and says so.
+
+    GitHub's own ref update is the last word: `force: false` refuses anything
+    that is not a fast-forward, so a commit that lands between the check above
+    and the write below is caught too. */
+async function commitFiles(env, { base, message, changes }) {
+    const head = await headSha(env);
+    if (!head) throw new HttpError('GitHub did not say which revision the site is on, so nothing was written', 502);
+    if (!base) throw new HttpError('A save must say which revision it started from', 400);
+    if (base !== head) {
+        throw new HttpError('Someone else published while this panel was open, so this save was not written. '
+            + 'Your work is still here: copy it if you need to, reload to see their version, then apply yours again.', 409);
     }
+
+    const baseCommit = await gh(env, `/git/commits/${head}`);
+    const baseTree = baseCommit.tree && baseCommit.tree.sha;
+    if (!baseTree) throw new HttpError('GitHub did not say what the site contained, so nothing was written', 502);
+
+    const tree = [];
+    const written = [];
+    const removed = [];
+    for (const change of changes) {
+        const path = change && change.path;
+        assertPath(path);
+        if (change.delete) {
+            // A null sha on an entry of the base tree is how the Git Data API
+            // expresses "this file is no longer in the tree".
+            tree.push({ path, mode: '100644', type: 'blob', sha: null });
+            removed.push(path);
+            continue;
+        }
+        const content = contentBase64(change, path);
+        const blob = await gh(env, '/git/blobs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, encoding: 'base64' }),
+        });
+        if (!blob.sha) throw new HttpError(`GitHub did not accept the new contents of ${path}`, 502);
+        tree.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
+        written.push({ path, sha: blob.sha });
+    }
+
+    const created = await gh(env, '/git/trees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base_tree: baseTree, tree }),
+    });
+    if (!created.sha) throw new HttpError('GitHub did not accept the new file list, so nothing was written', 502);
+
+    const commit = await gh(env, '/git/commits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            message: String(message || 'Update the site from the panel').slice(0, 200),
+            tree: created.sha,
+            parents: [head],
+        }),
+    });
+    if (!commit.sha) throw new HttpError('GitHub did not confirm the commit, so nothing is being reported as saved', 502);
+
+    await gh(env, refsPath(env), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sha: commit.sha, force: false }),
+    });
+
+    return { commit: commit.sha, head: commit.sha, files: written, deleted: removed };
 }
 
 // ── what this Worker is allowed to touch ─────────────────────────────────────
@@ -289,6 +407,7 @@ function isAllowedPath(path) {
     if (path.startsWith('/') || path.includes('..') || path.includes('\\')) return false;
     if (/[\u0000-\u001f\u007f]/.test(path)) return false;
     if (path === NEWS_PATH) return true;
+    if (path === PANEL_STATE_PATH) return true;
     if (/^engagement-[a-z0-9][a-z0-9-]{0,80}\.html$/.test(path)) return true;
     if (/^images\/[A-Za-z0-9][A-Za-z0-9-]{0,80}-\d{8}\.(jpe?g|png|webp|avif)$/.test(path)) return true;
     return false;
@@ -396,26 +515,21 @@ async function handle(request, env, headers) {
     }
 
     assertCallerIsAllowed(request, env);
-    const { email, editor: callerEditor } = await verifyAccess(request, env);
 
-    if (route === '/api/signed-in') {
+    // The sign-in page and the root need a proven session, not an editor record:
+    // someone who has just signed in should be able to see that they did, and be
+    // told what is missing, whether their access is pending or not granted.
+    if (route === '/api/signed-in' || route === '/' || route === '') {
+        const { email } = await verifySession(request, env);
         return new Response(signedInPage(email), {
             status: 200,
             headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...headers },
         });
     }
 
-    if (route === '/' || route === '') {
-        return new Response(signedInPage(email), {
-            status: 200,
-            headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...headers },
-        });
-    }
+    const caller = await verifyAccess(request, env);
+    const { email } = caller;
 
-
-    if (route.startsWith('/cdn-cgi/access/')) {
-        return jsonResponse({ ok: true }, 200, headers);
-    }
     if (route === '/api/verify') {
         const { owner, name } = repo(env);
         const body = await gh(env, '');
@@ -424,32 +538,58 @@ async function handle(request, env, headers) {
             login: (body.owner && body.owner.login) || owner,
             repo: `${owner}/${name}`,
             canWrite: Boolean(body.permissions && body.permissions.push),
-            editor: callerEditor || (await getEditor(env, email)) || (allowedEmails.includes(email) ? await ensureOwnerSeed(env, { email, name: claims.name || claims.email || email }) : null) || null,
+            // The registry's record, so the panel can say "waiting for
+            // approval" or "suspended" rather than a bare refusal.
+            editor: caller.editor,
+            // The revision this panel would save on top of. A save that names it
+            // is refused when the site has moved on, instead of overwriting.
+            head: await headSha(env),
         }, 200, headers);
     }
     // Editor management endpoints
     if (route.startsWith('/api/admin/editors')) {
-        const editor = await requireOwner({ email }, env);
+        requireOwner(caller);
         if (route === '/api/admin/editors' && method === 'GET') {
-            const list = await listEditors(env);
-            return jsonResponse({ editors: list }, 200, headers);
+            const editors = await registryCall(() => listEditors(env));
+            return jsonResponse({ editors }, 200, headers);
         }
         if (route === '/api/admin/editors' && method === 'POST') {
             const payload = await readJson(request);
             const created = await registryCall(() => addEditor(env, { email: payload.email, name: payload.name, role: payload.role || 'news-editor', status: payload.status || 'pending', actor: email }));
+            await reconcileAfterChange(env, { actor: email });
             return jsonResponse({ editor: created }, 201, headers);
         }
         if (route.startsWith('/api/admin/editors/') && method === 'PATCH') {
             const id = decodeURIComponent(route.split('/').pop());
             const payload = await readJson(request);
             const updated = await registryCall(() => updateEditor(env, { email: id, name: payload.name, role: payload.role, status: payload.status, actor: email }));
+            await reconcileAfterChange(env, { actor: email });
             return jsonResponse({ editor: updated }, 200, headers);
         }
         if (route.startsWith('/api/admin/editors/') && method === 'DELETE') {
             const id = decodeURIComponent(route.split('/').pop());
             await registryCall(() => removeEditor(env, { email: id, actor: email }));
+            await reconcileAfterChange(env, { actor: email });
             return jsonResponse({ success: true }, 200, headers);
         }
+        throw new HttpError(`${method} is not a way to change editors`, 405);
+    }
+
+    // What Cloudflare Access is being told, and asking it to be told again.
+    if (route === '/api/admin/access') {
+        requireOwner(caller);
+        if (method === 'GET') {
+            const [desired, last] = await registryCall(() => Promise.all([desiredAccessEmails(env), lastAccessSync(env)]));
+            return jsonResponse({ desired, last, configured: accessApiConfigured(env) }, 200, headers);
+        }
+        if (method === 'POST') {
+            // The same path an editor change takes, so a manual retry is recorded
+            // too — otherwise the panel would still show the old attempt and the
+            // owner could not tell whether pressing the button did anything.
+            const result = await reconcileAfterChange(env, { actor: email });
+            return jsonResponse(result, result.state === 'failed' ? 502 : 200, headers);
+        }
+        throw new HttpError(`${method} is not a way to work with Access`, 405);
     }
 
 
@@ -494,11 +634,16 @@ async function handle(request, env, headers) {
     }
 
     if (route === '/api/write' && method === 'POST') {
+        requireActive(caller);
         const payload = await readJson(request);
         const path = payload.path;
         assertPath(path);
         const content = contentBase64(payload, path);
-        const sha = payload.sha || await existingSha(env, path);
+        // Only the revision the caller read. Filling the sha in from the current
+        // file would write over whatever is there now, which is exactly the
+        // silent overwrite that a second editor must never suffer. An update
+        // must therefore say which revision it is updating; a create passes none.
+        const sha = payload.sha;
         const body = await gh(env, contentsPath(env, path), {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -520,38 +665,88 @@ async function handle(request, env, headers) {
     }
 
     if (route === '/api/remove' && method === 'POST') {
+        requireActive(caller);
         const payload = await readJson(request);
         const path = payload.path;
         assertPath(path);
-        const sha = payload.sha || await existingSha(env, path);
-        if (!sha) throw new HttpError('That file is not in the repository', 404);
-        const body = await gh(env, contentsPath(env, path), {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                message: String(payload.message || `Remove ${path}`).slice(0, 200),
-                sha,
-                branch: repo(env).branch,
-            }),
+        // A deletion names the revision it deletes. Looking the sha up here would
+        // delete whatever the file holds now, including a colleague's edit.
+        const sha = payload.sha;
+        if (!sha) throw new HttpError('A deletion must say which revision it is removing', 400);
+        // Who deleted what, and when. This is the record of a permanent change,
+        // so it is written on failure as well as on success.
+        const record = (detail) => audit(env, {
+            actor: email,
+            action: 'content.delete',
+            target: path,
+            detail: JSON.stringify(detail),
         });
-        if (!body.commit || !body.commit.sha) {
-            throw new HttpError('GitHub did not confirm the deletion', 502);
+        let body;
+        try {
+            body = await gh(env, contentsPath(env, path), {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: String(payload.message || `Remove ${path}`).slice(0, 200),
+                    sha,
+                    branch: repo(env).branch,
+                }),
+            });
+            if (!body.commit || !body.commit.sha) {
+                throw new HttpError('GitHub did not confirm the deletion', 502);
+            }
+        } catch (error) {
+            await record({ outcome: 'failed', reason: String((error && error.message) || error) });
+            throw error;
         }
+        await record({ outcome: 'removed', commit: body.commit.sha });
         return jsonResponse({ path, commit: body.commit.sha }, 200, headers);
     }
 
+    if (route === '/api/head') {
+        return jsonResponse({ head: await headSha(env), branch: repo(env).branch }, 200, headers);
+    }
 
-    if (route.startsWith('/cdn-cgi/')) {
-        return jsonResponse({ ok: true }, 200, headers);
+    /* A whole save in one commit. The panel sends every file it changed, the
+       revision it started from, and nothing else; either all of it lands or none
+       of it does. Deletions travel the same way, as an entry with `delete: true`,
+       which is what keeps a record page and the link to it in one revision. */
+    if (route === '/api/commit' && method === 'POST') {
+        requireActive(caller);
+        const payload = await readJson(request);
+        const changes = Array.isArray(payload.changes) ? payload.changes : [];
+        if (!changes.length) throw new HttpError('Nothing was sent to save', 400);
+        if (changes.length > MAX_CHANGES) {
+            throw new HttpError(`A save can hold at most ${MAX_CHANGES} files, and this one holds ${changes.length}`, 400);
+        }
+        const seen = new Set();
+        for (const change of changes) {
+            const path = change && change.path;
+            if (seen.has(path)) throw new HttpError(`${JSON.stringify(path)} was sent twice in one save`, 400);
+            seen.add(path);
+        }
+        const result = await commitFiles(env, { base: payload.base, message: payload.message, changes });
+        // One line per deleted file, so the audit answers "who removed the
+        // photograph" as precisely as it did when deletions were one at a time.
+        for (const path of result.deleted) {
+            await audit(env, {
+                actor: email,
+                action: 'content.delete',
+                target: path,
+                detail: JSON.stringify({ outcome: 'removed', commit: result.commit, via: 'commit' }),
+            });
+        }
+        return jsonResponse(result, 200, headers);
     }
-    if (route.startsWith('/.well-known/')) {
-        return jsonResponse({ ok: true }, 200, headers);
+
+
+    // Cloudflare asks the origin about these two prefixes itself, so they are
+    // answered without a body. Everything else that is not a route above is a
+    // mistake, and saying so is better than answering 200 to a typo.
+    if (route.startsWith('/cdn-cgi/') || route.startsWith('/.well-known/')) {
+        return new Response('', { status: 200, headers: { 'Cache-Control': 'no-store', ...headers } });
     }
-    // Fallback for unexpected paths - avoid "No such route" errors
-    if (route.startsWith('/cdn-cgi/')) {
-        return jsonResponse({ ok: true }, 200, headers);
-    }
-    return new Response('', { status: 200, headers: { 'Cache-Control': 'no-store', ...headers } });
+    return jsonResponse({ error: `There is no ${route} on this API` }, 404, headers);
 }
 
 export default {

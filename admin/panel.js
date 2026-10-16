@@ -838,6 +838,253 @@ export function recordPageSlug(value) {
     return slug.startsWith('engagement-') ? slug : `engagement-${slug}`;
 }
 
+// ── the record page an entry owns ────────────────────────────────────────
+
+/** The record pages the Worker writes. Kept the same as `isAllowedPath` in
+    worker/worker.js, so a path is only ever deleted when the API would agree to
+    the deletion rather than refuse it. */
+const RECORD_PAGE_PATH = /^engagement-[a-z0-9][a-z0-9-]{0,80}\.html$/;
+
+export function isRecordPagePath(path) {
+    return RECORD_PAGE_PATH.test(String(path || ''));
+}
+
+/** The address an entry publishes its own page at, or '' when it has none. */
+export function recordPathFor(recordSlug) {
+    const slug = recordPageSlug(recordSlug);
+    const path = slug ? `${slug}.html` : '';
+    return isRecordPagePath(path) ? path : '';
+}
+
+/** The record page a News card owns, worked out when the entry is deleted.
+
+    The address the card links to and the address the panel writes have to be the
+    same file. When they are not, the card is removed from the news page and its
+    page is left where it is: deleting a path the card never pointed at removes
+    the wrong file, and deleting nothing is the safe answer. The caller reports
+    which of the two happened. */
+export function recordPageTarget({ recordSlug = '', href = '' } = {}) {
+    const path = recordPathFor(recordSlug);
+    if (!path) return { path: '', reason: 'this entry has no full record page' };
+    const link = String(href || '');
+    if (!link) return { path: '', reason: 'its card does not link to its own page' };
+    if (link !== path) {
+        return { path: '', reason: `its card links to ${link}, which is not the page the panel writes (${path})` };
+    }
+    return { path, reason: '' };
+}
+
+/** The record page of a card parsed from the news page. */
+export function recordPageTargetForCard(card) {
+    return recordPageTarget({ recordSlug: card ? card.recordSlug : '', href: card ? card.slugText : '' });
+}
+
+// ── the published state ──────────────────────────────────────────────────
+
+/** The file the panel writes to say what it has published. The guard in
+    tools/content-guard.mjs reads this path, and this shape, so a panel save and
+    the check on a push are talking about the same thing. */
+export const STATE_PATH = '.panel-state.json';
+
+/** The digest a page is recorded under: SHA-256 over the exact bytes published.
+
+    The guard takes the same digest over the file in the repository, so a record
+    only matches when the page landed as it was sent. */
+export async function sha256Hex(text, subtle = globalThis.crypto && globalThis.crypto.subtle) {
+    if (!subtle) {
+        throw new Error('This page cannot work out a page digest, so what is published cannot be recorded. '
+            + 'Open the panel over https, or on your own computer.');
+    }
+    const digest = await subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/** The published state with one save folded into it.
+
+    Everything already recorded is kept: the file is the record of what has been
+    published, not only of this save. A deletion leaves a tombstone, and the
+    tombstone keeps the first time it was written, because that is when the page
+    was deleted — so saving again, or saving after a failure, cannot move it. */
+export function mergeState(previous, { at, published = {}, deleted = [] }) {
+    const before = previous && typeof previous === 'object' ? previous : {};
+    const files = { ...(before.files || {}) };
+    for (const [path, digest] of Object.entries(published)) if (digest) files[path] = digest;
+
+    const tombstones = new Map();
+    for (const item of Array.isArray(before.deleted) ? before.deleted : []) {
+        if (item && typeof item.path === 'string') tombstones.set(item.path, { path: item.path, at: String(item.at || '') });
+    }
+    for (const item of Array.isArray(deleted) ? deleted : []) {
+        if (!item || !item.path) continue;
+        const when = String(item.at || at || '');
+        const seen = tombstones.get(item.path);
+        if (!seen) { tombstones.set(item.path, { path: item.path, at: when }); continue; }
+        if (when && (!seen.at || when < seen.at)) tombstones.set(item.path, { path: item.path, at: when });
+    }
+    // A page that has been deleted is not published, so it cannot be listed as both.
+    for (const path of tombstones.keys()) delete files[path];
+
+    return {
+        version: 1,
+        updated: at,
+        files,
+        deleted: [...tombstones.values()].sort((a, b) => (a.path < b.path ? -1 : 1)),
+    };
+}
+
+/** The state file as it is written to disk, in the shape tools/content-state.mjs uses. */
+export function serializeState(state) {
+    return `${JSON.stringify(state, null, 4)}\n`;
+}
+
+// ── photographs left behind by a deletion ────────────────────────────────
+
+/** Which candidate photographs no page needs any more.
+
+    A photograph belongs to the site rather than to one entry: the news card, the
+    featured panel and any record page can name the same file. So a candidate is
+    removed only when every page that could name it has been read and none of them
+    does. A page that could not be read counts for nothing — an unread page is not
+    evidence that no one uses the file — and the candidate stays.
+
+    The Worker removes only the dated names the panel itself gives an upload, so
+    an older photograph is reported and left alone rather than attempted and
+    refused. */
+export function imagesToRemove({ candidates = [], pages = [], unreadable = [] }) {
+    const decisions = [];
+    for (const path of [...new Set(candidates)]) {
+        if (!photoPathAllowed(path)) {
+            decisions.push({ path, remove: false, reason: 'the API only removes photographs it named itself' });
+            continue;
+        }
+        const holders = pages.filter((page) => String(page.html || '').includes(path)).map((page) => page.path);
+        if (holders.length) {
+            decisions.push({ path, remove: false, reason: `still used by ${holders.join(', ')}` });
+            continue;
+        }
+        if (unreadable.length) {
+            decisions.push({ path, remove: false, reason: `could not be checked against ${unreadable.join(', ')}` });
+            continue;
+        }
+        decisions.push({ path, remove: true, reason: 'no page uses it any more' });
+    }
+    return {
+        decisions,
+        remove: decisions.filter((item) => item.remove).map((item) => item.path),
+        keep: decisions.filter((item) => !item.remove),
+    };
+}
+
+// ── what one save changes ───────────────────────────────────────────────
+
+/** Everything one save changes, as the single commit it becomes.
+
+    This replaced a list of steps that ran one after another. A save used to be
+    several commits, so the site could be caught between them — a card removed
+    from the news page before the page it pointed at was deleted, or the reverse
+    — and a save that stopped part-way left that state behind.
+
+    One commit removes the whole class of problem: the news page, the record
+    pages it links to, the photographs they use, the state file that records all
+    of it, and every deletion land together or not at all. Nothing is ordered
+    because nothing can be observed half-done.
+
+    The entries are sorted by path so the same save always describes itself the
+    same way, which is what makes it readable in a test and quiet in a diff. */
+export function saveChanges({ news = null, records = [], uploads = [], state = null, deletions = [] } = {}) {
+    const changes = [];
+    if (news && typeof news.text === 'string') changes.push({ path: news.path || NEWS_PATH, text: news.text });
+    for (const record of records) {
+        if (record && typeof record.text === 'string') changes.push({ path: record.path, text: record.text });
+    }
+    for (const upload of uploads) {
+        if (upload && upload.contentBase64) changes.push({ path: upload.path, contentBase64: upload.contentBase64 });
+    }
+    if (state && typeof state.text === 'string') changes.push({ path: STATE_PATH, text: state.text });
+    const removed = [...new Set(deletions.filter(Boolean))];
+    for (const path of removed) changes.push({ path, delete: true });
+
+    changes.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+
+    return {
+        changes,
+        written: changes.filter((change) => !change.delete).map((change) => change.path),
+        deleted: removed.sort(),
+        message: saveMessage({ news, records, uploads, deleted: removed }),
+    };
+}
+
+/** One line for the commit log that says what a save did, in the same plain
+    language the panel uses elsewhere. It names the first few files and counts
+    the rest, so a large save does not produce a two-thousand-character subject. */
+function saveMessage({ news = null, records = [], uploads = [], deleted = [] } = {}) {
+    const parts = [];
+    if (deleted.length) parts.push(`remove ${summarise(deleted)}`);
+    if (records.length) parts.push(`update ${summarise(records.map((record) => record.path))}`);
+    if (news) parts.push('update the news entries');
+    if (uploads.length) parts.push(`add ${summarise(uploads.map((upload) => upload.path))}`);
+    if (!parts.length) return 'Update the site from the panel';
+    const sentence = parts.join(', ');
+    return sentence.charAt(0).toUpperCase() + sentence.slice(1);
+}
+
+function summarise(paths, limit = 3) {
+    const names = paths.map((path) => String(path).split('/').pop());
+    if (names.length <= limit) return names.join(', ');
+    return `${names.slice(0, limit).join(', ')} and ${names.length - limit} more`;
+}
+
+
+// ── putting a save back ──────────────────────────────────────────────────
+
+/** Why the last save cannot be put back at all, or '' when it can be tried.
+
+    A save that deleted a record page is decided here, before the repository is
+    read, so a deleted page is never reached as a file that is merely missing. */
+export function undoRefusal(saved) {
+    const deleted = Array.isArray(saved && saved.deletions) ? saved.deletions : [];
+    if (!deleted.length) return '';
+    return `That save deleted ${[...deleted].sort().join(', ')}, and a page that has been deleted `
+        + 'cannot be put back by Undo. Nothing was changed.';
+}
+
+/** What Undo would do with the last save, worked out before anything changes.
+
+    `looked` holds what the repository says about each recorded path now:
+    `{ sha, history, text }`, or `{ missing: true }` when the file is gone.
+
+    A save that deleted a record page is refused outright, and refused before any
+    file is examined: the page is gone for good, so putting the news page back
+    without it would leave a card pointing at nothing. */
+export function undoPlan(saved, looked = {}) {
+    const refusal = undoRefusal(saved);
+    if (refusal) return { refused: refusal };
+    const actions = [];
+    for (const file of Array.isArray(saved && saved.files) ? saved.files : []) {
+        const now = looked[file.path] || {};
+        if (now.missing) { actions.push({ path: file.path, kind: 'skip' }); continue; }
+        const history = now.history || [];
+        if (!history[0] || history[0] !== file.commit) {
+            return { refused: `${file.path} has changed on GitHub since that save, so putting it back would `
+                + 'overwrite a change made after it. Nothing was changed.' };
+        }
+        if (file.created) {
+            if (history.length !== 1) {
+                return { refused: `${file.path} has a history from before that save, so this browser will not `
+                    + 'delete it. Nothing was changed.' };
+            }
+            actions.push({ path: file.path, kind: 'remove', sha: now.sha });
+            continue;
+        }
+        if (!history[1]) {
+            return { refused: `GitHub does not show which version ${file.path} had before that save, so it cannot `
+                + 'be put back safely. Nothing was changed.' };
+        }
+        actions.push({ path: file.path, kind: 'restore', sha: now.sha, text: now.text });
+    }
+    return { actions, refused: '' };
+}
+
 // ── base64 ───────────────────────────────────────────────────────────────
 
 export function bytesToBase64(bytes) {
