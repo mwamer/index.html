@@ -166,8 +166,8 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=17';
-import { describe, gitHub } from './api-worker.js?v=15';
+} from './panel.js?v=18';
+import { describe, gitHub } from './api-worker.js?v=16';
 
 var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -1172,22 +1172,28 @@ document.addEventListener('click', async (event) => {
         return;
     }
     if (act === 'activate-editor' || act === 'reactivate-editor') {
-        if (!state.canManageEditors) { setGateMessage('Owner access is required.'); return; }
+        console.group('[activate] click');
+        console.log('canManageEditors=', state.canManageEditors, 'email=', button.dataset.email, 'who=', (window.__who||null));
+        if (!state.canManageEditors) { setGateMessage('Owner access is required.'); console.warn('[activate] blocked: not owner'); console.groupEnd(); return; }
         const email = button.dataset.email;
-        if (!email) return;
+        if (!email) { console.warn('[activate] no email'); console.groupEnd(); return; }
         button.disabled = true;
         setGateMessage('Activating ' + email + '...');
         try {
+            console.log('[activate] calling api.updateEditor', email);
             const res = await api.updateEditor(email, { status: 'active' });
+            console.log('[activate] response', res);
             await refreshEditors();
+            console.log('[activate] refreshed editors count=', state.editors && state.editors.length);
             setGateMessage('Editor activated: ' + (res && res.editor ? res.editor.email : email));
             console.debug('[editors] activated', res);
         } catch (e) {
-            console.error('[editors] activate failed', e);
+            console.error('[activate] EXCEPTION', e);
             const msg = e && (e.message || e.toString());
             setGateMessage('Failed to activate: ' + msg + (e && e.code ? ' (' + e.code + ')' : ''));
         } finally {
             button.disabled = false;
+            console.groupEnd();
         }
         return;
     }
