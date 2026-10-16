@@ -136,7 +136,7 @@ async function settle(turns = 80) {
 /** Load `admin/index.html`'s own module against a stubbed browser, and hand back
     what the test needs to look at it: the fake document, and every API call the
     page made. */
-async function loadPage({ verifyStatus = 'active', role = 'owner', editors = [], commit = null, publication = null, publicationFails = false } = {}) {
+async function loadPage({ verifyStatus = 'active', role = 'owner', editors = [], commit = null, publication = null, publicationFails = false, diagnosis = null } = {}) {
     const calls = [];
     const document = fakeDocument();
     const clipboard = [];
@@ -174,8 +174,18 @@ async function loadPage({ verifyStatus = 'active', role = 'owner', editors = [],
         // Reading, changing and removing one editor share a prefix, so they are
         // answered together; the tests assert on what was sent, not on the reply.
         if (path.startsWith('/api/admin/editors/')) return json({ editor: {}, success: true });
-        if (path === '/api/admin/access') return json({ desired: [], last: null, configured: false });
-        if (path === '/api/admin/access') return json({ desired: [], last: null, configured: false });
+        if (path === '/api/admin/access') {
+            // The plain read and the diagnosis share a path, so the question is
+            // read from the query rather than from the path the calls log keeps.
+            if (new URL(url).searchParams.get('diagnose')) {
+                return json(diagnosis || {
+                    state: 'unavailable',
+                    configured: false,
+                    detail: 'Cloudflare API access is not configured on this Worker.',
+                });
+            }
+            return json({ desired: [], last: null, configured: false });
+        }
         if (path === '/api/read' || path === '/api/read-at') {
             return json({ sha: 'sha-1', text: siteFile(new URL(url).searchParams.get('path') || ''), size: 1 });
         }
@@ -542,6 +552,65 @@ test('the owner sees each editor, and only the actions its state allows', async 
     for (const act of ['activate-editor', 'suspend-editor', 'reactivate-editor', 'remove-editor']) {
         assert.equal(offers(act, owner), false, `the owner record must not offer ${act}`);
     }
+});
+
+test('the owner can read the live Access policy and see how it stands against the registry', async (t) => {
+    // The registry is the authority and Cloudflare Access holds a copy of it. The
+    // credential that can read the policy lives in the Worker rather than in the
+    // browser, so this reading is the only view of the comparison there is.
+    const diagnosis = {
+        state: 'ok',
+        configured: true,
+        policyName: 'Site editors',
+        inStep: false,
+        owner: { email: 'owner@example.com', present: true, detail: '' },
+        missing: ['nour@example.com'],
+        extra: ['gone@example.com'],
+        editors: [],
+    };
+    const { document, calls, restore } = await loadPage({ editors: [], diagnosis });
+    t.after(restore);
+
+    await press(document, { act: 'refresh-editors' });
+    await settle();
+
+    assert.doesNotMatch(document.element('#pn-access').innerHTML, /Site editors/,
+        'the policy is not described before anyone has read it');
+
+    await press(document, { act: 'check-access' });
+    await settle();
+
+    assert.ok(apiCalls(calls).some((call) => call.path === '/api/admin/access'),
+        'the owner asks the Worker for the live policy');
+    const shown = document.element('#pn-access').innerHTML;
+    assert.match(shown, /Site editors/, 'the policy is named');
+    assert.match(shown, /differs from the registry/, 'a difference is stated plainly');
+    assert.match(shown, /nour@example\.com/, 'an address waiting to be added is shown');
+    assert.match(shown, /gone@example\.com/, 'an address waiting to be removed is shown');
+});
+
+test('a policy that cannot be read is reported, not passed off as the last reading', async (t) => {
+    const { document, calls, restore } = await loadPage({
+        editors: [],
+        diagnosis: {
+            state: 'unavailable',
+            configured: false,
+            detail: 'Cloudflare API access is not configured on this Worker.',
+        },
+    });
+    t.after(restore);
+
+    await press(document, { act: 'refresh-editors' });
+    await settle();
+    await press(document, { act: 'check-access' });
+    await settle();
+
+    const shown = document.element('#pn-access').innerHTML;
+    assert.match(shown, /could not be read/i, 'the failure is said out loud');
+    assert.match(shown, /not configured/, 'and its reason is carried through');
+    assert.equal(shown.includes('matches the registry'), false,
+        'an unreadable policy must not be described as agreeing');
+    assert.ok(apiCalls(calls).some((call) => call.path === '/api/admin/access'), 'it still asked');
 });
 
 test('an editor who is not the owner is not offered editor management', async (t) => {

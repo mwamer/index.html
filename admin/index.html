@@ -210,6 +210,7 @@ const state = {
     canManageEditors: false,
     editors: [],
     access: null,           // what Cloudflare Access is being told, owner-only
+    accessCheck: null,      // the last live read of the Access policy, owner-only
 };
 
 // Every read and every change to the website goes through this one object. It
@@ -386,6 +387,9 @@ async function loadTemplate() {
 /** Load the editor list. Owner-only: anyone else gets an empty list, because
     asking is refused. */
 async function refreshEditors() {
+    // A changed registry puts any earlier reading of the policy out of date, so
+    // the diagnosis starts again rather than describing the list as it was.
+    state.accessCheck = null;
     if (!state.canManageEditors) { state.editors = []; state.access = null; return; }
     try {
         const res = await api.listEditors();
@@ -422,7 +426,33 @@ function renderAccess() {
         lines.push(`Last reconciled: ${last.state} — ${when}${last.detail ? ` (${last.detail})` : ''}`);
     }
     box.innerHTML = `<p class="pn-help">${lines.map(esc).join('<br>')}</p>`
+        + renderAccessCheck()
+        + '<button data-act="check-access">Check Access</button> '
         + (configured ? '<button data-act="reconcile-access">Reconcile Access now</button>' : '');
+}
+
+/** The last live reading of the Access policy, or nothing if it was never asked for.
+
+    Cloudflare Access holds a copy of the active editors; the registry holds the
+    authority. This is the only place the two can be compared, because the
+    credential that can read the policy lives in the Worker, not in the browser.
+    Asking reads and never writes, so a reading that fails is reported here rather
+    than treated as a fault. */
+function renderAccessCheck() {
+    const check = state.accessCheck;
+    if (!check) return '';
+    if (check.state !== 'ok') {
+        return `<p class="pn-help">The policy could not be read: ${esc(check.detail || 'no detail given')}</p>`;
+    }
+    const owner = check.owner || {};
+    const lines = [
+        `Policy: ${check.policyName || '(unnamed)'}`,
+        check.inStep ? 'The policy matches the registry.' : 'The policy differs from the registry.',
+        `Owner ${owner.email || '(none)'}: ${owner.present ? 'present in the policy' : 'NOT in the policy'}`,
+    ];
+    if (check.missing && check.missing.length) lines.push(`Waiting to be added: ${check.missing.join(', ')}`);
+    if (check.extra && check.extra.length) lines.push(`Waiting to be removed: ${check.extra.join(', ')}`);
+    return `<p class="pn-help">${lines.map(esc).join('<br>')}</p>`;
 }
 
 function renderEditors() {
@@ -1604,6 +1634,25 @@ document.addEventListener('click', async (event) => {
     }
     if (act === 'refresh-editors') {
         if (state.canManageEditors) { await refreshEditors(); renderEditors(); }
+        return;
+    }
+    if (act === 'check-access') {
+        if (!state.canManageEditors) return;
+        button.disabled = true;
+        setGateMessage('Reading the Access policy…');
+        try {
+            state.accessCheck = await api.accessDiagnosis();
+            setGateMessage('Read the Access policy.');
+        } catch (error) {
+            // The Worker answers an unreadable policy with 200 and a state of its
+            // own, so a thrown error means the request never arrived. Saying so is
+            // more useful than showing the previous reading as though it were new.
+            state.accessCheck = { state: 'unavailable', detail: describe(error) };
+            setGateMessage(`Could not read the Access policy: ${describe(error)}`);
+        } finally {
+            button.disabled = false;
+            renderAccess();
+        }
         return;
     }
     if (act === 'reconcile-access') {
