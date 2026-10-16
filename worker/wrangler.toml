@@ -35,3 +35,8 @@ ALLOWED_ORIGINS = "https://wesamamer.com"
 #                       npx wrangler secret put ALLOWED_EMAILS
 ACCESS_TEAM_DOMAIN = "fancy-feather-d3cc.cloudflareaccess.com"
 ACCESS_AUD = "c8641b6f466258759f0e3782e4a66b4ac27837bb56b2722621166ce150de397f"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wesam-personal-website-editors"
+database_id = "d07c7859-3432-4e37-867e-c05b88753dce"
