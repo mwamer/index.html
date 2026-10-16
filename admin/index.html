@@ -216,7 +216,11 @@ function setSession(status, message) {
 }
 
 function signIn() {
-    window.open(api.signedInUrl, '_blank', 'noopener');
+    try {
+        window.open(api.signedInUrl, '_blank', 'noopener');
+    } catch (e) {
+        window.location.href = api.signedInUrl;
+    }
     $('#pn-gate-status').textContent = 'Waiting for you to finish signing in, in the other tab…';
 }
 
