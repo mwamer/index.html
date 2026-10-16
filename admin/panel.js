@@ -573,17 +573,28 @@ export function renderNewsPage(page, edit = {}) {
     let html = `${page.head}${body}\n${page.tail}`;
 
     if (page.featured) {
-        const featuredIndex = edit.featuredIndex;
-        let values = null;
-        if (featuredIndex !== undefined && featuredIndex >= 0) {
-            const card = page.cards[featuredIndex];
-            values = (edit.values && edit.values[featuredIndex]) || card.values;
-        }
-        if (values) {
-            const candidate = renderFeatured(page.featured, values);
-            if (candidate !== page.featured.raw) {
-                const start = page.featured.span.start;
-                html = html.slice(0, start) + candidate + html.slice(start + page.featured.raw.length);
+        const removed = edit.removed || [];
+        // Which entry the panel is showing: the editor's own choice when they made
+        // one, otherwise the entry whose record the panel links to.
+        const shown = page.cards.findIndex(
+            (card) => card.recordSlug && card.recordSlug === page.featured.slug);
+        const chosen = edit.featuredIndex === undefined ? shown : edit.featuredIndex;
+        // Deleting the entry the panel shows would leave it published at the top of
+        // the page, so feature the newest entry that is left instead.
+        const deleted = chosen >= 0 && removed.includes(chosen);
+        // Left alone, the panel already matches the file, so an entry that was not
+        // deleted is never rewritten.
+        if (edit.featuredIndex !== undefined || deleted) {
+            const featuredIndex = deleted
+                ? page.cards.findIndex((card, index) => !removed.includes(index))
+                : chosen;
+            if (featuredIndex >= 0) {
+                const values = (edit.values && edit.values[featuredIndex]) || page.cards[featuredIndex].values;
+                const candidate = renderFeatured(page.featured, values);
+                if (candidate !== page.featured.raw) {
+                    const start = page.featured.span.start;
+                    html = html.slice(0, start) + candidate + html.slice(start + page.featured.raw.length);
+                }
             }
         }
     }

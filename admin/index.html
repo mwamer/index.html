@@ -166,7 +166,7 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=18';
+} from './panel.js?v=19';
 import { describe, gitHub } from './api-worker.js?v=16';
 
 var refreshEditors;
@@ -622,6 +622,20 @@ function renderEditor() {
                     : '<button class="pn-btn--danger" data-act="delete">Delete this entry</button>'}
         </div>`;
     showShortNameWarning();
+}
+
+/** Fill the editor pane when no entry is open, keeping the save control.
+
+    The Save and publish button lives only inside this pane, so a handler that
+    clears the pane after a change would take the button with it and leave the
+    change with no way to publish it. */
+function renderIdle(message) {
+    $('#pn-editor').innerHTML = `<p class="pn-help">${message}</p>`
+        + (state.dirty
+            ? `<div class="pn-save-bar">
+                <button class="pn-btn--primary" data-act="save">Save and publish</button>
+            </div>`
+            : '');
 }
 
 /** Say, while the person is typing, that report text needs a short name. The
@@ -1096,7 +1110,7 @@ document.addEventListener('click', async (event) => {
         state.draft = null;
         state.dirty = true;
         renderList();
-        $('#pn-editor').innerHTML = '<p class="pn-help">Choose an entry on the left, or add a new one.</p>';
+        renderIdle('Choose an entry on the left, or add a new one.');
         return;
     }
     if (act === 'delete') {
@@ -1108,7 +1122,7 @@ document.addEventListener('click', async (event) => {
         state.draft = null;
         state.dirty = true;
         renderList();
-        $('#pn-editor').innerHTML = '<p class="pn-help">That entry is marked for deletion. Press Save and publish to finish.</p>';
+        renderIdle('That entry is marked for deletion. Press Save and publish to finish.');
         return;
     }
     if (act === 'body-add') { if (draft.bodies.length < 2) { draft.bodies.push(''); touch('bodies'); remember(); renderEditor(); } return; }
