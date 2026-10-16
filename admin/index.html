@@ -166,8 +166,8 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=16';
-import { describe, gitHub } from './api-worker.js?v=14';
+} from './panel.js?v=17';
+import { describe, gitHub } from './api-worker.js?v=15';
 
 var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -1176,12 +1176,16 @@ document.addEventListener('click', async (event) => {
         const email = button.dataset.email;
         if (!email) return;
         button.disabled = true;
+        setGateMessage('Activating ' + email + '...');
         try {
-            await api.updateEditor(email, { status: 'active' });
+            const res = await api.updateEditor(email, { status: 'active' });
             await refreshEditors();
-            setGateMessage('Editor activated.');
+            setGateMessage('Editor activated: ' + (res && res.editor ? res.editor.email : email));
+            console.debug('[editors] activated', res);
         } catch (e) {
-            setGateMessage('Failed to activate: ' + (e && e.message ? e.message : String(e)));
+            console.error('[editors] activate failed', e);
+            const msg = e && (e.message || e.toString());
+            setGateMessage('Failed to activate: ' + msg + (e && e.code ? ' (' + e.code + ')' : ''));
         } finally {
             button.disabled = false;
         }
