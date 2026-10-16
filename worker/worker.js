@@ -30,6 +30,17 @@ class HttpError extends Error {
     }
 }
 
+// Registry errors (invalid input, duplicate editor, last-owner protection) are
+// all caller mistakes, so surface them as 400 rather than an opaque 500.
+async function registryCall(fn) {
+    try {
+        return await fn();
+    } catch (error) {
+        if (error instanceof HttpError) throw error;
+        throw new HttpError(error && error.message ? error.message : 'The request failed', 400);
+    }
+}
+
 // ── configuration ────────────────────────────────────────────────────────────
 
 const list = (value) => String(value || '').split(',').map((item) => item.trim()).filter(Boolean);
@@ -413,7 +424,7 @@ async function handle(request, env, headers) {
             login: (body.owner && body.owner.login) || owner,
             repo: `${owner}/${name}`,
             canWrite: Boolean(body.permissions && body.permissions.push),
-            editor: callerEditor || (await getEditor(env, email)) || null,
+            editor: callerEditor || (await getEditor(env, email)) || (allowedEmails.includes(email) ? await ensureOwnerSeed(env, { email, name: claims.name || claims.email || email }) : null) || null,
         }, 200, headers);
     }
     // Editor management endpoints
@@ -425,18 +436,18 @@ async function handle(request, env, headers) {
         }
         if (route === '/api/admin/editors' && method === 'POST') {
             const payload = await readJson(request);
-            const created = await addEditor(env, { email: payload.email, name: payload.name, role: payload.role || 'news-editor', status: payload.status || 'pending', actor: email });
+            const created = await registryCall(() => addEditor(env, { email: payload.email, name: payload.name, role: payload.role || 'news-editor', status: payload.status || 'pending', actor: email }));
             return jsonResponse({ editor: created }, 201, headers);
         }
         if (route.startsWith('/api/admin/editors/') && method === 'PATCH') {
-            const id = route.split('/').pop();
+            const id = decodeURIComponent(route.split('/').pop());
             const payload = await readJson(request);
-            const updated = await updateEditor(env, { email: id, name: payload.name, role: payload.role, status: payload.status, actor: email });
+            const updated = await registryCall(() => updateEditor(env, { email: id, name: payload.name, role: payload.role, status: payload.status, actor: email }));
             return jsonResponse({ editor: updated }, 200, headers);
         }
         if (route.startsWith('/api/admin/editors/') && method === 'DELETE') {
-            const id = route.split('/').pop();
-            await removeEditor(env, { email: id, actor: email });
+            const id = decodeURIComponent(route.split('/').pop());
+            await registryCall(() => removeEditor(env, { email: id, actor: email }));
             return jsonResponse({ success: true }, 200, headers);
         }
     }

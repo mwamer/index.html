@@ -166,8 +166,8 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=15';
-import { describe, gitHub } from './api-worker.js?v=13';
+} from './panel.js?v=16';
+import { describe, gitHub } from './api-worker.js?v=14';
 
 var refreshEditors;
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -353,7 +353,21 @@ function renderEditors() {
         list.innerHTML = '<p class="pn-help">No editors.</p>';
         return;
     }
-    list.innerHTML = state.editors.map(e => `<div class="pn-row"><span>${esc(e.name)} &lt;${esc(e.email)}&gt; — ${esc(e.role)}/${esc(e.status)}</span>${e.role==='owner' && e.status==='active' ? '' : `<button class="pn-btn--danger" data-act="remove-editor" data-email="${esc(e.email)}">Remove</button>`}</div>`).join('');
+    list.innerHTML = state.editors.map(e => {
+        const isSelf = e.role === 'owner' && e.status === 'active';
+        let actions = '';
+        if (!isSelf) {
+            if (e.status === 'pending') {
+                actions += `<button data-act="activate-editor" data-email="${esc(e.email)}">Activate</button> `;
+            } else if (e.status === 'active') {
+                actions += `<button data-act="suspend-editor" data-email="${esc(e.email)}">Suspend</button> `;
+            } else if (e.status === 'suspended') {
+                actions += `<button data-act="reactivate-editor" data-email="${esc(e.email)}">Reactivate</button> `;
+            }
+            actions += `<button class="pn-btn--danger" data-act="remove-editor" data-email="${esc(e.email)}">Remove</button>`;
+        }
+        return `<div class="pn-row"><span>${esc(e.name)} &lt;${esc(e.email)}&gt; — ${esc(e.role)}/${esc(e.status)}</span>${actions}</div>`;
+    }).join('');
 }
 
 async function load() {
@@ -1154,6 +1168,39 @@ document.addEventListener('click', async (event) => {
             setGateMessage('Editor removed');
         } catch (e) {
             setGateMessage('Failed to remove editor: ' + (e && e.message ? e.message : String(e)));
+        }
+        return;
+    }
+    if (act === 'activate-editor' || act === 'reactivate-editor') {
+        if (!state.canManageEditors) { setGateMessage('Owner access is required.'); return; }
+        const email = button.dataset.email;
+        if (!email) return;
+        button.disabled = true;
+        try {
+            await api.updateEditor(email, { status: 'active' });
+            await refreshEditors();
+            setGateMessage('Editor activated.');
+        } catch (e) {
+            setGateMessage('Failed to activate: ' + (e && e.message ? e.message : String(e)));
+        } finally {
+            button.disabled = false;
+        }
+        return;
+    }
+    if (act === 'suspend-editor') {
+        if (!state.canManageEditors) { setGateMessage('Owner access is required.'); return; }
+        const email = button.dataset.email;
+        if (!email) return;
+        if (!confirm('Suspend ' + email + '? They keep their record but cannot write.')) return;
+        button.disabled = true;
+        try {
+            await api.updateEditor(email, { status: 'suspended' });
+            await refreshEditors();
+            setGateMessage('Editor suspended.');
+        } catch (e) {
+            setGateMessage('Failed to suspend: ' + (e && e.message ? e.message : String(e)));
+        } finally {
+            button.disabled = false;
         }
         return;
     }
