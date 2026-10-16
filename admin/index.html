@@ -166,8 +166,8 @@ import {
     renderRecordPage, recordShell, buildRecordPage, retitleRecordShell,
     noteComments, slugify, recordPageSlug, needsShortName,
     PHOTO_EXTENSIONS, PHOTO_FORMATS, photoExtension, photoPathAllowed,
-} from './panel.js?v=8';
-import { describe, gitHub } from './api-worker.js?v=6';
+} from './panel.js?v=9';
+import { describe, gitHub } from './api-worker.js?v=7';
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 
@@ -329,6 +329,21 @@ async function loadTemplate() {
     throw new Error('No record page was found to use as a template.');
 }
 
+
+
+async function refreshEditors() {
+    try {
+        if (!state.canManageEditors) {
+            state.editors = [];
+            return;
+        }
+        const res = await api.listEditors();
+        state.editors = Array.isArray(res.editors) ? res.editors : (Array.isArray(res) ? res : []);
+    } catch (error) {
+        state.editors = [];
+        setGateMessage('Could not load editors: ' + (error && error.message ? error.message : String(error)));
+    }
+}
 
 function renderEditors() {
     const section = $('#pn-editors');
