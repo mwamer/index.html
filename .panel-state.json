@@ -1,12 +1,11 @@
 {
     "version": 1,
-    "updated": "2026-10-16T23:19:17.139Z",
+    "updated": "2026-10-16T23:19:37.372Z",
     "files": {
         "engagement-armistice-plan.html": "80c6dd915bb83788184452982a059fa9a71750fca40e22a54e0affaacbfe976b",
         "engagement-cambridge-real-centre-2026.html": "2c31979bf7bdc215bb8244e8602e37ffa4e4a4520667a686cc5a00d53e0a5ca5",
         "engagement-cardiff-university-2026.html": "3f723f2197064772ab0df4614f50663768b0049e020b57c80fa5c8877908e682",
         "engagement-cordoba-casa-arabe-2025.html": "503d014721b2008307c2b91c4d7d1ce7461c9d6dbcbaae33284638de8a1cced5",
-        "engagement-disorient-interview-2025.html": "71403deccbd1c3ae2d3b9754931850c5e124a743c83122ef6c37c7894d3c039b",
         "engagement-eldiario-es-2025.html": "be7d7c7eddea633fae609a9cc08f921f456439e7d13c8144505d557c5bc02100",
         "engagement-european-parliament-2026.html": "e0be264ab6fe853e25f411be1f23769769210f268c126bc5d1467ab7b02294bc",
         "engagement-fames-cambridge-2025.html": "9a2d0114b489235e246b81784115b4c6d620f18ee447f2f245775c1dca3c91a8",
@@ -27,7 +26,7 @@
         "engagement-paydesk.html": "2e76c0837ca3dcb8f6ebcce63687052bbda277109c157699a7a2a54ed277b101",
         "engagement-uxil-paris.html": "3fe6a35c039ca85f92e79bc491236c1fca73eb1c37a73ca718b711314657a698",
         "engagement-world-beyond-war-silenced.html": "d37d793ec7eac36e27a373bd89f200cb532cbb1ac32422e0cf8d25eb15b7c16a",
-        "news-engagement.html": "bd5df357285fbb490e809e104ce7f0b9401d8a0610f27b33f89742b052b41c24"
+        "news-engagement.html": "4cbe9c873e63ba7f10b79578a5a075d58b289b76c3e48fe0de09e4de182c8b71"
     },
     "deleted": [
         {
@@ -37,6 +36,10 @@
         {
             "path": "engagement-cambridge-seminar-2025.html",
             "at": "2026-10-16T23:19:17.139Z"
+        },
+        {
+            "path": "engagement-disorient-interview-2025.html",
+            "at": "2026-10-16T23:19:37.372Z"
         }
     ]
 }
