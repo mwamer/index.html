@@ -178,7 +178,7 @@ import {
     isRecordPagePath, recordPageTargetForCard, mergeState, serializeState,
     sha256Hex, imagesToRemove, saveChanges, undoPlan, undoRefusal, bytesToBase64,
 } from './panel.js?v=965b997e';
-import { describe, gitHub } from './api-worker.js?v=28afdf55';
+import { describe, gitHub } from './api-worker.js?v=5e064517';
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 
@@ -938,6 +938,104 @@ async function publish({ base, message, changes }) {
     return result;
 }
 
+/** How long to follow a commit to the public site, and how often to look.
+
+    A Pages build usually finishes inside a minute, so this window is generous.
+    Looking is cheap and giving up early reports a save as unpublished when it is
+    not, which is the more expensive mistake. The first look is quick, so a short
+    build is reported as soon as it is done; the interval then doubles to a
+    ceiling, so a long one does not become a stream of requests. */
+const PUBLICATION_WATCH_MS = 4 * 60 * 1000;
+const PUBLICATION_FIRST_MS = 1000;
+const PUBLICATION_MAX_MS = 7000;
+
+/** The deployment, said in terms of what it means for the person waiting. */
+const DEPLOYMENT_WORDS = {
+    started: 'Deployment started — GitHub has the commit and is building the site.',
+    completed: 'Deployment completed — the site serves what this commit holds.',
+    failed: 'Deployment failed — the GitHub Pages build reported an error.',
+    unknown: 'Deployment — the site could not be read, so this step cannot be measured.',
+};
+
+/** Why a page is not yet what the commit holds. */
+const FILE_WORDS = {
+    current: 'the public page shows the new version',
+    earlier: 'the public page still shows the earlier version',
+    gone: 'the page is gone from the public site, as intended',
+    retained: 'the public page is still there, but this save removed it',
+    unreachable: 'the public page did not answer',
+    unknown: 'the public page could not be read',
+};
+
+/** Follow a commit to the public website, and say only what was measured.
+
+    The commit is the first step, not the last. GitHub then builds the site, and
+    the result travels out through caches that may still hold the earlier page.
+    Each step is asked for separately, so "published" never means less than it
+    says — a save is not called done because GitHub accepted a write. */
+async function watchPublication(sha, line) {
+    const deadline = Date.now() + PUBLICATION_WATCH_MS;
+    let last = null;
+    let saidDeployment = '';
+    let purged = false;
+    let polls = 0;
+
+    for (;;) {
+        let report;
+        try {
+            report = await api.publication(sha);
+        } catch (error) {
+            if (error.code === 'signed-out') setSession('signed-out', 'Session ended');
+            line(`Could not follow the publication: ${describe(error)}`);
+            line('The commit is safe on GitHub. “Check the live site” tests the page again later.');
+            return null;
+        }
+        last = report;
+
+        if (report.deployment.state !== saidDeployment) {
+            saidDeployment = report.deployment.state;
+            line(DEPLOYMENT_WORDS[saidDeployment] || `Deployment — ${saidDeployment}.`);
+            // Only a failure or an unmeasurable step has anything to add.
+            if (report.deployment.detail && (saidDeployment === 'failed' || saidDeployment === 'unknown')) {
+                line(`  ${report.deployment.detail}`);
+            }
+        }
+
+        // Ask for a purge only once the origin holds the new bytes. A cache told
+        // to drop a URL before the build finishes will fetch the old page back in.
+        if (!purged && report.deployment.state === 'completed') {
+            purged = true;
+            try {
+                last = await api.publication(sha, { purge: true });
+            } catch {
+                last.cache = { state: 'failed', detail: 'the cache step could not be asked for' };
+            }
+            const cache = last.cache || { state: 'skipped', detail: 'no cache step ran' };
+            line(cache.state === 'purged'
+                ? `Cache invalidation completed — ${cache.detail}`
+                : `Cache invalidation — ${cache.state}: ${cache.detail}`);
+        }
+
+        if (last.verified) {
+            line('Public website verified — a reader is served the new page.');
+            return last;
+        }
+        if (Date.now() >= deadline) break;
+        const wait = Math.min(PUBLICATION_FIRST_MS * (2 ** polls), PUBLICATION_MAX_MS);
+        polls += 1;
+        await new Promise((resolve) => setTimeout(resolve, wait));
+    }
+
+    line('Not verified within a few minutes. The commit is safe on GitHub, and the site');
+    line('usually catches up shortly; “Check the live site” tests it again without saving.');
+    for (const file of last.files || []) {
+        if (!['current', 'gone'].includes(file.publicState)) {
+            line(`  ${file.path}: ${FILE_WORDS[file.publicState] || file.publicState}`);
+        }
+    }
+    return last;
+}
+
 /** Say that the site moved while this panel was open, and offer the two things
     worth doing about it.
 
@@ -1155,11 +1253,15 @@ async function save() {
     state.head = result.head || result.commit;
     state.dirty = false;
 
-    line('\nPublished, as one commit. The site updates within about a minute.');
+    line('\nSaved to GitHub, as one commit.');
     if (imagePlan.remove.length) line(`Removed ${imagePlan.remove.length} photograph(s) no page uses any more.`);
     if (!removedPages.length) line('Use “Undo the last save” if anything looks wrong.');
     state.template = '';
     await load();
+
+    // The commit is the first step, not the last. Follow it to the public site
+    // before this save is called finished.
+    await watchPublication(result.commit, line);
     return;
 }
 
@@ -1365,6 +1467,21 @@ async function checkLive() {
         say(same
             ? 'The live site matches this copy. Saving will change only what you edited.'
             : 'The live site is behind this copy. Saving would publish every entry in this copy, including ones not yet on the site. Push your local work first, or reload from the site.');
+
+        // The copy GitHub holds is not the page a reader gets. GitHub has to
+        // build it, and a cache may still be serving the earlier one, so ask
+        // what the website itself is serving before calling it caught up.
+        const head = await api.head();
+        if (!head || !head.sha) return;
+        const report = await api.publication(head.sha);
+        const behind = (report.files || []).filter((file) => !['current', 'gone'].includes(file.publicState));
+        const short = String(head.sha).slice(0, 7);
+        if (behind.length) {
+            say(`${behind.length === 1 ? 'One page' : `${behind.length} pages`} the website has not caught up with `
+                + `${short} yet: ${behind.map((file) => file.path).join(', ')}. It usually catches up shortly.`);
+        } else {
+            say(`The website is serving ${short}.`);
+        }
     } catch (error) {
         say(`Could not read the live site: ${describe(error)}`);
     }

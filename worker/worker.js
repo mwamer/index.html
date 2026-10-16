@@ -1,5 +1,6 @@
 import { listEditors, getEditor, addEditor, updateEditor, removeEditor, ensureOwnerSeed, audit, desiredAccessEmails, lastAccessSync } from "./registry.js";
-import { accessApiConfigured, reconcileAfterChange } from "./access.js";
+import { accessApiConfigured, reconcileAfterChange, accessDiagnosis } from "./access.js";
+import { publicationReport } from "./publication.js";
 /* The News & Engagement panel's API.
 
    The panel runs in a browser, so it must never hold a GitHub token. Every read
@@ -579,6 +580,14 @@ async function handle(request, env, headers) {
     if (route === '/api/admin/access') {
         requireOwner(caller);
         if (method === 'GET') {
+            // `?diagnose=1` reads the live policy and reports the comparison.
+            // The plain form stays as it was, so the panel's existing view keeps
+            // working without a second round trip.
+            if (url.searchParams.get('diagnose')) {
+                // An unavailable diagnosis is still an answer: it says the read
+                // failed, or was never configured. Not a 5xx.
+                return jsonResponse(await accessDiagnosis(env), 200, headers);
+            }
             const [desired, last] = await registryCall(() => Promise.all([desiredAccessEmails(env), lastAccessSync(env)]));
             return jsonResponse({ desired, last, configured: accessApiConfigured(env) }, 200, headers);
         }
@@ -739,6 +748,15 @@ async function handle(request, env, headers) {
         return jsonResponse(result, 200, headers);
     }
 
+    // Whether the commit the panel just made has actually reached the website.
+    // Read-only, so any signed-in editor may ask; purging asks a cache to drop
+    // URLs, so that needs the right to publish at all.
+    if (route === '/api/publication' && method === 'POST') {
+        const payload = await readJson(request);
+        if (payload.purge) requireActive(caller);
+        const report = await publicationReport(env, gh, { sha: payload.sha, purge: Boolean(payload.purge) });
+        return jsonResponse(report, 200, headers);
+    }
 
     // Cloudflare asks the origin about these two prefixes itself, so they are
     // answered without a body. Everything else that is not a route above is a

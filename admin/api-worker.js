@@ -129,6 +129,12 @@ export function gitHub(options = {}) {
         async head() {
             return call('/api/head');
         },
+        /** Whether the commit just made has reached the public website.
+            Read-only; `purge` additionally asks a cache to drop the changed URLs,
+            which needs the right to publish. */
+        async publication(sha, { purge = false } = {}) {
+            return call('/api/publication', { method: 'POST', body: JSON.stringify({ sha, purge }) });
+        },
         async history(path, count = 3) {
             const body = await call(`/api/history?path=${encodeURIComponent(path)}&count=${count}`);
             return body.history || [];
@@ -152,6 +158,11 @@ export function gitHub(options = {}) {
         /** What Cloudflare Access is being told, and when it was last told. */
         async accessState() {
             return call('/api/admin/access');
+        },
+        /** Read the live Access policy and compare it with the registry. An owner
+            question: the credential that can read it lives in the Worker. */
+        async accessDiagnosis() {
+            return call('/api/admin/access?diagnose=1');
         },
         /** Ask for the Access policy to be brought back into step now. */
         async reconcileAccess() {

@@ -60,11 +60,30 @@ Cloudflare Access sits in front of the whole hostname, so every route is reached
 | `/api/head` | any editor | the revision a save must name as its base |
 | `/api/read`, `/api/read-at`, `/api/history` | any editor | read a permitted file, at the branch or at a revision |
 | `/api/commit` | active editor | one save as one commit |
+| `/api/publication` | any editor (purge: active editor) | whether a commit has reached the public website |
 | `/api/write`, `/api/remove` | active editor | a single file; both require the revision being changed |
 | `/api/admin/editors` | owner | list, add, update, remove |
 | `/api/admin/access` | owner | what Access is being told, and a way to reconcile now |
+| `/api/admin/access?diagnose=1` | owner | read the live policy and compare it with the registry; never writes |
 
 `/api/write` and `/api/remove` no longer look the current sha up for you. Doing so wrote over whatever the file held at that moment, which is exactly the overwrite a second editor must never suffer.
+
+## Saying whether a save has reached the website
+
+A commit is not a published page. GitHub then builds the site, and the result travels out through caches that may still hold the earlier page. `/api/publication` measures each step instead of assuming it, and the panel shows them one at a time:
+
+- **The origin has the new bytes.** Asked with a query nothing could have cached, so the answer cannot come from a cache. This is the "deployment completed" step.
+- **A reader has the new bytes.** Asked without that, so the answer includes whatever caches stand in front — which is what a visitor actually gets.
+- **A deletion is confirmed by a `404`,** and by the deleted entry no longer being named on the news page. The page's own digest is compared with the committed file, byte for byte, which is sound because GitHub Pages serves these files verbatim.
+- **A step that cannot be measured is reported as `unknown`,** with the reason. Nothing is reported as published merely because GitHub accepted a write.
+
+`.panel-state.json` travels in the same commit but is not checked: GitHub Pages does not publish dotfiles, so it is not part of the public site.
+
+### Caches
+
+wesamamer.com resolves to GitHub Pages directly, so **no CDN stands in front of it** and there is nothing for a purge to act on. GitHub serves the site's HTML with `Cache-Control: max-age=600`, which means a browser can hold the earlier page for ten minutes after the new one is live. That is the delay a person actually experiences after a deletion.
+
+`/api/publication` purges by URL — never a whole zone — when `CF_ZONE_ID` and `CF_CACHE_TOKEN` are set on the Worker. With neither set the step reports `not-configured`, and the panel says so rather than claiming it ran. To make invalidation do anything, the site must first be proxied through Cloudflare; the panel reports what it finds either way.
 
 ## Keeping Cloudflare Access in step
 
@@ -117,12 +136,13 @@ The editor registry is a further reason to migrate first. `access_sync` arrives 
 
 ## Tests
 
-Two Node harnesses, both offline — they replace `fetch` with a fake GitHub, a fake Cloudflare API, and a fake Access key set. Nothing touches Cloudflare, GitHub, or the live site.
+Three Node harnesses, all offline — they replace `fetch` with a fake GitHub, a fake Cloudflare API, and a fake Access key set. Nothing touches Cloudflare, GitHub, or the live site.
 
 | Harness | Checks | Proves |
 | --- | --- | --- |
 | `worker.test.mjs` | 61 | token verification, CORS, path policy, the fail-closed registry, the one-commit save and its compare-and-swap, editor rules, what Access is being told, deletion auditing |
-| `access.test.mjs` | 15 | reconciliation: skipped, dry run, add, remove, the empty-list refusal, a pinned policy, and that a failure is reported rather than thrown |
+| `access.test.mjs` | 21 | reconciliation: skipped, dry run, add, remove, the empty-list refusal, a pinned policy, and that a failure is reported rather than thrown; and the owner-only diagnosis, which reads the live policy, names the addresses that need attention, reports a missing owner, and returns no token or account identifier |
+| `publication.test.mjs` | 16 | the step from a commit to a reader: a deployment that has started, one that has completed, a cache still holding the earlier page, a deletion confirmed by its absence, an unreadable site reported as unknown, and a purge that names only the URLs the save changed |
 
 ```bash
 node --test worker/          # this directory

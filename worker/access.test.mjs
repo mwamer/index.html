@@ -14,7 +14,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { accessApiConfigured, accessDiff, reconcileAccess, reconcileAfterChange } from './access.js';
+import { accessApiConfigured, accessDiff, accessDiagnosis, reconcileAccess, reconcileAfterChange } from './access.js';
 
 const ACCOUNT = 'acct-1';
 const APP_ID = 'app-1';
@@ -61,12 +61,20 @@ function stubCloudflare({ policy = null, fail = false, failStatus = 500 } = {}) 
 
 /** A D1 stand-in that only answers what the registry needs here. Statements
     arrive either bound or bare, so both shapes are offered. */
-function stubDB(activeEmails = []) {
+function stubDB(activeEmails = [], editors = null) {
     const syncs = [];
     const handle = (sql, args) => ({
         all: async () => {
             if (/SELECT email FROM editors WHERE status = 'active'/.test(sql)) {
                 return { results: activeEmails.map((email) => ({ email })) };
+            }
+            // The full editor records, which the Access diagnosis reads to say
+            // whether each editor is in the live policy.
+            if (/FROM editors ORDER BY email ASC/.test(sql)) {
+                const rows = editors || activeEmails.map((email) => ({
+                    email, name: '', role: 'news-editor', status: 'active',
+                }));
+                return { results: rows };
             }
             throw new Error(`stubDB does not know: ${sql}`);
         },
@@ -264,5 +272,132 @@ test('a reconciliation that fails does not stop the change that triggered it', a
         const result = await reconcileAfterChange(env({ db }), { actor: 'owner@example.com' });
         assert.equal(result.state, 'failed');
         assert.equal(db._syncs.at(-1).state, 'failed');
+    });
+});
+
+// ── the diagnosis: reading the live policy, and changing nothing ─────────────
+
+test('an unconfigured Worker says the live policy cannot be read, and points at the dashboard', async () => {
+    // The credential that can read the policy lives in the Worker, so this
+    // question has no answer anywhere else. Saying so beats an empty answer.
+    const result = await accessDiagnosis({ DB: stubDB() });
+    assert.equal(result.state, 'unavailable');
+    assert.equal(result.configured, false);
+    assert.match(result.detail, /dashboard/);
+});
+
+test('a policy that agrees with the registry is reported as in step, and is not written to', async () => {
+    const owner = 'wesaam.amer@gmail.com';
+    const editor = 'family.amer6@gmail.com';
+    const db = stubDB([owner, editor], [
+        { email: owner, name: 'Owner', role: 'owner', status: 'active' },
+        { email: editor, name: 'Editor', role: 'news-editor', status: 'active' },
+    ]);
+    await withCloudflare({
+        policy: {
+            id: POLICY_ID,
+            name: 'Editors',
+            decision: 'allow',
+            include: [{ email: { email: owner } }, { email: { email: editor } }],
+            exclude: [],
+            require: [],
+        },
+    }, async (cloudflare) => {
+        const result = await accessDiagnosis(env({ db }));
+        assert.equal(result.state, 'ok');
+        assert.equal(result.inStep, true);
+        assert.deepEqual(result.missing, []);
+        assert.deepEqual(result.extra, []);
+        assert.equal(result.owner.email, owner);
+        assert.equal(result.owner.present, true, 'the owner must be in the live policy');
+        const listed = Object.fromEntries(result.editors.map((e) => [e.email, e.inPolicy]));
+        assert.equal(listed[owner], true);
+        assert.equal(listed[editor], true);
+        assert.equal(cloudflare.calls.some((call) => call.method === 'PUT'), false,
+            'a diagnosis reads; it must never write the policy');
+    });
+});
+
+test('an editor the live policy is missing is named, and a stale one is too', async () => {
+    const owner = 'wesaam.amer@gmail.com';
+    const missing = 'new-editor@example.com';
+    const stale = 'removed-editor@example.com';
+    const db = stubDB([owner, missing], [
+        { email: owner, name: 'Owner', role: 'owner', status: 'active' },
+        { email: missing, name: 'New', role: 'news-editor', status: 'active' },
+    ]);
+    await withCloudflare({
+        policy: {
+            id: POLICY_ID,
+            name: 'Editors',
+            decision: 'allow',
+            include: [{ email: { email: owner } }, { email: { email: stale } }],
+            exclude: [],
+            require: [],
+        },
+    }, async () => {
+        const result = await accessDiagnosis(env({ db }));
+        assert.equal(result.state, 'ok');
+        assert.equal(result.inStep, false);
+        assert.deepEqual(result.missing, [missing], 'the editor Access has not been told about');
+        assert.deepEqual(result.extra, [stale], 'the address Access still lets in');
+        const listed = Object.fromEntries(result.editors.map((e) => [e.email, e.inPolicy]));
+        assert.equal(listed[missing], false);
+        assert.equal(listed[owner], true);
+    });
+});
+
+test('the diagnosis returns no token and no account identifier', async () => {
+    // It is an owner-only route, but the answer should still be limited to what
+    // the owner needs to act on. A credential in a response body is a leak with
+    // somewhere to travel to.
+    const db = stubDB(['a@example.com'], [
+        { email: 'a@example.com', name: 'A', role: 'owner', status: 'active' },
+    ]);
+    await withCloudflare({}, async () => {
+        const result = await accessDiagnosis(env({ db }));
+        const serialised = JSON.stringify(result);
+        assert.doesNotMatch(serialised, /cf-token/, 'the API token must not appear');
+        assert.doesNotMatch(serialised, new RegExp(ACCOUNT), 'the account identifier must not appear');
+        assert.doesNotMatch(serialised, new RegExp(AUD), 'the audience tag must not appear');
+        assert.doesNotMatch(serialised, new RegExp(POLICY_ID), 'the policy identifier must not appear');
+    });
+});
+
+test('an owner the live policy does not include is reported as absent', async () => {
+    // The alarming case: the person who can fix Access is not in the policy.
+    // Reporting the owner as present when they are missing would hide the one
+    // failure that locks everyone out.
+    const owner = 'wesaam.amer@gmail.com';
+    const db = stubDB([owner], [
+        { email: owner, name: 'Owner', role: 'owner', status: 'active' },
+    ]);
+    await withCloudflare({
+        policy: {
+            id: POLICY_ID,
+            name: 'Editors',
+            decision: 'allow',
+            include: [{ email: { email: 'someone-else@example.com' } }],
+            exclude: [],
+            require: [],
+        },
+    }, async () => {
+        const result = await accessDiagnosis(env({ db }));
+        assert.equal(result.state, 'ok');
+        assert.equal(result.owner.present, false, 'the owner is missing from the live policy');
+        assert.equal(result.inStep, false);
+        assert.ok(result.missing.includes(owner), 'the missing owner is one of the addresses to add');
+    });
+});
+
+test('a Cloudflare failure during a diagnosis is reported, not thrown', async () => {
+    const db = stubDB(['a@example.com'], [
+        { email: 'a@example.com', name: 'A', role: 'owner', status: 'active' },
+    ]);
+    await withCloudflare({ fail: true }, async () => {
+        const result = await accessDiagnosis(env({ db }));
+        assert.equal(result.state, 'unavailable');
+        assert.equal(result.configured, true, 'it is configured; the read failed');
+        assert.match(result.detail, /Access API said no/);
     });
 });

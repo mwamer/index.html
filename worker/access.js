@@ -23,7 +23,7 @@
      The registry is committed first, so a reconciliation that fails leaves the
      truth intact and the copy stale — which is the safe direction to drift. */
 
-import { desiredAccessEmails as desiredFromRegistry, recordAccessSync } from './registry.js';
+import { desiredAccessEmails as desiredFromRegistry, recordAccessSync, listEditors } from './registry.js';
 
 const CF_API = 'https://api.cloudflare.com/client/v4';
 
@@ -106,6 +106,58 @@ export async function accessDiff(env) {
         add: desired.filter((email) => !current.includes(email)),
         remove: current.filter((email) => !desired.includes(email)),
     };
+}
+
+/** Read the live Access policy and say, in the owner's terms, whether it agrees
+    with the registry.
+
+    The credential that can read the policy lives in this Worker and nowhere
+    else, so this question has no answer outside it. The answer is deliberately
+    narrow: the policy's name, whether each editor is in it, and the two lists
+    that would need attention. No token, no account identifier and no policy
+    body leaves here — only the comparison the owner needs to act on.
+
+    It reads and never writes, so asking is always safe. */
+export async function accessDiagnosis(env) {
+    if (!accessApiConfigured(env)) {
+        return {
+            state: 'unavailable',
+            configured: false,
+            detail: 'Cloudflare API access is not configured on this Worker, so the live policy cannot be read. '
+                + 'Until it is, the policy is only checkable from the Cloudflare dashboard.',
+        };
+    }
+    try {
+        const [diff, editors] = await Promise.all([accessDiff(env), listEditors(env)]);
+        const owner = editors.find((editor) => editor.role === 'owner');
+        const ownerEmail = owner ? String(owner.email).toLowerCase() : '';
+        return {
+            state: 'ok',
+            configured: true,
+            policyName: diff.policyName,
+            inStep: !diff.add.length && !diff.remove.length,
+            owner: {
+                email: ownerEmail,
+                present: Boolean(ownerEmail) && diff.current.includes(ownerEmail),
+                detail: ownerEmail ? '' : 'The registry holds no owner account.',
+            },
+            // The two lists that need a decision. Everything else already agrees.
+            missing: diff.add,
+            extra: diff.remove,
+            editors: editors.map((editor) => ({
+                email: String(editor.email),
+                role: String(editor.role || ''),
+                status: String(editor.status || ''),
+                inPolicy: diff.current.includes(String(editor.email).toLowerCase()),
+            })),
+        };
+    } catch (error) {
+        return {
+            state: 'unavailable',
+            configured: true,
+            detail: (error && error.message) || String(error),
+        };
+    }
 }
 
 /** Refuse to write an empty policy. An empty include list would deny everyone,

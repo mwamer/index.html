@@ -136,10 +136,11 @@ async function settle(turns = 80) {
 /** Load `admin/index.html`'s own module against a stubbed browser, and hand back
     what the test needs to look at it: the fake document, and every API call the
     page made. */
-async function loadPage({ verifyStatus = 'active', commit = null } = {}) {
+async function loadPage({ verifyStatus = 'active', role = 'owner', editors = [], commit = null, publication = null, publicationFails = false } = {}) {
     const calls = [];
     const document = fakeDocument();
     const clipboard = [];
+    let publicationServed = 0;
     const dir = mkdtempSync(join(tmpdir(), 'page-glue-'));
 
     const json = (body, status = 200) => ({
@@ -164,20 +165,38 @@ async function loadPage({ verifyStatus = 'active', commit = null } = {}) {
         if (path === '/api/verify') {
             return json({
                 email: 'wesam.amer@gmail.com',
-                canWrite: true,
-                editor: { email: 'wesam.amer@gmail.com', role: 'owner', status: verifyStatus },
+                canWrite: role === 'owner',
+                editor: { email: 'wesam.amer@gmail.com', role, status: verifyStatus },
                 head: 'head-1',
             });
         }
-        if (path === '/api/admin/editors') return json({ editors: [] });
+        if (path === '/api/admin/editors') return json({ editors });
+        // Reading, changing and removing one editor share a prefix, so they are
+        // answered together; the tests assert on what was sent, not on the reply.
+        if (path.startsWith('/api/admin/editors/')) return json({ editor: {}, success: true });
+        if (path === '/api/admin/access') return json({ desired: [], last: null, configured: false });
         if (path === '/api/admin/access') return json({ desired: [], last: null, configured: false });
         if (path === '/api/read' || path === '/api/read-at') {
             return json({ sha: 'sha-1', text: siteFile(new URL(url).searchParams.get('path') || ''), size: 1 });
         }
         if (path === '/api/history') return json({ history: [] });
+        if (path === '/api/head') return json({ sha: 'head-1' });
         if (path === '/api/commit') {
             if (commit) return commit(json, calls);
             return json({ commit: 'commit-2', head: 'head-2', files: [], deleted: [] });
+        }
+        if (path === '/api/publication') {
+            if (publicationFails) return json({ error: 'the site could not be reached' }, 503);
+            // A report says what the site is serving now. Without one, the site is
+            // taken to be serving the commit straight away, which keeps the tests
+            // that are not about publication from waiting on it.
+            const supplied = typeof publication === 'function' ? publication(body, calls) : publication;
+            if (Array.isArray(supplied)) {
+                const next = supplied[Math.min(publicationServed, supplied.length - 1)];
+                publicationServed += 1;
+                return json(typeof next === 'function' ? next(body, calls) : next);
+            }
+            return json(supplied || verifiedReport());
         }
         if (path.startsWith('/api/')) return json({ error: 'no such route' }, 404);
         return json(null) && { ok: true, status: 200, type: 'basic', text: async () => siteFile(url), json: async () => null };
@@ -306,6 +325,43 @@ const fakePhoto = (name, bytes = [1, 2, 3]) => ({
 
 const apiCalls = (calls) => calls.filter((call) => call.path.startsWith('/api/'));
 
+/** Everything the page has written to its log, which is where a save narrates
+    itself: what it sent, and what became of it. */
+const logOf = (document) => document.element('#pn-log').textContent;
+
+/** A publication report for a save that has already reached the site, which is
+    what a test that is not about publication should be handed. */
+const verifiedReport = (over = {}) => ({
+    sha: 'commit-2',
+    checkedAt: new Date(0).toISOString(),
+    deployment: { state: 'completed', detail: 'The site serves what this commit holds.', build: null },
+    files: [{
+        path: 'news-engagement.html',
+        url: 'https://wesamamer.com/news-engagement.html',
+        kind: 'written',
+        originState: 'current',
+        publicState: 'current',
+        cacheControl: 'max-age=600',
+        age: '0',
+    }],
+    cache: { state: 'not-configured', detail: 'No Cloudflare zone is configured for this Worker.', urls: [] },
+    behindCloudflare: false,
+    verified: true,
+    ...over,
+});
+
+/** A report for a commit GitHub has, and the site has not served yet. */
+function startedReport(over = {}) {
+    const report = verifiedReport();
+    return {
+        ...report,
+        deployment: { state: 'started', detail: 'GitHub has the commit; the site is not serving it yet.', build: null },
+        files: [{ ...report.files[0], originState: 'earlier', publicState: 'earlier' }],
+        verified: false,
+        ...over,
+    };
+}
+
 test('the page loads, signs in, and reads the entries without an error', async (t) => {
     // The whole point of this one: import the page's module and let it run. A
     // reference to something that does not exist, or a step that throws on the way
@@ -352,6 +408,234 @@ test('publishing a save goes through exactly one commit', async (t) => {
         'the news page should be in the commit');
     assert.match(statusOf(document), /published|saved|one commit/i,
         `the page should say the save went through, not "${statusOf(document)}"`);
+});
+
+test('checking the live site asks what the website serves, not just what GitHub holds', async (t) => {
+    // The copy GitHub holds is not the page a reader gets: GitHub has to build
+    // it, and a cache can hold the earlier page afterwards. A button that only
+    // compared against GitHub would report the site caught up when it is not.
+    const stale = verifiedReport({
+        deployment: { state: 'started', detail: 'GitHub has the commit; the site is not serving it yet.', build: null },
+        files: [{
+            path: 'news-engagement.html',
+            url: 'https://wesamamer.com/news-engagement.html',
+            kind: 'written',
+            originState: 'earlier',
+            publicState: 'earlier',
+        }],
+        verified: false,
+    });
+    const { document, calls, restore } = await loadPage({ publication: stale });
+    t.after(restore);
+
+    await press(document, { act: 'check' });
+    await settle();
+
+    assert.ok(apiCalls(calls).some((call) => call.path === '/api/publication'),
+        'the button must ask the Worker what the website serves');
+    assert.match(statusOf(document), /not caught up|serving head-1/i,
+        `the answer should describe the website, not just GitHub:\n${statusOf(document)}`);
+});
+
+test('a save is not called published until the site is serving it', async (t) => {
+    // The commit is the first step, not the last. The panel has to follow the
+    // save to the public site and say what it found, so that "published" never
+    // means merely that GitHub accepted a write.
+    const { document, calls, restore } = await loadPage({ publication: [startedReport(), verifiedReport()] });
+    t.after(restore);
+
+    await press(document, { act: 'add' });
+    await settle();
+    await press(document, { act: 'save' });
+
+    const log = logOf(document);
+    for (const step of ['Saved to GitHub', 'Deployment started', 'Deployment completed', 'Cache invalidation', 'Public website verified']) {
+        assert.match(log, new RegExp(step), `the log should report "${step}", but it read:\n${log}`);
+    }
+    assert.ok(log.indexOf('Deployment started') < log.indexOf('Deployment completed'),
+        'the steps should be reported in the order they happened');
+    assert.ok(log.indexOf('Deployment completed') < log.indexOf('Public website verified'),
+        'the site cannot be verified before the deployment completed');
+
+    // A purge is asked for once, and only once the origin holds the new bytes:
+    // a cache told to drop a URL before the build finishes fetches the old page
+    // back into itself.
+    const purges = apiCalls(calls).filter((call) => call.path === '/api/publication' && call.body && call.body.purge);
+    assert.equal(purges.length, 1, `a save should ask for one purge, but asked ${purges.length} times`);
+    assert.equal(purges[0].body.sha, 'commit-2', 'the purge should name the commit it follows');
+});
+
+test('a save whose publication cannot be followed does not claim the site was verified', async (t) => {
+    const { document, restore } = await loadPage({ publicationFails: true });
+    t.after(restore);
+
+    await press(document, { act: 'add' });
+    await settle();
+    await press(document, { act: 'save' });
+
+    const log = logOf(document);
+    assert.match(log, /Saved to GitHub/, 'the commit still happened, and is still reported');
+    assert.match(log, /Could not follow the publication|Not verified/, `the log should say the follow-up failed:\n${log}`);
+    assert.doesNotMatch(log, /Public website verified/,
+        'the panel must not say the site was verified when it could not be checked');
+});
+
+test('an editor waiting for approval can read the panel but cannot publish', async (t) => {
+    // The registry decides, and the panel obeys. A pending account must be told
+    // which state it is in, and must not reach the commit at all.
+    const { document, calls, restore } = await loadPage({ verifyStatus: 'pending' });
+    t.after(restore);
+
+    await press(document, { act: 'save' });
+    await settle();
+
+    assert.match(logOf(document), /waiting to be approved/, `the panel should explain the state:\n${logOf(document)}`);
+    assert.deepEqual(apiCalls(calls).filter((call) => call.path === '/api/commit'), [],
+        'a pending account must publish nothing');
+});
+
+test('a suspended editor is refused differently from one waiting to be approved', async (t) => {
+    const { document, calls, restore } = await loadPage({ verifyStatus: 'suspended' });
+    t.after(restore);
+
+    await press(document, { act: 'save' });
+    await settle();
+
+    assert.match(logOf(document), /suspended/, `the panel should name the state:\n${logOf(document)}`);
+    assert.doesNotMatch(logOf(document), /waiting to be approved/,
+        'a suspension is a decision already taken, not an approval that is pending');
+    assert.deepEqual(apiCalls(calls).filter((call) => call.path === '/api/commit'), [],
+        'a suspended account must publish nothing');
+});
+
+test('the owner sees each editor, and only the actions its state allows', async (t) => {
+    // The buttons are the policy made visible: a pending account can be let in,
+    // an active one paused, a suspended one restored — and the owner record
+    // offers nothing, because the Worker protects it as well as this page does.
+    const owner = 'owner@example.com';
+    const waiting = 'waiting@example.com';
+    const working = 'working@example.com';
+    const paused = 'paused@example.com';
+    const editors = [
+        { email: owner, name: 'Owner', role: 'owner', status: 'active' },
+        { email: waiting, name: 'Waiting', role: 'news-editor', status: 'pending' },
+        { email: working, name: 'Working', role: 'news-editor', status: 'active' },
+        { email: paused, name: 'Paused', role: 'news-editor', status: 'suspended' },
+    ];
+    const { document, calls, restore } = await loadPage({ editors });
+    t.after(restore);
+
+    await press(document, { act: 'refresh-editors' });
+    await settle();
+
+    assert.ok(apiCalls(calls).some((call) => call.path === '/api/admin/editors'),
+        'the owner’s panel reads the editor list');
+    const html = document.element('#pn-editors-list').innerHTML;
+    for (const editor of editors) assert.match(html, new RegExp(editor.email), `${editor.email} should be listed`);
+
+    const offers = (act, email) => html.includes(`data-act="${act}" data-email="${email}"`);
+    assert.equal(offers('activate-editor', waiting), true, 'a pending account can be let in');
+    assert.equal(offers('suspend-editor', waiting), false, 'a pending account has nothing to suspend yet');
+    assert.equal(offers('suspend-editor', working), true, 'an active account can be paused');
+    assert.equal(offers('reactivate-editor', paused), true, 'a suspended account can be restored');
+    assert.equal(offers('remove-editor', waiting), true, 'anyone but the owner can be removed');
+    for (const act of ['activate-editor', 'suspend-editor', 'reactivate-editor', 'remove-editor']) {
+        assert.equal(offers(act, owner), false, `the owner record must not offer ${act}`);
+    }
+});
+
+test('an editor who is not the owner is not offered editor management', async (t) => {
+    const { document, calls, restore } = await loadPage({
+        role: 'news-editor',
+        editors: [{ email: 'owner@example.com', role: 'owner', status: 'active' }],
+    });
+    t.after(restore);
+
+    // Ask for the list, then fill in the form and submit it. Neither may reach
+    // the registry: the page and the Worker must agree about who may change
+    // editors, and the page must not rely on the Worker to refuse.
+    await press(document, { act: 'refresh-editors' });
+    await settle();
+    document.element('#pn-editor-name').value = 'Nour';
+    document.element('#pn-editor-email').value = 'nour@example.com';
+    await press(document, { act: 'add-editor' });
+    await settle();
+
+    assert.deepEqual(
+        apiCalls(calls).filter((call) => call.path === '/api/admin/editors'),
+        [],
+        'a non-owner must neither read nor change the editor registry',
+    );
+});
+
+test('adding an editor sends the name and email the owner typed, and starts them pending', async (t) => {
+    const { document, calls, restore } = await loadPage({ editors: [] });
+    t.after(restore);
+
+    document.element('#pn-editor-name').value = '  Nour  ';
+    document.element('#pn-editor-email').value = '  Nour@Example.com  ';
+    await press(document, { act: 'add-editor' });
+    await settle();
+
+    const posted = apiCalls(calls).find((call) => call.path === '/api/admin/editors' && call.body);
+    assert.ok(posted, 'adding an editor should reach the registry');
+    assert.deepEqual(posted.body, {
+        name: 'Nour',
+        email: 'nour@example.com',
+        role: 'news-editor',
+        status: 'pending',
+    }, 'the name and email are trimmed, the email is lowercased, and a new editor waits for approval');
+});
+
+test('activating an editor sends the change for that editor only', async (t) => {
+    const waiting = 'waiting@example.com';
+    const { document, calls, restore } = await loadPage({
+        editors: [{ email: waiting, name: 'Waiting', role: 'news-editor', status: 'pending' }],
+    });
+    t.after(restore);
+
+    await press(document, { act: 'refresh-editors' });
+    await settle();
+    await press(document, { act: 'activate-editor', email: waiting });
+    await settle();
+
+    const patched = apiCalls(calls).find((call) => call.path === `/api/admin/editors/${encodeURIComponent(waiting)}` && call.body);
+    assert.ok(patched, 'activating should reach the registry');
+    assert.deepEqual(patched.body, { status: 'active' }, 'only the status changes, and only for the editor named');
+});
+
+test('deleting an entry removes its card and its page in the same commit', async (t) => {
+    const { document, calls, restore } = await loadPage();
+    t.after(restore);
+
+    await press(document, { select: '0' });
+    await settle();
+    await press(document, { act: 'delete' });
+    await settle();
+    await press(document, { act: 'save' });
+    await settle();
+
+    const commit = apiCalls(calls).find((call) => call.path === '/api/commit');
+    assert.ok(commit, 'a deletion is published as a commit');
+    const changes = commit.body.changes;
+    const paths = changes.map((change) => change.path);
+
+    const news = changes.find((change) => change.path === 'news-engagement.html');
+    assert.ok(news, 'the card is removed from the news page');
+    assert.doesNotMatch(news.text, /href="engagement-neu-international-conference\.html"/,
+        'the deleted entry must no longer be named anywhere on the news page');
+
+    // The entry's own page goes, and so do the photographs only it used — all in
+    // the same commit, so a photograph never leaves before the page naming it.
+    const deletions = changes.filter((change) => 'delete' in change).map((change) => change.path);
+    assert.deepEqual(deletions.filter((path) => !path.startsWith('images/')),
+        ['engagement-neu-international-conference.html'],
+        `the entry's own page should be deleted; deletions were ${JSON.stringify(deletions)}`);
+
+    assert.ok(paths.includes('.panel-state.json'), 'the deletion is recorded where the guard reads it');
+    const marker = changes.find((change) => change.path === '.panel-state.json');
+    assert.match(marker.text, /engagement-neu-international-conference\.html/,
+        'the state file records which page was deleted');
 });
 
 test('a save the API refuses keeps the draft and offers a way out', async (t) => {
