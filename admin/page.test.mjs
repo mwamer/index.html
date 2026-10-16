@@ -695,6 +695,38 @@ test('a photograph travels inside the same commit as the page that shows it', as
     assert.ok(changes.some((change) => change.path === 'news-engagement.html'), 'and the page that shows it');
 });
 
+test('replacing a photograph dates the name it already had, and adds no second date', async (t) => {
+    // An upload is dated so a replacement never lands on the file the site is
+    // already serving. That date has to replace the one already on the name.
+    // `london-01` collected three of them across three saves before the name was
+    // stripped back, and a name only grows until it no longer fits the length the
+    // API allows — at which point the save is refused outright.
+    const { document, calls, restore } = await loadPage();
+    t.after(restore);
+
+    // The entry the site shows first carries the photograph that grew: opening it
+    // is how the page comes to know the name the replacement replaces.
+    await press(document, { select: '0' });
+    await settle();
+    await choose(document, 0, fakePhoto('london-01.jpeg', [9, 9, 9]));
+    await settle();
+
+    await press(document, { act: 'save' });
+    await settle();
+
+    const commits = apiCalls(calls).filter((call) => call.path === '/api/commit');
+    assert.equal(commits.length, 1, 'the replacement and the page are one commit');
+
+    const image = commits[0].body.changes.find((change) => change.path.startsWith('images/'));
+    assert.ok(image, 'the replacement photograph should be in the commit');
+
+    const withoutTodays = image.path.replace(/^images\//, '').replace(/\.[a-z0-9]+$/i, '').replace(/-\d{8}$/, '');
+    assert.doesNotMatch(withoutTodays, /-\d{8}/,
+        `the name should carry one date, but a save has added another: ${image.path}`);
+    assert.match(image.path, /^images\/london-01-\d{8}\.jpeg$/,
+        `the name should be the one the entry already used, dated: ${image.path}`);
+});
+
 test('every element the page reaches for by name exists in the page', () => {
     // The stand-in hands back an element for any selector, so a misspelt id would
     // otherwise pass unnoticed. The markup is the authority: check it directly.
