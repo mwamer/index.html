@@ -3,933 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Dr Wesam Amer</title>
-    <meta name="description" content="Academic biography of Dr Wesam Amer - scholar of media, AI, conflict and higher education.">
+    <title>About - Dr Wesam Amer</title>
+    <meta name="description" content="Academic biography of Dr Wesam Amer.">
     <meta name="author" content="Dr Wesam Amer">
-    <meta name="theme-color" content="#1A2238">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#24384A">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        :root {
-            --canvas: #F9F9F6;
-            --charcoal: #1A2238;
-            --terracotta: #B85C38;
-            --slate: #4A5568;
-            --stone: #E2E8F0;
-            --white: #FFFFFF;
-        }
-        
-        body {
-            background-color: var(--canvas);
-            color: var(--charcoal);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.7;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Playfair Display', Georgia, serif;
-            color: var(--charcoal);
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-        
-        /* Hero Section - Split Screen */
-        .hero-split {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            min-height: 85vh;
-            align-items: center;
-            gap: 0;
-        }
-        
-        .hero-content {
-            padding: clamp(3rem, 8vw, 6rem);
-            max-width: 650px;
-            margin-left: auto;
-        }
-        
-        .hero-kicker {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--terracotta);
-            margin-bottom: 1.5rem;
-        }
-        
-        .hero-name {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            letter-spacing: -0.03em;
-        }
-        
-        .hero-titles {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-        
-        .hero-title-tag {
-            padding: 0.5rem 1rem;
-            background: rgba(184, 92, 56, 0.1);
-            color: var(--terracotta);
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 2px;
-        }
-        
-        .hero-quote {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-            font-style: italic;
-            line-height: 1.5;
-            color: var(--charcoal);
-            margin-bottom: 2rem;
-            position: relative;
-            padding-left: 2rem;
-        }
-        
-        .hero-quote::before {
-            content: '"';
-            position: absolute;
-            left: 0;
-            top: -0.25rem;
-            font-size: 2.5rem;
-            color: var(--terracotta);
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .hero-description {
-            font-size: 1rem;
-            color: var(--slate);
-            line-height: 1.8;
-            margin-bottom: 2rem;
-        }
-        
-        .hero-image-container {
-            position: relative;
-            height: 100%;
-            min-height: 500px;
-        }
-        
-        .hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center 30%;
-        }
-        
-        .hero-image-frame {
-            position: absolute;
-            inset: 2rem;
-            border: 1px solid rgba(184, 92, 56, 0.3);
-            pointer-events: none;
-        }
-        
-        /* Core Pillars */
-        .pillars-section {
-            padding: clamp(4rem, 10vw, 7rem) 0;
-            background: var(--white);
-        }
-        
-        .section-header {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 4rem;
-            padding: 0 1.5rem;
-        }
-        
-        .section-kicker {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--terracotta);
-            margin-bottom: 1rem;
-        }
-        
-        .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-        
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: var(--slate);
-            line-height: 1.8;
-        }
-        
-        .pillars-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        
-        .pillar-card {
-            background: var(--canvas);
-            padding: 2.5rem;
-            border: 1px solid var(--stone);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .pillar-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--terracotta), transparent);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
-        
-        .pillar-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(26, 34, 56, 0.08);
-            border-color: rgba(184, 92, 56, 0.3);
-        }
-        
-        .pillar-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .pillar-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: rgba(184, 92, 56, 0.2);
-            line-height: 1;
-            margin-bottom: 1.5rem;
-        }
-        
-        .pillar-card-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-        
-        .pillar-card-desc {
-            color: var(--slate);
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-        
-        .pillar-link {
-            color: var(--terracotta);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: gap 0.3s ease;
-        }
-        
-        .pillar-link:hover {
-            gap: 0.75rem;
-        }
-        
-        /* Timeline */
-        .timeline-section {
-            padding: clamp(4rem, 10vw, 7rem) 0;
-            background: var(--canvas);
-        }
-        
-        .timeline-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        
-        .timeline-track {
-            display: flex;
-            gap: 2rem;
-            overflow-x: auto;
-            padding: 2rem 0 3rem;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .timeline-track::-webkit-scrollbar {
-            height: 6px;
-        }
-        
-        .timeline-track::-webkit-scrollbar-track {
-            background: var(--stone);
-        }
-        
-        .timeline-track::-webkit-scrollbar-thumb {
-            background: var(--terracotta);
-        }
-        
-        .timeline-node {
-            flex: 0 0 280px;
-            scroll-snap-align: start;
-            position: relative;
-        }
-        
-        .timeline-node::before {
-            content: '';
-            position: absolute;
-            top: 1.5rem;
-            left: 0;
-            right: -2rem;
-            height: 1px;
-            background: linear-gradient(90deg, var(--terracotta), var(--stone));
-        }
-        
-        .timeline-node:last-child::before {
-            display: none;
-        }
-        
-        .timeline-dot {
-            width: 12px;
-            height: 12px;
-            background: var(--terracotta);
-            border-radius: 50%;
-            margin-bottom: 1.5rem;
-            position: relative;
-            box-shadow: 0 0 0 6px rgba(184, 92, 56, 0.1);
-        }
-        
-        .timeline-year {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--terracotta);
-            margin-bottom: 0.75rem;
-        }
-        
-        .timeline-content {
-            background: var(--white);
-            padding: 1.5rem;
-            border: 1px solid var(--stone);
-            min-height: 180px;
-        }
-        
-        .timeline-role {
-            font-weight: 600;
-            color: var(--charcoal);
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-        
-        .timeline-institution {
-            color: var(--terracotta);
-            font-size: 0.875rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        .timeline-desc {
-            font-size: 0.875rem;
-            color: var(--slate);
-            line-height: 1.6;
-        }
-        
-        /* Frameworks */
-        .frameworks-section {
-            padding: clamp(4rem, 10vw, 7rem) 0;
-            background: var(--white);
-        }
-        
-        .framework-flow {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: grid;
-            gap: 1.5rem;
-        }
-        
-        .framework-step {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            gap: 2rem;
-            align-items: start;
-            padding: 2rem;
-            background: var(--canvas);
-            border: 1px solid var(--stone);
-            transition: all 0.3s ease;
-        }
-        
-        .framework-step:hover {
-            border-color: rgba(184, 92, 56, 0.4);
-            box-shadow: 0 10px 30px rgba(26, 34, 56, 0.06);
-        }
-        
-        .framework-number {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--terracotta), #d67042);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .framework-content h3 {
-            font-size: 1.375rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        .framework-content p {
-            color: var(--slate);
-            margin-bottom: 0;
-        }
-        
-        /* Dual Column */
-        .dual-section {
-            padding: clamp(4rem, 10vw, 7rem) 0;
-            background: var(--canvas);
-        }
-        
-        .dual-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-        }
-        
-        .dual-column {
-            background: var(--white);
-            padding: 3rem;
-            border: 1px solid var(--stone);
-        }
-        
-        .dual-kicker {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--terracotta);
-            margin-bottom: 1rem;
-        }
-        
-        .dual-title {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.25;
-        }
-        
-        .dual-content p {
-            color: var(--slate);
-            margin-bottom: 1.25rem;
-            line-height: 1.8;
-        }
-        
-        .dual-list {
-            list-style: none;
-            padding: 0;
-            margin: 1.5rem 0;
-        }
-        
-        .dual-list li {
-            padding: 0.75rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-            color: var(--slate);
-            border-bottom: 1px solid var(--stone);
-        }
-        
-        .dual-list li::before {
-            content: '▸';
-            position: absolute;
-            left: 0;
-            color: var(--terracotta);
-        }
-        
-        /* Gateway Tiles */
-        .gateway-section {
-            padding: clamp(4rem, 10vw, 7rem) 0;
-            background: linear-gradient(to bottom, var(--white), var(--canvas));
-        }
-        
-        .gateway-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-        
-        .gateway-tile {
-            background: var(--white);
-            padding: 2rem;
-            border: 1px solid var(--stone);
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        
-        .gateway-tile:hover {
-            border-color: var(--terracotta);
-            transform: translateX(4px);
-            box-shadow: 0 10px 30px rgba(26, 34, 56, 0.06);
-        }
-        
-        .gateway-content h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
-        }
-        
-        .gateway-tile:hover .gateway-content h3 {
-            color: var(--terracotta);
-        }
-        
-        .gateway-content p {
-            color: var(--slate);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-        
-        .gateway-arrow {
-            font-size: 1.5rem;
-            color: var(--terracotta);
-            transition: transform 0.3s ease;
-        }
-        
-        .gateway-tile:hover .gateway-arrow {
-            transform: translateX(4px);
-        }
-        
-        @media (max-width: 968px) {
-            .hero-split {
-                grid-template-columns: 1fr;
-                min-height: auto;
-            }
-            .hero-content {
-                margin: 0;
-                max-width: 100%;
-            }
-            .hero-image-container {
-                min-height: 400px;
-            }
-            .pillars-grid {
-                grid-template-columns: 1fr;
-            }
-            .dual-grid {
-                grid-template-columns: 1fr;
-            }
-            .gateway-grid {
-                grid-template-columns: 1fr;
-            }
-            .timeline-track {
-                gap: 1.5rem;
-            }
-            .timeline-node {
-                flex: 0 0 250px;
-            }
-        }
-        
-        @media (max-width: 640px) {
-            .framework-step {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            .hero-content {
-                padding: 2rem 1.5rem;
-            }
-            .dual-column {
-                padding: 2rem 1.5rem;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800">
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm" aria-label="Primary">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="brand" style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--charcoal); text-decoration: none;">Dr Wesam Amer</a>
-
-            <ul class="nav-links nav-desktop" style="display: flex; gap: 1.5rem; list-style: none; align-items: center;">
-                <li><a href="index.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Home</a></li>
-                <li><a href="about.html" style="color: var(--terracotta); text-decoration: none; font-size: 0.9rem; font-weight: 600;" aria-current="page">About</a></li>
-                <li><a href="research.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Research</a></li>
-                <li><a href="publications.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Publications</a></li>
-                <li><a href="teaching.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Teaching</a></li>
-                <li><a href="academic-profile.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Academic Profile</a></li>
-                <li><a href="news-engagement.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">News & Engagement</a></li>
-                <li><a href="services.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Services</a></li>
-                <li><a href="contact.html" style="color: var(--slate); text-decoration: none; font-size: 0.9rem; font-weight: 500;">Contact</a></li>
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" aria-label="Primary">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="brand">Dr Wesam Amer</a>
+            <ul class="nav-links nav-desktop">
+                <li><a href="index.html" class="text-gray-700 hover:text-blue-600 transition">Home</a></li>
+                <li><a href="about.html" class="text-blue-600 font-semibold transition" aria-current="page">About</a></li>
+                <li><a href="research.html" class="text-gray-700 hover:text-blue-600 transition">Research</a></li>
+                <li><a href="publications.html" class="text-gray-700 hover:text-blue-600 transition">Publications</a></li>
+                <li><a href="teaching.html" class="text-gray-700 hover:text-blue-600 transition">Teaching</a></li>
+                <li><a href="academic-profile.html" class="text-gray-700 hover:text-blue-600 transition">Academic Profile</a></li>
+                <li><a href="news-engagement.html" class="text-gray-700 hover:text-blue-600 transition">News & Engagement</a></li>
+                <li><a href="services.html" class="text-gray-700 hover:text-blue-600 transition">Services</a></li>
+                <li><a href="contact.html" class="text-gray-700 hover:text-blue-600 transition">Contact</a></li>
             </ul>
-
-            <button id="menu-toggle" class="nav-toggle" style="display: none; background: none; border: none; color: var(--charcoal);" aria-label="Open menu">
+            <button id="menu-toggle" class="nav-toggle text-gray-700 focus:outline-none" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
         </div>
+        <div id="mobile-menu" class="hidden bg-white border-t border-gray-200 px-6 py-4">
+            <ul class="flex flex-col gap-3">
+                <li><a href="index.html" class="block text-gray-700 hover:text-blue-600">Home</a></li>
+                <li><a href="about.html" class="block text-blue-600 font-semibold">About</a></li>
+                <li><a href="research.html" class="block text-gray-700 hover:text-blue-600">Research</a></li>
+                <li><a href="publications.html" class="block text-gray-700 hover:text-blue-600">Publications</a></li>
+                <li><a href="teaching.html" class="block text-gray-700 hover:text-blue-600">Teaching</a></li>
+                <li><a href="academic-profile.html" class="block text-gray-700 hover:text-blue-600">Academic Profile</a></li>
+                <li><a href="news-engagement.html" class="block text-gray-700 hover:text-blue-600">News & Engagement</a></li>
+                <li><a href="services.html" class="block text-gray-700 hover:text-blue-600">Services</a></li>
+                <li><a href="contact.html" class="block text-gray-700 hover:text-blue-600">Contact</a></li>
+            </ul>
+        </div>
     </nav>
 
-    <!-- Hero Section - Split Screen -->
-    <section class="hero-split">
-        <div class="hero-content">
-            <p class="hero-kicker">Academic Profile</p>
-            <h1 class="hero-name">Dr Wesam Amer</h1>
-            <div class="hero-titles">
-                <span class="hero-title-tag">Scholar</span>
-                <span class="hero-title-tag">Researcher</span>
-                <span class="hero-title-tag">Consultant</span>
-            </div>
-            <blockquote class="hero-quote">
-                Who can speak, be seen and produce knowledge under conditions of conflict and technological change?
-            </blockquote>
-            <p class="hero-description">
-                Dr Wesam Amer is an academic, researcher and consultant specialising in political communication, media and digital technologies, artificial intelligence, and higher education in conflict-affected contexts. His work examines how communication, technology and political power shape public understanding, political narratives and the production and circulation of knowledge.
-            </p>
-            <p class="hero-description">
-                With an academic career spanning Palestine, Germany, the United Kingdom and the United States, he brings together interdisciplinary research, university teaching, institutional leadership and professional engagement. Currently an Affiliated Lecturer at Cambridge Digital Humanities, University of Cambridge, and Founder and Director of Frontline World and the Gaza Center for Research in Humanities and Social Sciences.
-            </p>
-        </div>
-        <div class="hero-image-container">
-            <img src="images/wesam-amer-portrait.jpeg" alt="Portrait of Dr Wesam Amer" class="hero-image">
-            <div class="hero-image-frame"></div>
-        </div>
-    </section>
-
-    <!-- Core Pillars -->
-    <section class="pillars-section">
-        <div class="section-header">
-            <p class="section-kicker">Core Focus Areas</p>
-            <h2 class="section-title">Intellectual Pillars</h2>
-            <p class="section-subtitle">
-                Three closely connected areas form the foundation of his work, united by a common concern with communication, power and knowledge under conditions of conflict and technological change.
-            </p>
-        </div>
-        <div class="pillars-grid">
-            <article class="pillar-card">
-                <div class="pillar-number">01</div>
-                <h3 class="pillar-card-title">Political Communication, Media and Conflict</h3>
-                <p class="pillar-card-desc">
-                    Investigating how political actors, movements and media institutions construct narratives, communicate objectives and shape public understanding during conflict and political change through critical discourse studies and political communication.
-                </p>
-                <a href="research.html" class="pillar-link">
-                    Explore Research <span>→</span>
-                </a>
-            </article>
-            <article class="pillar-card">
-                <div class="pillar-number">02</div>
-                <h3 class="pillar-card-title">Artificial Intelligence, Digital Technologies and Algorithmic Power</h3>
-                <p class="pillar-card-desc">
-                    Examining how digital platforms, artificial intelligence and algorithmic systems transform communication, media production and information visibility, and how technological infrastructures influence content circulation and interpretation.
-                </p>
-                <a href="research.html" class="pillar-link">
-                    Explore Research <span>→</span>
-                </a>
-            </article>
-            <article class="pillar-card">
-                <div class="pillar-number">03</div>
-                <h3 class="pillar-card-title">Higher Education, Scholasticide and Reconstruction</h3>
-                <p class="pillar-card-desc">
-                    Researching the destruction and disruption of educational institutions in conflict, particularly Palestine, and the conditions required to restore academic communities, institutional capacity, governance and knowledge production beyond physical reconstruction.
-                </p>
-                <a href="research.html" class="pillar-link">
-                    Explore Research <span>→</span>
-                </a>
-            </article>
-        </div>
-    </section>
-
-    <!-- Global Academic Journey Timeline -->
-    <section class="timeline-section">
-        <div class="section-header">
-            <p class="section-kicker">Global Trajectory</p>
-            <h2 class="section-title">Academic Journey Across Continents</h2>
-            <p class="section-subtitle">
-                A career spanning Palestine, Germany, the United Kingdom and the United States through fellowships, research positions and institutional leadership.
-            </p>
-        </div>
-        <div class="timeline-container">
-            <div class="timeline-track">
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2001</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">BA in Mass Communication</div>
-                        <div class="timeline-institution">Al-Azhar University, Gaza</div>
-                        <div class="timeline-desc">Foundation in media and communication studies</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2009</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">MA with Distinction</div>
-                        <div class="timeline-institution">Anglia Ruskin University, UK</div>
-                        <div class="timeline-desc">Advanced studies in communication</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2015</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">PhD, Media Studies & Discourse Analysis (Magna Cum Laude)</div>
-                        <div class="timeline-institution">University of Hamburg, Germany</div>
-                        <div class="timeline-desc">War reporting in international press</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2017–2020</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">Marie Skłodowska-Curie Fellow</div>
-                        <div class="timeline-institution">Newcastle University, UK</div>
-                        <div class="timeline-desc">Postdoctoral research fellowship</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2022</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">Fulbright Fellow</div>
-                        <div class="timeline-institution">Harvard University, USA</div>
-                        <div class="timeline-desc">Hamas's digital communication research</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2023–2024</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">Guest Researcher</div>
-                        <div class="timeline-institution">Hans-Bredow-Institut, Germany</div>
-                        <div class="timeline-desc">Media and communication research</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2024–2026</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">CARA/IIE-SRF Fellow</div>
-                        <div class="timeline-institution">University of Cambridge, UK</div>
-                        <div class="timeline-desc">Scholar at risk fellowship</div>
-                    </div>
-                </article>
-                <article class="timeline-node">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-year">2026–2027</div>
-                    <div class="timeline-content">
-                        <div class="timeline-role">Affiliated Lecturer</div>
-                        <div class="timeline-institution">Cambridge Digital Humanities, Cambridge</div>
-                        <div class="timeline-desc">Current academic position</div>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Conceptual Frameworks & Methods -->
-    <section class="frameworks-section">
-        <div class="section-header">
-            <p class="section-kicker">Theoretical Contributions</p>
-            <h2 class="section-title">Conceptual Frameworks & Methods</h2>
-            <p class="section-subtitle">
-                Developing innovative approaches that bridge critical theory with technological analysis to understand discourse in digital environments.
-            </p>
-        </div>
-        <div class="framework-flow">
-            <article class="framework-step">
-                <div class="framework-number">1</div>
-                <div class="framework-content">
-                    <h3>Techno-Discursive Critical Analysis (TDCA)</h3>
-                    <p>Brings together critical discourse studies, critical algorithm studies and critical security studies to examine how political discourse interacts with technological infrastructures, algorithmic systems and the allocation of visibility in digital environments.</p>
-                </div>
-            </article>
-            <article class="framework-step">
-                <div class="framework-number">2</div>
-                <div class="framework-content">
-                    <h3>De-scholasticide</h3>
-                    <p>Extends the analysis of scholasticide by examining what is required to restore educational communities, institutional capacity and knowledge production following the destruction of higher education systems, moving beyond physical reconstruction.</p>
-                </div>
-            </article>
-            <article class="framework-step">
-                <div class="framework-number">3</div>
-                <div class="framework-content">
-                    <h3>HYPERWAR</h3>
-                    <p>Current research examining AI-mediated hypermedia warfare and algorithmic visibility in contemporary conflict, analyzing how political actors adapt communicative strategies to platform environments and how technological infrastructures influence narrative circulation.</p>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <!-- Bridging Scholarship & Practice -->
-    <section class="dual-section">
-        <div class="section-header">
-            <p class="section-kicker">Bridging Worlds</p>
-            <h2 class="section-title">Scholarship & Practice</h2>
-            <p class="section-subtitle">
-                Connecting rigorous academic inquiry with institutional leadership and professional engagement.
-            </p>
-        </div>
-        <div class="dual-grid">
-            <article class="dual-column">
-                <p class="dual-kicker">Academic Realm</p>
-                <h3 class="dual-title">Research, Teaching & Mentorship</h3>
-                <div class="dual-content">
-                    <p>
-                        Extensive experience in undergraduate and postgraduate education across Palestine, the UK and Germany, with guest lecturing at Harvard University. At the University of Cambridge, contributes to lecturing, supervision and examination.
+    <main class="max-w-5xl mx-auto px-6 py-10">
+        <section class="about-section">
+            <div class="about-hero">
+                <div class="about-hero__text">
+                    <p class="kicker">About</p>
+                    <h1 class="about-name">Dr Wesam Amer</h1>
+                    <p class="about-descriptor">Scholar of Media, Political Communication and Higher Education</p>
+                    <p class="about-intro">
+                        Dr Wesam Amer is a scholar of media, political communication and higher education whose interdisciplinary research examines how communication technologies, political discourse and institutional structures shape power, conflict and knowledge production.
                     </p>
-                    <ul class="dual-list">
-                        <li>Research-led, interdisciplinary teaching approach</li>
-                        <li>Focus on digital technologies and AI in education</li>
-                        <li>Curriculum development and research mentorship</li>
-                        <li>Supervision of undergraduate and postgraduate students</li>
-                    </ul>
-                    <a href="teaching.html" class="pillar-link">Explore Teaching & Supervision →</a>
-                </div>
-            </article>
-            <article class="dual-column">
-                <p class="dual-kicker">Professional Practice</p>
-                <h3 class="dual-title">Institutional Leadership & Advisory</h3>
-                <div class="dual-content">
-                    <p>
-                        Founder and Director of Frontline World and the Gaza Center for Research in Humanities and Social Sciences. Former Dean of the Faculty of Mass Communication and Languages at Gaza University (2020-2023).
+                    <p class="about-intro">
+                        His work spans Palestine, Germany, the United Kingdom and the United States, connecting academic research with teaching, institutional leadership and professional engagement. He is currently an Affiliated Lecturer at Cambridge Digital Humanities, University of Cambridge, and Founder and Director of Frontline World and the Gaza Center for Research in Humanities and Social Sciences.
                     </p>
-                    <ul class="dual-list">
-                        <li><strong>Frontline World</strong> - Strategic research, institutional advisory, risk & foresight</li>
-                        <li><strong>Gaza Center for Research</strong> - Advancing humanities and social sciences research</li>
-                        <li>Institutional governance and academic leadership</li>
-                        <li>Bridging academic knowledge with policy and practice</li>
-                    </ul>
-                    <a href="services.html" class="pillar-link">Explore Services & Consultancy →</a>
                 </div>
-            </article>
-        </div>
-    </section>
+                <figure class="about-photo about-photo--main photo-frame photo-frame--portrait">
+                    <img src="images/wesam-amer-portrait.jpeg" alt="Portrait of Dr Wesam Amer" width="682" height="1023" loading="lazy">
+                </figure>
+            </div>
 
-    <!-- Gateway Navigation Hub -->
-    <section class="gateway-section">
-        <div class="section-header">
-            <p class="section-kicker">Explore Further</p>
-            <h2 class="section-title">Continue the Journey</h2>
-            <p class="section-subtitle">
-                Discover more about Dr Amer's work, publications, and engagement across the academic and professional spheres.
-            </p>
-        </div>
-        <div class="gateway-grid">
-            <a href="research.html" class="gateway-tile">
-                <div class="gateway-content">
-                    <h3>Research Agendas</h3>
-                    <p>Explore research themes and projects</p>
+            <div class="about-block">
+                <h2 class="about-heading">Research Focus</h2>
+                <p class="about-block__intro">
+                    His work is organised around three interconnected areas that share a common concern with communication, power and knowledge under conditions of conflict and technological change.
+                </p>
+                <div class="pillars">
+                    <article class="pillar">
+                        <p class="pillar__kicker">Area 1</p>
+                        <h3 class="pillar__title">Political Communication, Media and Conflict</h3>
+                        <p class="pillar__intro">
+                            Examining how political actors and media institutions construct narratives, communicate political objectives and shape public understanding during conflict and political change, drawing on critical discourse studies and political communication.
+                        </p>
+                    </article>
+                    <article class="pillar">
+                        <p class="pillar__kicker">Area 2</p>
+                        <h3 class="pillar__title">Artificial Intelligence, Digital Technologies and Algorithmic Power</h3>
+                        <p class="pillar__intro">
+                            Investigating how digital platforms, AI and algorithmic systems transform communication, media production and visibility, and how technological infrastructures shape the circulation of political content.
+                        </p>
+                    </article>
+                    <article class="pillar" style="grid-column: 1 / -1; max-width: 48ch; margin: 0 auto; text-align: center;">
+                        <p class="pillar__kicker">Area 3</p>
+                        <h3 class="pillar__title">Higher Education, Scholasticide and Reconstruction</h3>
+                        <p class="pillar__intro">
+                            Researching the destruction of educational institutions in conflict, particularly Palestine, and the conditions required to restore academic communities, institutional capacity and knowledge production.
+                        </p>
+                    </article>
                 </div>
-                <span class="gateway-arrow">→</span>
-            </a>
-            <a href="publications.html" class="gateway-tile">
-                <div class="gateway-content">
-                    <h3>Publications</h3>
-                    <p>Scholarly works and contributions</p>
+                <div class="pillars-connection">
+                    <p>
+                        <strong>Central concern:</strong> Who can speak, be seen and produce knowledge under conditions of conflict and technological change?
+                    </p>
                 </div>
-                <span class="gateway-arrow">→</span>
-            </a>
-            <a href="teaching.html" class="gateway-tile">
-                <div class="gateway-content">
-                    <h3>Teaching Clusters</h3>
-                    <p>Courses, supervision and mentorship</p>
-                </div>
-                <span class="gateway-arrow">→</span>
-            </a>
-            <a href="academic-profile.html" class="gateway-tile">
-                <div class="gateway-content">
-                    <h3>Academic Profile</h3>
-                    <p>Full CV and appointments</p>
-                </div>
-                <span class="gateway-arrow">→</span>
-            </a>
-            <a href="news-engagement.html" class="gateway-tile">
-                <div class="gateway-content">
-                    <h3>News & Engagement</h3>
-                    <p>Lectures, interviews and media</p>
-                </div>
-                <span class="gateway-arrow">→</span>
-            </a>
-            <a href="services.html" class="gateway-tile">
-                <div class="gateway-content">
-                    <h3>Consultancy & Services</h3>
-                    <p>Strategic research and advisory</p>
-                </div>
-                <span class="gateway-arrow">→</span>
-            </a>
-        </div>
-    </section>
+            </div>
 
-    <!-- Footer -->
-    <footer style="background: var(--charcoal); color: #CBD5E0; padding: 3rem 1.5rem 2rem;">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2rem;">
+            <div class="about-block bio">
+                <h2 class="about-heading">Academic Biography</h2>
+                <p>
+                    Dr Amer holds a PhD in Media Studies and Discourse Analysis from the University of Hamburg (2015, Magna Cum Laude), an MA with Distinction from Anglia Ruskin University (2009), and a BA from Al-Azhar University in Gaza (2001). His doctoral research examined international press coverage of the 2008-09 Gaza war through Critical Discourse Analysis.
+                </p>
+                <p>
+                    His academic appointments include Marie Skłodowska-Curie Fellow at Newcastle University (2017-2020), Fulbright Fellow at Harvard University (2022), Guest Researcher at the Hans-Bredow-Institut (2023-2024), CARA/IIE-SRF Fellow at the University of Cambridge (2024-2026), and Affiliated Lecturer at Cambridge Digital Humanities (2026-2027). He also held visiting positions at Jesus College, Homerton College and the Centre for Islamic Studies at the University of Cambridge. From 2020 to 2023, he served as Dean of the Faculty of Mass Communication and Languages at Gaza University.
+                </p>
+                <p>
+                    He is developing two conceptual contributions: <strong>Techno-Discursive Critical Analysis (TDCA)</strong>, which connects critical discourse studies with critical algorithm studies and critical security studies to examine discourse through technological infrastructures; and <strong>de-scholasticide</strong>, which focuses on restoring and transforming higher education following institutional destruction. His current research includes <strong>HYPERWAR</strong>, examining AI-mediated hypermedia warfare and algorithmic visibility in contemporary conflict.
+                </p>
+                <p>
+                    Alongside research and teaching, he is Founder and Director of <a href="https://frontlineworld.org/">Frontline World</a> and the Gaza Center for Research in Humanities and Social Sciences. He works in Arabic, English and German and is a member of the Marie Curie Alumni Association (founding Chair of its Middle East Chapter).
+                </p>
+                <p>
+                    <a class="pillar__link" href="research.html">Explore Research →</a>
+                    <span style="margin: 0 1rem;">·</span>
+                    <a class="pillar__link" href="academic-profile.html">View Academic Profile →</a>
+                    <span style="margin: 0 1rem;">·</span>
+                    <a class="pillar__link" href="teaching.html">Teaching & Supervision →</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
             <div>
-                <h3 style="color: white; font-size: 1.5rem; margin-bottom: 1rem;">Dr Wesam Amer</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.7;">Scholar of Media, Political Communication and Higher Education</p>
-                <a href="mailto:wesaam.amer@gmail.com" style="color: var(--terracotta); text-decoration: none;">wesaam.amer@gmail.com</a>
+                <p class="footer-name">Dr Wesam Amer</p>
+                <p class="footer-role">Scholar of Media, Communication and Political Discourse</p>
+                <p><a class="footer-email" href="mailto:wesaam.amer@gmail.com">wesaam.amer@gmail.com</a></p>
             </div>
             <div>
-                <h4 style="color: white; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Profile</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.75rem;"><a href="index.html" style="color: #CBD5E0; text-decoration: none;">Home</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="about.html" style="color: #CBD5E0; text-decoration: none;">About</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="academic-profile.html" style="color: #CBD5E0; text-decoration: none;">Academic Profile</a></li>
+                <p class="footer-heading">Profile</p>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="academic-profile.html">Academic Profile</a></li>
                 </ul>
             </div>
             <div>
-                <h4 style="color: white; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Scholarship</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.75rem;"><a href="research.html" style="color: #CBD5E0; text-decoration: none;">Research</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="publications.html" style="color: #CBD5E0; text-decoration: none;">Publications</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="teaching.html" style="color: #CBD5E0; text-decoration: none;">Teaching</a></li>
+                <p class="footer-heading">Scholarship</p>
+                <ul class="footer-links">
+                    <li><a href="research.html">Research</a></li>
+                    <li><a href="publications.html">Publications</a></li>
+                    <li><a href="teaching.html">Teaching</a></li>
                 </ul>
             </div>
             <div>
-                <h4 style="color: white; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Engagement</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.75rem;"><a href="news-engagement.html" style="color: #CBD5E0; text-decoration: none;">News & Engagement</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="services.html" style="color: #CBD5E0; text-decoration: none;">Services</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="contact.html" style="color: #CBD5E0; text-decoration: none;">Contact</a></li>
+                <p class="footer-heading">Engagement</p>
+                <ul class="footer-links">
+                    <li><a href="news-engagement.html">News &amp; Engagement</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
                 </ul>
             </div>
         </div>
-        <div style="max-width: 1200px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <p style="font-size: 0.875rem; margin: 0;">&copy; 2026 Dr. Mohammedwesam Amer. All rights reserved.</p>
-            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
-                <a href="https://orcid.org/0000-0002-8796-9097" target="_blank" rel="noopener" style="color: #CBD5E0; text-decoration: none; font-size: 0.875rem;">ORCID</a>
-                <a href="https://scholar.google.com/citations?user=CNgZsPQAAAAJ&hl=en" target="_blank" rel="noopener" style="color: #CBD5E0; text-decoration: none; font-size: 0.875rem;">Google Scholar</a>
-                <a href="https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/" target="_blank" rel="noopener" style="color: #CBD5E0; text-decoration: none; font-size: 0.875rem;">LinkedIn</a>
-                <a href="https://research.sociology.cam.ac.uk/profile/dr-wesam-amer" target="_blank" rel="noopener" style="color: #CBD5E0; text-decoration: none; font-size: 0.875rem;">University of Cambridge</a>
-            </div>
+        <div class="footer-meta">
+            <p class="footer-copy">&copy; 2026 Dr. Mohammedwesam Amer. All rights reserved.</p>
+            <ul class="footer-profiles">
+                <li><a href="https://orcid.org/0000-0002-8796-9097" target="_blank" rel="noopener">ORCID</a></li>
+                <li><a href="https://scholar.google.com/citations?user=CNgZsPQAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a></li>
+                <li><a href="https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/" target="_blank" rel="noopener">LinkedIn</a></li>
+                <li><a href="https://research.sociology.cam.ac.uk/profile/dr-wesam-amer" target="_blank" rel="noopener">University of Cambridge</a></li>
+            </ul>
         </div>
     </footer>
 
     <script>
-        // Simple mobile menu toggle
-        const menuBtn = document.getElementById('menu-toggle');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', function() {
-                // Add mobile menu functionality if needed
-                alert('Mobile menu');
-            });
-        }
+        var toggleBtn = document.getElementById('menu-toggle');
+        var mobileMenu = document.getElementById('mobile-menu');
+        toggleBtn.addEventListener('click', function () {
+            var isHidden = mobileMenu.classList.toggle('hidden');
+            toggleBtn.setAttribute('aria-expanded', String(!isHidden));
+        });
     </script>
 </body>
 </html>
