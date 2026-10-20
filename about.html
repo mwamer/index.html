@@ -3,12 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Dr Wesam Amer</title>
-    <meta name="description" content="Academic biography, intellectual development and research trajectory.">
+    <title>About Dr Wesam Amer</title>
+    <meta name="description" content="Academic biography of Dr Wesam Amer - scholar of media, AI, conflict and higher education.">
     <meta name="author" content="Dr Wesam Amer">
     <meta name="theme-color" content="#24384A">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* About page specific styles */
+        .about-hero-section {
+            padding: clamp(2rem, 4vw, 3rem) 0 var(--space-section);
+        }
+        .about-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 340px);
+            gap: clamp(2rem, 6vw, 4rem);
+            align-items: start;
+        }
+        .about-kicker {
+            margin: 0 0 0.7rem;
+            font-size: var(--fs-eyebrow);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: var(--track-eyebrow);
+            color: var(--terracotta);
+        }
+        .about-page-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: var(--fs-display);
+            font-weight: 700;
+            line-height: 1.08;
+            color: var(--navy);
+            margin: 0 0 0.5rem;
+            max-width: 18ch;
+        }
+        .about-subtitle {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: var(--fs-h3);
+            font-weight: 400;
+            color: var(--terracotta-dark);
+            margin: 0 0 1.5rem;
+        }
+        .about-identity {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: var(--fs-h4);
+            color: var(--navy);
+            margin: 0 0 1.25rem;
+            font-weight: 600;
+        }
+        .about-portrait {
+            margin: 0;
+        }
+        .about-portrait img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--stone);
+        }
+        .about-portrait figcaption {
+            margin-top: 0.75rem;
+            font-size: var(--fs-meta);
+            color: var(--slate);
+            text-align: center;
+        }
+        .section {
+            padding: var(--space-section) 0;
+            border-top: 1px solid var(--stone);
+        }
+        .section:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+        .section-navy {
+            background: var(--navy);
+            color: var(--stone);
+            padding: clamp(3rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 2rem);
+            margin: var(--space-section) 0;
+        }
+        .section-navy h2,
+        .section-navy h3,
+        .section-navy h4 {
+            color: var(--white);
+        }
+        .section-navy p {
+            color: var(--stone);
+        }
+        .section-navy .kicker {
+            color: var(--terracotta);
+        }
+        .section-navy a {
+            color: var(--white);
+            border-bottom: 1px solid rgba(255,255,255,0.4);
+            text-decoration: none;
+        }
+        .section-navy a:hover {
+            border-bottom-color: var(--white);
+        }
+        .measure {
+            max-width: var(--measure);
+        }
+        .measure-wide {
+            max-width: 72ch;
+        }
+        .diagram {
+            margin: 2.5rem 0;
+            padding: clamp(2rem, 4vw, 3rem);
+            background: var(--white);
+            border: 1px solid var(--stone);
+        }
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(1rem, 3vw, 1.5rem);
+            align-items: stretch;
+        }
+        .diagram-node {
+            padding: 1.5rem;
+            border: 1px solid var(--stone);
+            background: var(--ivory);
+            text-align: center;
+            position: relative;
+        }
+        .diagram-node h3 {
+            font-size: var(--fs-h4);
+            margin-bottom: 0.75rem;
+        }
+        .diagram-node p {
+            font-size: var(--fs-meta);
+            margin: 0;
+        }
+        .diagram-center {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--stone);
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: var(--fs-h4);
+            color: var(--navy);
+            font-weight: 600;
+        }
+        .research-highlights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(1.25rem, 3vw, 1.75rem);
+            margin: 2rem 0;
+        }
+        .research-highlight {
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.02);
+        }
+        .research-highlight h3 {
+            font-size: var(--fs-h4);
+            margin-bottom: 0.75rem;
+        }
+        .research-highlight p {
+            font-size: var(--fs-meta);
+            margin: 0 0 1rem;
+        }
+        .timeline {
+            margin: 2rem 0;
+            position: relative;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8rem;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--stone);
+        }
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 8rem 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .timeline-date {
+            text-align: right;
+            padding-top: 0.25rem;
+            font-weight: 700;
+            color: var(--terracotta-dark);
+            font-size: var(--fs-meta);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 8rem;
+            top: 0.5rem;
+            width: 10px;
+            height: 10px;
+            background: var(--terracotta);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            border: 2px solid var(--ivory);
+        }
+        .timeline-content {
+            padding: 0 0 1rem 0;
+        }
+        .timeline-content h3 {
+            font-size: var(--fs-h4);
+            margin-bottom: 0.25rem;
+        }
+        .timeline-content .institution {
+            color: var(--terracotta-dark);
+            font-size: var(--fs-meta);
+            margin-bottom: 0.5rem;
+        }
+        .map-container {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--white);
+            border: 1px solid var(--stone);
+            text-align: center;
+        }
+        .map-svg {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+        .country-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem 2rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            font-size: var(--fs-meta);
+        }
+        .org-panel {
+            padding: 2rem;
+            border: 1px solid var(--stone);
+            background: var(--white);
+            margin-bottom: 1.5rem;
+        }
+        .org-panel h3 {
+            font-size: var(--fs-h3);
+            margin-bottom: 0.5rem;
+        }
+        .language-grid {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .language-item {
+            text-align: center;
+        }
+        .language-code {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: var(--fs-h4);
+            font-weight: 700;
+            color: var(--navy);
+            display: block;
+        }
+        .language-name {
+            font-size: var(--fs-meta);
+            color: var(--slate);
+        }
+        .outlook-section {
+            background: var(--ivory);
+            padding: clamp(3rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 2rem);
+            margin: var(--space-section) 0 0;
+            border: 1px solid var(--stone);
+        }
+        .outlook-quote {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+            line-height: 1.4;
+            color: var(--navy);
+            max-width: 60ch;
+            margin: 0 auto;
+            text-align: center;
+            font-style: italic;
+        }
+        @media (max-width: 900px) {
+            .about-hero-grid {
+                grid-template-columns: 1fr;
+            }
+            .about-portrait {
+                max-width: 320px;
+            }
+            .diagram-grid {
+                grid-template-columns: 1fr;
+            }
+            .research-highlights {
+                grid-template-columns: 1fr;
+            }
+            .timeline::before {
+                left: 1rem;
+            }
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding-left: 2rem;
+            }
+            .timeline-date {
+                text-align: left;
+            }
+            .timeline-dot {
+                left: 1rem;
+            }
+        }
+        @media (max-width: 640px) {
+            .language-grid {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -51,150 +355,319 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-6 py-10">
-        <section id="about" class="about-section">
-
-            <!-- About hero -->
-            <div class="about-hero">
-                <div class="about-hero__text">
-                    <p class="kicker">About</p>
-                    <h1 class="about-name">Dr Wesam Amer</h1>
-                    <p class="about-descriptor">Scholar of Media, Political Communication and Higher Education</p>
-                    <p class="about-intro">
-                        Dr Wesam Amer is a scholar of media, political communication and higher education. His work is organised around two interconnected pillars: digital political communication, media and conflict; and higher education, knowledge and scholasticide. His research and academic experience span Palestine, Germany, the United Kingdom and the United States.
+    <main class="max-w-6xl mx-auto px-6 py-10">
+        <!-- SECTION A - Biography introduction -->
+        <section class="about-hero-section">
+            <div class="about-hero-grid">
+                <div>
+                    <p class="about-kicker">ACADEMIC PROFILE</p>
+                    <h1 class="about-page-title">About Dr Wesam Amer</h1>
+                    <p class="about-identity">Scholar · Expert · Consultant</p>
+                    <h2 class="about-subtitle">Media, AI, Conflict & Higher Education</h2>
+                    
+                    <p class="about-intro measure">
+                        Dr Wesam Amer is an academic, researcher and consultant specialising in political communication, media and digital technologies, artificial intelligence, and higher education in conflict-affected contexts. His work examines how communication, technology and political power shape public understanding, political narratives and the production and circulation of knowledge.
+                    </p>
+                    
+                    <p class="about-intro measure" style="margin-top: 1rem;">
+                        With an academic career spanning Palestine, Germany, the United Kingdom and the United States, he brings together interdisciplinary research, university teaching, institutional leadership and professional engagement. His work connects critical scholarship with contemporary challenges facing media, political institutions and higher education, with particular attention to Palestine and the wider Middle East.
+                    </p>
+                    
+                    <p class="about-intro measure" style="margin-top: 1rem;">
+                        He is currently an Affiliated Lecturer at <a href="https://www.cdh.cam.ac.uk/">Cambridge Digital Humanities</a>, University of Cambridge, and the Founder and Director of <a href="https://frontlineworld.org/">Frontline World</a> and the Gaza Center for Research in Humanities and Social Sciences.
                     </p>
                 </div>
-
-                <figure class="about-photo about-photo--main photo-frame photo-frame--portrait">
-                    <img src="images/wesam-amer-portrait.jpeg" alt="Portrait of Dr Wesam Amer" width="682" height="682" decoding="async">
+                
+                <figure class="about-portrait">
+                    <img src="images/wesam-amer-portrait.jpeg" alt="Portrait of Dr Wesam Amer" width="682" height="1023" loading="lazy">
+                    <figcaption>Dr Wesam Amer</figcaption>
                 </figure>
             </div>
+        </section>
 
-            <!-- In Brief -->
-            <div class="about-block">
-                <h2 class="about-heading">In Brief</h2>
-                <p class="about-lead">
-                    Dr Wesam Amer is a scholar of media, political communication and higher education. His interdisciplinary research examines how communication technologies, political discourse and institutional structures shape power, conflict and knowledge production. His work focuses on two interconnected areas: digital political communication, media and conflict, social media, artificial intelligence and hypermedia warfare; and higher education, scholasticide, academic resilience and the reconstruction of universities, particularly in Gaza. He has held academic and research positions at Cambridge, Harvard, Newcastle and Hamburg, and served as Dean at Gaza University. He holds a PhD in Media Studies from the University of Hamburg.
-                </p>
+        <!-- SECTION B - Academic and intellectual profile -->
+        <section class="section">
+            <h2 class="about-heading">Academic and Intellectual Profile</h2>
+            <p class="measure-wide">
+                His academic work is driven by an interest in the relationship between communication, technology and power, and in the ways conflict transforms the institutions and systems through which societies produce and share knowledge.
+            </p>
+            <p class="measure-wide" style="margin-top: 1rem;">
+                Across his research and teaching, three closely connected areas form the foundation of his work:
+            </p>
+
+            <div class="diagram">
+                <div class="diagram-grid">
+                    <article class="diagram-node">
+                        <h3>Political Communication, Media and Conflict</h3>
+                        <p>He investigates how political actors, movements and media institutions construct narratives, communicate political objectives and shape public understanding during conflict and political change. His work draws on critical discourse studies and political communication to examine media representation, digital political expression and the relationship between communication and power.</p>
+                    </article>
+                    <article class="diagram-node">
+                        <h3>Artificial Intelligence, Digital Technologies and Algorithmic Power</h3>
+                        <p>He examines how digital platforms, artificial intelligence and algorithmic systems transform communication, media production and the visibility of information. His research considers how political actors adapt to platform environments and how technological infrastructures influence the circulation and interpretation of digital content.</p>
+                    </article>
+                    <article class="diagram-node">
+                        <h3>Higher Education, Scholasticide and Reconstruction</h3>
+                        <p>He researches the destruction and disruption of educational institutions in conflict, particularly in Palestine, and the conditions required to restore academic communities and knowledge production. This work moves beyond physical reconstruction to consider institutional capacity, academic continuity, governance and the recovery of higher education systems.</p>
+                    </article>
+                </div>
+                <div class="diagram-center">
+                    Communication, power and knowledge under conflict.
+                </div>
             </div>
 
-            <!-- Research Focus -->
-            <div class="about-block">
-                <h2 class="about-heading">Research Focus</h2>
-                <p class="about-block__intro">
-                    His work is organised around two major, interconnected areas — two dimensions of a single academic agenda concerned with how power, technology, conflict and institutional structures shape communication, knowledge production and social transformation.
+            <p class="measure-wide" style="text-align: center; font-style: italic; font-size: 1.05rem;">
+                Together, these areas reflect a broader intellectual concern: <strong>Who can speak, be seen and produce knowledge under conditions of conflict and technological change?</strong>
+            </p>
+        </section>
+
+        <!-- SECTION C - Research and knowledge production -->
+        <section class="section section-navy" style="margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+            <div style="max-width: 72rem; margin: 0 auto;">
+                <h2 class="about-heading">Research and Knowledge Production</h2>
+                <p class="measure-wide">
+                    Dr Amer's research combines critical theoretical inquiry with empirical and interdisciplinary methods. His work draws on Critical Discourse Studies, political communication, media studies, critical algorithm studies, critical security studies and higher education research.
+                </p>
+                <p class="measure-wide" style="margin-top: 1rem;">
+                    He is developing two conceptual contributions that connect his research agendas.
                 </p>
 
-                <div class="pillars">
-                    <article class="pillar">
-                        <p class="pillar__kicker">Pillar One</p>
-                        <h3 class="pillar__title">Media, Political Communication and Digital Technologies</h3>
-                        <p class="pillar__intro">
-                            This research examines how political actors communicate, construct narratives, mobilise audiences and exercise influence within changing media environments, and how digital platforms, algorithms and artificial intelligence shape the production, circulation, visibility and reception of political communication.
-                        </p>
-                        <a class="pillar__link" href="research.html">Explore research &rarr;</a>
+                <div class="research-highlights">
+                    <article class="research-highlight">
+                        <h3>Techno-Discursive Critical Analysis (TDCA)</h3>
+                        <p>Brings together critical discourse studies, critical algorithm studies and critical security studies to examine how political discourse interacts with technological infrastructures, algorithmic systems and the allocation of visibility in digital environments.</p>
                     </article>
-
-                    <article class="pillar">
-                        <p class="pillar__kicker">Pillar Two</p>
-                        <h3 class="pillar__title">Higher Education, Knowledge and Scholasticide</h3>
-                        <p class="pillar__intro">
-                            This research examines how universities and knowledge institutions are affected by conflict, how academic communities sustain themselves under conditions of disruption, and how higher education can be restored and transformed beyond the reconstruction of physical infrastructure.
-                        </p>
-                        <a class="pillar__link" href="research.html">Explore research &rarr;</a>
+                    <article class="research-highlight">
+                        <h3>De-scholasticide</h3>
+                        <p>Extends the analysis of scholasticide by examining what is required to restore educational communities, institutional capacity and knowledge production following the destruction of higher education systems.</p>
+                    </article>
+                    <article class="research-highlight">
+                        <h3>HYPERWAR</h3>
+                        <p>Examines AI-mediated hypermedia warfare and algorithmic visibility in contemporary conflict, and research on the reconstruction of Palestinian higher education.</p>
                     </article>
                 </div>
 
-                <div class="pillars-connection">
-                    <p class="kicker">One integrated agenda</p>
-                    <p>
-                        In the media sector, his research examines political communication, digital infrastructures, narratives, visibility and power. In the education sector, it examines knowledge institutions, scholasticide, academic resilience, institutional recovery and epistemic autonomy. Together, these areas form a single integrated academic agenda — concerned with how power, technology, conflict and institutional structures shape communication, knowledge production and social transformation.
+                <p class="measure-wide">
+                    His methodological experience includes critical discourse analysis, systemic functional linguistics, corpus-assisted research, social media and digital trace analysis, multimodal analysis, social network analysis and institutional case studies. He works with qualitative, computational and interpretive approaches to investigate complex communication and institutional processes.
+                </p>
+                <p style="margin-top: 1.5rem;">
+                    <a href="research.html" style="font-weight: 600;">Explore Research &rarr;</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION D - Teaching and academic development -->
+        <section class="section">
+            <h2 class="about-heading">Teaching and Academic Development</h2>
+            <div class="about-hero-grid">
+                <div>
+                    <p class="measure-wide">
+                        Teaching is an integral part of Dr Amer's academic work. He has contributed to undergraduate and postgraduate education across Palestine, the United Kingdom and Germany, as well as guest lecturing at Harvard University during his Fulbright Fellowship.
+                    </p>
+                    <p class="measure-wide" style="margin-top: 1rem;">
+                        His teaching covers media and communication, journalism, digital media, political communication, international affairs and research methods. He connects academic theory with contemporary developments and encourages students to question assumptions, evaluate evidence, develop independent arguments and undertake rigorous research.
+                    </p>
+                    <p class="measure-wide" style="margin-top: 1rem;">
+                        His teaching approach is research-led, interdisciplinary and attentive to the different educational backgrounds and experiences of students. He is particularly interested in the implications of digital technologies and generative AI for teaching, academic work, research practices and educational integrity.
+                    </p>
+                    <p class="measure-wide" style="margin-top: 1rem;">
+                        At the University of Cambridge, his academic contribution includes lecturing, undergraduate and postgraduate supervision, and examination. His wider academic interests include research mentorship, curriculum development and the future of higher education in challenging contexts.
+                    </p>
+                    <p style="margin-top: 1.5rem;">
+                        <a href="teaching.html" class="pillar__link">Teaching & Supervision &rarr;</a>
                     </p>
                 </div>
+                <figure class="about-portrait">
+                    <img src="images/wesam-amer-portrait.jpg" alt="Dr Wesam Amer in academic setting" width="682" height="1023" loading="lazy">
+                    <figcaption>Academic engagement</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- SECTION E - Academic journey and international experience -->
+        <section class="section">
+            <h2 class="about-heading">Academic Journey and Institutional Experience</h2>
+            <p class="measure-wide">
+                Dr Amer's academic journey began in Palestine, where he studied mass communication before pursuing postgraduate studies in the United Kingdom and Germany.
+            </p>
+            <p class="measure-wide" style="margin-top: 1rem;">
+                He holds a PhD in Media Studies and Discourse Analysis from the University of Hamburg, awarded Magna Cum Laude in 2015. His doctoral research examined international press coverage of the 2008–09 Gaza war through Critical Discourse Analysis. He also holds an MA with Distinction from Anglia Ruskin University and a BA from Al-Azhar University in Gaza.
+            </p>
+
+            <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem;">Academic Milestones</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2001</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>BA, Mass Communication</h3>
+                        <div class="institution"><a href="https://www.alazhar.edu.ps/">Al-Azhar University</a>, Gaza</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2009</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>MA with Distinction</h3>
+                        <div class="institution"><a href="https://www.aru.ac.uk/">Anglia Ruskin University</a>, United Kingdom</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2015</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>PhD in Media Studies and Discourse Analysis, Magna Cum Laude</h3>
+                        <div class="institution"><a href="https://www.uni-hamburg.de/en.html">University of Hamburg</a>, Germany</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2017–2020</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Marie Skłodowska-Curie Fellow</h3>
+                        <div class="institution"><a href="https://www.ncl.ac.uk/">Newcastle University</a>, United Kingdom</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2022</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Fulbright Fellow</h3>
+                        <div class="institution"><a href="https://www.harvard.edu/">Harvard University</a>, United States</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2023–2024</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Guest Researcher</h3>
+                        <div class="institution"><a href="https://www.hans-bredow-institut.de/en">Hans-Bredow-Institut</a>, Germany</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2024–2026</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>CARA / IIE-SRF Fellow</h3>
+                        <div class="institution"><a href="https://www.cam.ac.uk/">University of Cambridge</a>, United Kingdom</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026–2027</div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Affiliated Lecturer</h3>
+                        <div class="institution"><a href="https://www.cdh.cam.ac.uk/">Cambridge Digital Humanities</a>, University of Cambridge</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Academic Biography -->
-            <div class="about-block bio">
-                <h2 class="about-heading">Academic Biography</h2>
+            <h3 style="margin-top: 3rem; margin-bottom: 1.5rem;">Additional Affiliations</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Visiting Scholar, <a href="https://www.jesus.cam.ac.uk/">Jesus College</a>, University of Cambridge</li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Visiting Researcher, Department of Sociology, University of Cambridge</li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Affiliated Fellow, Centre for Islamic Studies, University of Cambridge</li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Associate Fellow, <a href="https://www.homerton.cam.ac.uk/">Homerton College</a>, University of Cambridge</li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Dean of the Faculty of Mass Communication and Languages, Gaza University (2020–2023)</li>
+                <li style="padding: 0.75rem 0;">Founder and first Chair of the Middle East Chapter of the <a href="https://www.mariecuriealumni.eu/">Marie Curie Alumni Association</a></li>
+            </ul>
 
-                <h3>A scholar between academia and the world</h3>
-                <p>
-                    Dr Wesam Amer is a scholar of media, communication and higher education whose work examines how communication technologies, media systems, political discourse and institutional structures shape power, conflict and knowledge production. His interdisciplinary research connects two closely related areas: media and political communication, and higher education, knowledge and scholasticide. Across both, he is concerned with how political and institutional power operates, how societies communicate and produce knowledge under conditions of conflict and transformation, and how media and educational institutions respond to profound technological and political change.
-                </p>
-                <p>
-                    His academic trajectory has developed through research, teaching, institutional leadership and international collaboration across Palestine, Germany, the United Kingdom and the United States. His work combines critical and interdisciplinary approaches, drawing on media and communication studies, critical discourse analysis, digital media research, political communication and higher education studies.
-                </p>
-
-                <h3>Media, political communication and digital technologies</h3>
-                <p>
-                    A central strand of Wesam's research examines the relationship between media, political communication and power. His work investigates how political actors construct and circulate narratives, develop communication strategies, mobilise audiences and negotiate public meaning across traditional and digital media environments.
-                </p>
-                <p>
-                    His earlier research focused on media representations, war reporting and political discourse, particularly in relation to the Israeli–Palestinian conflict and the wider Middle East. His doctoral research examined war reporting in the international press, building on his wider interest in how media institutions frame conflict, represent political actors and shape public understanding of international events.
-                </p>
-                <p>
-                    Over time, this research expanded towards digital political communication and the transformation of political discourse through social media and networked communication. He has examined how political and non-state actors use digital platforms to communicate, mobilise supporters, construct identities and engage in strategic narrative production. His interests include Islamist movements, political and strategic communication, digital activism and the changing relationship between media, conflict and geopolitical contestation.
-                </p>
-                <p>
-                    More recently, his research has increasingly addressed the role of platforms, algorithms and artificial intelligence in shaping contemporary communication. Rather than treating digital technologies as neutral channels, he investigates how platform infrastructures, algorithmic systems, content moderation and mechanisms of visibility influence the production, circulation and reception of political communication.
-                </p>
-                <p>
-                    His current research explores hypermedia warfare and AI-mediated communication in contemporary conflict. It considers how political actors adapt their communicative strategies to platform environments, how visual and multimodal content circulates across digital networks, and how technological infrastructures influence the visibility and amplification of political narratives.
-                </p>
-                <p>
-                    This work informs his developing approach to <strong>Techno-Discursive Critical Analysis (TDCA)</strong>, which connects the critical interpretation of language, narratives and multimodal communication with the technological infrastructures through which discourse is produced, distributed and made visible. It provides a framework for examining the interaction between political strategy, communicative adaptation, platform governance and algorithmic visibility.
-                </p>
-
-                <h3>Higher education, knowledge production and scholasticide</h3>
-                <p>
-                    A second major strand of Wesam's academic work concerns higher education, knowledge production and the institutional consequences of war, occupation and political violence. This research examines universities not simply as physical infrastructures or providers of education, but as essential institutions for knowledge production, cultural continuity, professional development and collective futures.
-                </p>
-                <p>
-                    His work on Gaza focuses on the destruction of educational institutions and the wider consequences for academic communities, students, researchers and knowledge systems. It engages with the concept of scholasticide to examine the destruction of educational life and institutions, while developing a broader perspective on how higher education can be sustained, recovered and reconstructed.
-                </p>
-                <p>
-                    An important part of this work is the development of the concept of <strong>de-scholasticide</strong>, which shifts attention from documenting destruction towards the intellectual, institutional and practical conditions required to restore and transform higher education. It considers how universities can recover beyond the reconstruction of buildings, addressing the restoration of academic communities, institutional capacity, knowledge infrastructures, research environments and educational opportunities.
-                </p>
-                <p>
-                    His research in this area explores institutional resilience, academic continuity, human-capital regeneration, Palestinian leadership in reconstruction, epistemic self-determination and the role of international academic solidarity. It also considers how higher education institutions can move beyond emergency recovery towards more sustainable, transformative and locally grounded models of development.
-                </p>
-
-                <h3>Academic leadership, teaching and institutional development</h3>
-                <p>
-                    Alongside his research, Wesam has extensive experience in higher education teaching, academic management and institutional development, including service as Dean of the Faculty of Mass Communication and Languages at Gaza University. His teaching and supervision experience spans media and communication studies, digital media, media and society, political communication, visual communication, social media and research methods.
-                </p>
-                <p>
-                    His approach connects critical academic inquiry with contemporary media practices and encourages students to understand communication within its wider technological, political and institutional contexts.
-                </p>
-                <p>
-                    <a class="pillar__link" href="teaching.html">See Teaching and Supervision &rarr;</a>
-                </p>
-
-                <h3>International research experience and academic collaborations</h3>
-                <p>
-                    Wesam's academic career includes research and academic appointments in several international institutions across the United Kingdom, Germany, the United States and beyond, developed through fellowships including the Marie Skłodowska-Curie Postdoctoral Fellowship at Newcastle University (2017–2019), a Fulbright Research Scholarship at Harvard University (2022), CARA/IIE-Scholar Rescue Fund support at the University of Cambridge and a guest research position at the Hans-Bredow-Institut in Hamburg (from December 2023). He was also the founder and first Chair of the Middle East Chapter of the Marie Curie Alumni Association, contributing to the development of academic networks and research connections across the region and internationally.
-                </p>
-                <p>
-                    His international research experience has enabled him to develop collaborations across academic institutions and disciplinary communities, contributing to wider discussions on media, political communication, conflict, digital technologies and higher education.
-                </p>
-                <p>
-                    <a class="pillar__link" href="academic-profile.html">See Academic Profile &rarr;</a>
-                </p>
-
-                <h3>An integrated research agenda</h3>
-                <p>
-                    Although media and political communication and higher education may appear to be distinct academic fields, they are connected by a common intellectual concern: understanding how power, technology, conflict and institutional structures shape the conditions under which societies communicate, produce knowledge and organise their futures.
-                </p>
-                <p>
-                    In the media sector, his research examines how political actors communicate, how digital infrastructures shape public discourse, and how technological systems influence visibility, influence and power.
-                </p>
-                <p>
-                    In the education sector, his research examines how knowledge institutions are affected by conflict and political violence, how academic communities maintain intellectual and professional continuity, and how higher education can be reconstructed in ways that restore institutional capacity and strengthen epistemic autonomy.
-                </p>
-                <p>
-                    Together, these areas form an integrated academic and professional agenda connecting communication, political power, technology, education and knowledge transformation.
-                </p>
+            <h3 style="margin-top: 3rem; margin-bottom: 1.5rem;">International Academic Journey</h3>
+            <div class="map-container">
+                <svg class="map-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map showing countries of academic activity: Palestine, Germany, United Kingdom, United States">
+                    <!-- Simplified world map representation -->
+                    <rect width="400" height="200" fill="#F7F5F0" stroke="var(--stone)" stroke-width="1"/>
+                    <!-- UK -->
+                    <ellipse cx="180" cy="80" rx="15" ry="10" fill="#A66B50" opacity="0.7"/>
+                    <!-- Germany -->
+                    <ellipse cx="210" cy="85" rx="12" ry="8" fill="#A66B50" opacity="0.7"/>
+                    <!-- Palestine -->
+                    <ellipse cx="235" cy="100" rx="8" ry="6" fill="#A66B50" opacity="0.7"/>
+                    <!-- US -->
+                    <ellipse cx="90" cy="90" rx="25" ry="15" fill="#A66B50" opacity="0.7"/>
+                    
+                    <text x="180" y="75" font-size="8" text-anchor="middle" fill="var(--navy)">UK</text>
+                    <text x="210" y="80" font-size="8" text-anchor="middle" fill="var(--navy)">DE</text>
+                    <text x="235" y="95" font-size="8" text-anchor="middle" fill="var(--navy)">PS</text>
+                    <text x="90" y="85" font-size="8" text-anchor="middle" fill="var(--navy)">US</text>
+                </svg>
+                <div class="country-labels">
+                    <span><strong>Palestine</strong> – Academic beginnings</span>
+                    <span><strong>Germany</strong> – PhD & research</span>
+                    <span><strong>United Kingdom</strong> – Postgraduate & fellowships</span>
+                    <span><strong>United States</strong> – Fulbright Fellowship</span>
+                </div>
             </div>
+        </section>
+
+        <!-- SECTION F - Institutional leadership and professional practice -->
+        <section class="section">
+            <h2 class="about-heading">From Academic Research to Professional Practice</h2>
+            <p class="measure-wide">
+                Dr Amer's work extends beyond academic research and teaching. He is interested in bringing rigorous research, critical analysis and institutional understanding into professional and organisational settings.
+            </p>
+
+            <div style="margin-top: 2rem;">
+                <article class="org-panel">
+                    <h3>Frontline World</h3>
+                    <p style="font-style: italic; color: var(--terracotta-dark); margin-bottom: 1rem;">Founder & Director</p>
+                    <p class="measure-wide">Connecting academic knowledge with strategic research, institutional advisory, risk and strategic foresight, strategic communication and professional development.</p>
+                    <p style="margin-top: 1rem;"><a href="https://frontlineworld.org/" target="_blank" rel="noopener" class="pillar__link">frontlineworld.org &rarr;</a></p>
+                </article>
+
+                <article class="org-panel">
+                    <h3>Gaza Center for Research in Humanities and Social Sciences (GCR-HSS)</h3>
+                    <p style="font-style: italic; color: var(--terracotta-dark); margin-bottom: 1rem;">Founder & Director</p>
+                    <p class="measure-wide">Advancing research and scholarly engagement in the humanities and social sciences, with a focus on Palestinian society.</p>
+                </article>
+            </div>
+
+            <p class="measure-wide" style="margin-top: 1.5rem;">
+                These initiatives reflect his wider commitment to making research relevant to institutional decision-making, public understanding and the challenges facing communities affected by conflict.
+            </p>
+        </section>
+
+        <!-- SECTION G - Recognition and international engagement -->
+        <section class="section">
+            <h2 class="about-heading">Recognition and International Engagement</h2>
+            <p class="measure-wide">
+                Dr Amer's academic experience has been shaped by international research fellowships, interdisciplinary collaboration and engagement with academic communities across different countries.
+            </p>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1.25rem;">Fellowships and Distinctions</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Fulbright Fellowship at Harvard University</li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">Marie Skłodowska-Curie Fellowship at Newcastle University</li>
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--stone);">CARA / IIE-SRF Fellowship at the University of Cambridge</li>
+                <li style="padding: 0.75rem 0;">First Place in the Data-Driven Research Award in MENA as a Junior Researcher Coach (2021), in an initiative associated with UNESCO, the University of Liverpool and partner organisations</li>
+            </ul>
+
+            <h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">Languages</h3>
+            <div class="language-grid">
+                <div class="language-item">
+                    <span class="language-code">AR</span>
+                    <span class="language-name">Arabic</span>
+                </div>
+                <div class="language-item">
+                    <span class="language-code">EN</span>
+                    <span class="language-name">English</span>
+                </div>
+                <div class="language-item">
+                    <span class="language-code">DE</span>
+                    <span class="language-name">German</span>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; color: var(--slate); font-size: var(--fs-meta);">He works in Arabic, English and German and engages with international academic and professional communities through research, teaching, collaboration and public discussion.</p>
+        </section>
+
+        <!-- SECTION H - Academic outlook -->
+        <section class="outlook-section">
+            <h2 class="about-heading" style="text-align: center;">Working Across Research, Education and Practice</h2>
+            <p class="outlook-quote">
+                Academic inquiry and strategic practice are vital tools to challenge narrative distortion, protect educational ecosystems, and ensure that the realities of conflict-affected communities are rigorously examined and understood.
+            </p>
+            <p class="measure-wide" style="margin: 2rem auto 0; text-align: center;">
+                Whether through research, teaching, institutional engagement or consultancy, he seeks to connect critical scholarship with practical questions and contribute to a deeper understanding of the relationship between media, technology, political power and knowledge.
+            </p>
         </section>
     </main>
 
