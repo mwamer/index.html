@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="research.css">
 </head>
 <body>
-    <!-- Header / nav -->
     <header class="site-header">
         <nav class="nav-container" aria-label="Primary">
             <a href="index.html" class="brand">Dr Wesam Amer</a>
@@ -31,40 +30,40 @@
     </header>
 
     <main>
-        <!-- Hero -->
         <section class="hero">
             <div class="container hero-grid">
                 <div class="hero-content">
-                    <p class="eyebrow">Research</p>
+                    <p class="eyebrow eyebrow-terra">Research</p>
                     <h1>Who can speak, be seen and know under conflict</h1>
                     <p>My research examines how conflict, technology and political power shape the production, circulation and loss of knowledge. It follows two connected agendas. The first studies how media and AI-mediated systems construct political narratives and govern what becomes visible in conflict. The second studies how war destroys, and how societies rebuild, the universities that sustain knowledge production, particularly in Palestine.</p>
                     <p>Both ask who can speak, be seen and know under violence. I develop a framework for each: Techno-Discursive Critical Analysis (TDCA) and de-scholasticide, the study of how education is restored after scholasticide, its systematic destruction.</p>
                     <div class="hero-actions">
                         <a href="#projects" class="btn btn-primary">Explore selected research projects</a>
-                        <a href="publications.html" class="btn btn-outline">Browse publications</a>
+                        <a href="publications.html" class="btn btn-secondary">Browse publications</a>
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <figure class="visual-slot" data-slot="hero-agenda" style="--ratio: 16 / 9">
-                        <div class="two-agenda-diagram">
-                            <div class="agenda-row">
-                                <div class="agenda-col agenda-col-a">
-                                    <p class="agenda-eyebrow">Agenda A</p>
-                                    <h3 class="agenda-title">Communication, technology and political power</h3>
-                                    <div class="agenda-box">Pillar I: Political communication, media and conflict</div>
-                                    <div class="agenda-pill agenda-pill-teal">TDCA</div>
-                                    <div class="agenda-box">Pillar II: AI, digital technologies and algorithmic power</div>
+                    <div class="two-agenda-diagram" aria-label="Two-agenda diagram">
+                        <div class="agenda-row">
+                            <div class="agenda-col agenda-col-a">
+                                <p class="agenda-eyebrow">Agenda A</p>
+                                <h3 class="agenda-title">Communication, technology and political power</h3>
+                                <div class="agenda-box">I Political communication, media and conflict</div>
+                                <div class="agenda-pill-wrap">
+                                    <span class="agenda-pill agenda-pill-teal">TDCA</span>
                                 </div>
-                                <div class="agenda-col agenda-col-b">
-                                    <p class="agenda-eyebrow">Agenda B</p>
-                                    <h3 class="agenda-title">Conflict and knowledge production</h3>
-                                    <div class="agenda-box">Pillar III: Higher education, scholasticide and reconstruction</div>
-                                    <div class="agenda-pill agenda-pill-terra">De-scholasticide</div>
+                                <div class="agenda-box">II AI, digital technologies and algorithmic power</div>
+                            </div>
+                            <div class="agenda-col agenda-col-b">
+                                <p class="agenda-eyebrow">Agenda B</p>
+                                <h3 class="agenda-title">Conflict and knowledge production</h3>
+                                <div class="agenda-box">III Higher education, scholasticide and reconstruction</div>
+                                <div class="agenda-pill-wrap">
+                                    <span class="agenda-pill agenda-pill-terra">De-scholasticide</span>
                                 </div>
                             </div>
                         </div>
-                        <figcaption class="visual-slot__caption">Two-agenda diagram</figcaption>
-                    </figure>
+                    </div>
                     <div class="agenda-shared-band">
                         <p>Who can speak, be seen and know under conflict</p>
                     </div>
@@ -72,13 +71,17 @@
             </div>
         </section>
 
-        <!-- Research pillars and questions -->
-        <section class="section-card">
+        <section class="section section-card">
             <div class="container">
-                <h2>Research pillars and questions</h2>
+                <header class="section-header">
+                    <p class="eyebrow">Research</p>
+                    <h2>Research pillars and questions</h2>
+                </header>
                 <div class="pillars-grid">
-                    <article class="pillar-col pillar-col-a">
-                        <div class="pillar-numeral">I</div>
+                    <article class="card pillar-card pillar-card-a">
+                        <div class="card-top">
+                            <span class="pillar-numeral">I</span>
+                        </div>
                         <h3>Pillar I: Political Communication, Media and Conflict</h3>
                         <p>I investigate how political actors, movements and media institutions construct narratives, communicate political objectives and shape public understanding in contexts of conflict and insecurity.</p>
                         <p class="pillar-subhead">Guiding questions</p>
@@ -88,13 +91,11 @@
                             <li>How are terrorism, extremism and security framed in political and media discourse?</li>
                         </ul>
                         <p class="evidence">Evidence: <a href="https://www.arabmediasociety.com/">PhD research on Gaza war coverage</a> · <a href="#">Hamas in Cyberspace (2023)</a> · <a href="#">Critical Multimodal Discourse Analysis (2024)</a></p>
-                        <figure class="visual-slot" data-slot="pillar-1" style="--ratio: 4 / 3">
-                            <div class="visual-slot__placeholder">Visual placeholder: pillar figure</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
                     </article>
-                    <article class="pillar-col pillar-col-a">
-                        <div class="pillar-numeral">II</div>
+                    <article class="card pillar-card pillar-card-a">
+                        <div class="card-top">
+                            <span class="pillar-numeral">II</span>
+                        </div>
                         <h3>Pillar II: Artificial Intelligence, Digital Technologies and Algorithmic Power</h3>
                         <p>I examine how artificial intelligence, digital platforms and algorithmic systems transform communication, political influence and the visibility of information. This pillar asks how political actors adapt to algorithmically mediated environments, and what AI-generated, manipulated and multimodal media mean for conflict and security.</p>
                         <p class="pillar-subhead">Guiding questions</p>
@@ -104,13 +105,11 @@
                             <li>What role do AI-generated, manipulated and multimodal media play in contemporary conflict and information warfare?</li>
                         </ul>
                         <p class="evidence">Evidence: <a href="#projects">HYPERWAR: AI-Mediated Hypermedia Warfare</a> · <a href="#contributions">TDCA framework</a></p>
-                        <figure class="visual-slot" data-slot="pillar-2" style="--ratio: 4 / 3">
-                            <div class="visual-slot__placeholder">Visual placeholder: pillar figure</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
                     </article>
-                    <article class="pillar-col pillar-col-b">
-                        <div class="pillar-numeral">III</div>
+                    <article class="card pillar-card pillar-card-b">
+                        <div class="card-top">
+                            <span class="pillar-numeral">III</span>
+                        </div>
                         <h3>Pillar III: Higher Education, Scholasticide and Reconstruction</h3>
                         <p>I investigate the destruction and disruption of higher education in conflict-affected societies, with particular attention to Palestine. Scholasticide, the systematic destruction of education, damages universities, academic communities and the continuity of knowledge production. My work asks what reconstruction requires beyond rebuilt infrastructure, including governance, institutional resilience and academic capacity.</p>
                         <p class="pillar-subhead">Guiding questions</p>
@@ -120,50 +119,40 @@
                             <li>What does de-scholasticide require beyond the physical reconstruction of educational infrastructure?</li>
                         </ul>
                         <p class="evidence">Evidence: <a href="#projects">Beyond Scholasticide: De-Scholasticide and the Reconstruction of Higher Education in Gaza</a> · <a href="#projects">Rebuilding Higher Education in Post-War Gaza</a> · <a href="#projects">Re-engineering Palestinian Universities</a></p>
-                        <figure class="visual-slot" data-slot="pillar-3" style="--ratio: 4 / 3">
-                            <div class="visual-slot__placeholder">Visual placeholder: pillar figure</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- Conceptual contributions -->
         <section class="section" id="contributions">
             <div class="container">
-                <h2>Conceptual contributions</h2>
-                <p class="section-intro">My research engages established theoretical traditions while developing analytical approaches to emerging questions at the intersection of communication, technology, conflict and knowledge production.</p>
+                <header class="section-header">
+                    <h2>Conceptual contributions</h2>
+                    <p class="section-intro">My research engages established theoretical traditions while developing analytical approaches to emerging questions at the intersection of communication, technology, conflict and knowledge production.</p>
+                </header>
                 <div class="contributions-grid">
                     <article class="contrib-panel contrib-panel-teal">
                         <span class="badge">Developing framework</span>
                         <h3>Techno-Discursive Critical Analysis (TDCA)</h3>
                         <p>TDCA integrates Critical Discourse Studies, Critical Algorithm Studies and Critical Security Studies. It asks how political discourse interacts with technological infrastructures, algorithmic systems and the distribution of visibility in digital information environments. Rather than treating language and technology separately, it examines how narratives, platform architectures and algorithmic ranking together shape what becomes visible and legitimate in conflict. TDCA links Pillars I and II and is applied in the HYPERWAR project.</p>
                         <a href="#projects" class="contrib-link">Research application: HYPERWAR: AI-Mediated Hypermedia Warfare</a>
-                        <figure class="visual-slot" data-slot="tdca-diagram" style="--ratio: 16 / 9">
-                            <div class="visual-slot__placeholder">Visual placeholder: TDCA diagram</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
                     </article>
                     <article class="contrib-panel contrib-panel-terra">
                         <span class="badge">Developing conceptual approach</span>
                         <h3>De-scholasticide</h3>
                         <p>De-scholasticide moves beyond documenting the destruction of educational institutions to examine the processes and conditions needed to restore academic communities, institutional capacity and knowledge production. Where scholasticide names the destruction, de-scholasticide asks what recovery requires: academic continuity, governance, institutional resilience and the rebuilding of the human and organisational capacity of universities. It belongs primarily to Pillar III and is applied to Gaza and to Palestinian higher education more widely.</p>
                         <a href="#projects" class="contrib-link">Research application: Beyond Scholasticide · Rebuilding Higher Education in Post-War Gaza</a>
-                        <figure class="visual-slot" data-slot="descholasticide-diagram" style="--ratio: 16 / 9">
-                            <div class="visual-slot__placeholder">Visual placeholder: de-scholasticide diagram</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- Theoretical foundations and methods -->
-        <section class="section-card">
+        <section class="section section-card">
             <div class="container">
-                <h2>Theoretical foundations and methods</h2>
-                <p class="section-intro">My work draws on interdisciplinary traditions and uses qualitative, interpretive, computational and comparative methods, chosen according to the research question and the empirical material.</p>
+                <header class="section-header">
+                    <h2>Theoretical foundations and methods</h2>
+                    <p class="section-intro">My work draws on interdisciplinary traditions and uses qualitative, interpretive, computational and comparative methods, chosen according to the research question and the empirical material.</p>
+                </header>
                 <div class="foundations-methods-grid">
                     <div>
                         <h3>Theoretical foundations</h3>
@@ -210,84 +199,55 @@
                         </div>
                     </div>
                 </div>
-                <figure class="visual-slot" data-slot="methods-figure" style="--ratio: 16 / 9">
-                    <div class="visual-slot__placeholder">Visual placeholder: methods figure</div>
-                    <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                </figure>
             </div>
         </section>
 
-        <!-- Selected research projects -->
         <section class="section" id="projects">
             <div class="container">
-                <h2>Selected research projects</h2>
+                <header class="section-header">
+                    <h2>Selected research projects</h2>
+                </header>
                 <div class="projects-grid">
-                    <article class="project-card project-card-teal">
-                        <div class="project-header">
+                    <article class="card project-card project-card-teal">
+                        <div class="card-top project-card-top">
                             <span class="project-number">01</span>
                             <span class="status-pill status-in-progress">In progress</span>
                         </div>
                         <h3>HYPERWAR</h3>
                         <p><strong>AI-Mediated Hypermedia Warfare in Contemporary Conflict.</strong> Examines how political communication, AI-mediated content, platform infrastructures and algorithmic visibility interact in contemporary conflict, focusing on Hamas and Hezbollah across Telegram and TikTok. It is a cross-platform study of AI-mediated content, applying TDCA.</p>
-                        <a href="#" class="project-link">Explore HYPERWAR project</a>
-                        <figure class="visual-slot" data-slot="project-01" style="--ratio: 3 / 2">
-                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
+                        <p class="card-meta"><a href="#">Explore HYPERWAR project</a></p>
                     </article>
-                    <article class="project-card project-card-teal">
-                        <div class="project-header">
+                    <article class="card project-card project-card-teal">
+                        <div class="card-top project-card-top">
                             <span class="project-number">02</span>
                             <span class="status-pill status-published">Published work</span>
                         </div>
                         <h3>Hamas Digital Communication</h3>
                         <p>Examines the digital communication practices, political expression and discursive strategies of Hamas and associated media environments. Unlike HYPERWAR, it is a single-actor study of political discourse.</p>
-                        <p class="evidence">Evidence: Hamas in Cyberspace (2023) · Critical Multimodal Discourse Analysis (2024)</p>
-                        <figure class="visual-slot" data-slot="project-02" style="--ratio: 3 / 2">
-                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
+                        <p class="evidence">Evidence: <a href="#">Hamas in Cyberspace (2023)</a> · <a href="#">Critical Multimodal Discourse Analysis (2024)</a></p>
                     </article>
-                    <article class="project-card project-card-terra">
-                        <div class="project-header">
+                    <article class="card project-card project-card-terra">
+                        <div class="card-top project-card-top">
                             <span class="project-number">03</span>
-                            <span class="status-pill status-in-progress">In progress</span>
+                            <span class="status-pill status-in-progress status-terra">In progress</span>
                         </div>
                         <h3>Beyond Scholasticide</h3>
                         <p>De-scholasticide and the reconstruction of higher education in Gaza, examining academic continuity, institutional recovery and the restoration of knowledge production.</p>
-                        <a href="#" class="project-link">Explore research and conceptual framework</a>
-                        <figure class="visual-slot" data-slot="project-03" style="--ratio: 3 / 2">
-                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
+                        <p class="card-meta"><a href="#">Explore research and conceptual framework</a></p>
                     </article>
-                    <article class="project-card project-card-terra">
-                        <div class="project-header">
+                    <article class="card project-card project-card-terra">
+                        <div class="card-top project-card-top">
                             <span class="project-number">04</span>
-                            <span class="status-pill status-in-progress">In progress</span>
+                            <span class="status-pill status-in-progress status-terra">In progress</span>
                         </div>
                         <h3>Rebuilding Palestinian Higher Education</h3>
                         <p>Research on the institutional, academic and organisational requirements for rebuilding higher education after the destruction of universities and educational infrastructure. It covers institutional transformation, business process re-engineering and organisational resilience.</p>
                         <p class="evidence">Evidence: <a href="#">Rebuilding Higher Education in Post-War Gaza</a> · <a href="#">Re-engineering Palestinian Universities</a></p>
-                        <figure class="visual-slot" data-slot="project-04" style="--ratio: 3 / 2">
-                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
-                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
-                        </figure>
                     </article>
-                </div>
-                
-                <!-- Presentation slot -->
-                <div class="presentation-section">
-                    <h3>Research in presentation</h3>
-                    <figure class="visual-slot" data-slot="presentation" style="--ratio: 16 / 9">
-                        <div class="visual-slot__placeholder">Visual placeholder: conference talk, slide deck or video (16:9)</div>
-                        <figcaption class="visual-slot__caption">Embed YouTube/Vimeo iframe or PDF viewer here. Add title attribute for iframes.</figcaption>
-                    </figure>
                 </div>
             </div>
         </section>
 
-        <!-- Collaboration -->
         <section class="collab-band">
             <div class="container collab-grid">
                 <div class="collab-content">
@@ -305,7 +265,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="site-footer">
         <div class="container footer-grid">
             <div>Dr Wesam Amer · Also published as Mohammedwesam Amer</div>
