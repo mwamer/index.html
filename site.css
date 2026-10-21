@@ -1729,3 +1729,145 @@ html {
     align-items: center;
     min-height: 44px;
 }
+
+/* Section containers: the section already supplies vertical padding */
+.section > .container {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#services,
+#frontline {
+    scroll-margin-top: 24px;
+}
+
+/* Services */
+.cluster-card-paper {
+    background: var(--paper);
+}
+
+.cluster-card-narrow {
+    flex-basis: 240px;
+}
+
+.who-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.who-row {
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 23px;
+    line-height: 1.25;
+    color: var(--ink);
+}
+
+.who-row-last {
+    border-bottom: 1px solid var(--line);
+}
+
+.split-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+}
+
+.split-grid-flush {
+    gap: 32px 48px;
+}
+
+.split-col {
+    flex: 1 1 400px;
+    min-width: 0;
+}
+
+.split-intro {
+    margin: 0 0 24px;
+    color: var(--ink-soft);
+}
+
+.theme-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.theme-row {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    color: var(--ink);
+}
+
+.theme-row-last {
+    border-bottom: 1px solid var(--line);
+}
+
+.training-card {
+    align-self: flex-start;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--terra);
+    border-radius: 6px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.badge-start {
+    align-self: flex-start;
+}
+
+.training-text {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-soft);
+}
+
+.training-note {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.training-action {
+    margin-top: 8px;
+}
+
+.steps-grid {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.step {
+    flex: 1 1 240px;
+    min-width: 0;
+    border-top: 4px solid var(--ink);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+ul.pill-list {
+    list-style: none;
+}
+
+.pill-note {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+@media (max-width: 640px) {
+    .section,
+    .section-card {
+        padding: 48px 0;
+    }
+}
