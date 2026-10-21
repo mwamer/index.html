@@ -2105,7 +2105,7 @@ button.btn {
 /* News & Engagement */
 .news-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
     align-items: stretch;
 }
@@ -2184,7 +2184,7 @@ button.btn {
 
 .news-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 136px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
     margin-top: auto;
     padding-top: 4px;
@@ -2197,8 +2197,8 @@ button.btn {
 
 .news-figure img {
     display: block;
-    width: 136px;
-    height: 102px;
+    width: 100%;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     border: 1px solid var(--line);
     border-radius: 6px;
@@ -2210,9 +2210,14 @@ button.btn {
     color: var(--muted);
 }
 
-@media (max-width: 1024px) {
+/* Featured gallery matches the width of the archive card galleries */
+.news-item-featured .news-gallery {
+    max-width: 500px;
+}
+
+@media (max-width: 768px) {
     .news-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
