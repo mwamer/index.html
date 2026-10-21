@@ -2104,9 +2104,10 @@ button.btn {
 
 /* News & Engagement */
 .news-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
+    align-items: stretch;
 }
 
 .news-item {
@@ -2183,9 +2184,10 @@ button.btn {
 
 .news-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, 136px);
     gap: 16px;
-    margin-top: 4px;
+    margin-top: auto;
+    padding-top: 4px;
 }
 
 .news-figure {
@@ -2194,8 +2196,9 @@ button.btn {
 }
 
 .news-figure img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
+    display: block;
+    width: 136px;
+    height: 102px;
     object-fit: cover;
     border: 1px solid var(--line);
     border-radius: 6px;
@@ -2205,4 +2208,20 @@ button.btn {
     margin-top: 8px;
     font-size: 14px;
     color: var(--muted);
+}
+
+@media (max-width: 1024px) {
+    .news-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .news-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .news-item,
+    .news-item-featured {
+        padding: 20px;
+    }
 }
