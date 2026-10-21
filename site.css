@@ -1537,3 +1537,195 @@ html {
         text-align: left;
     }
 }
+
+/* Leadership */
+#faculty {
+    scroll-margin-top: 24px;
+}
+
+.glance-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.glance-row {
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+}
+
+.glance-row-last {
+    border-bottom: 1px solid var(--line);
+}
+
+.glance-period {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 23px;
+    line-height: 1.25;
+    color: var(--terra);
+}
+
+.glance-title {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.glance-meta {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.faculty-period {
+    margin: 0 0 8px;
+    font-weight: 600;
+    color: var(--terra);
+}
+
+.outcomes-grid {
+    margin-bottom: 40px;
+}
+
+.cluster-num-ink {
+    color: var(--ink);
+}
+
+.review-grid {
+    gap: 48px;
+}
+
+.review-col {
+    flex: 1 1 420px;
+}
+
+.pill-list-flush {
+    margin-top: 0;
+}
+
+.pill-lg {
+    padding: 4px 16px;
+}
+
+.journal-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.journal-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+}
+
+.journal-row-last {
+    border-bottom: 1px solid var(--line);
+}
+
+.journal-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 23px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.journal-link {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    align-self: center;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.featured-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--teal);
+    border-radius: 6px;
+    padding: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px 48px;
+    align-items: center;
+}
+
+.featured-main {
+    flex: 1 1 480px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.featured-badge {
+    align-self: flex-start;
+    background: #E3ECEA;
+    color: var(--teal);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.featured-title {
+    margin: 0;
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1.2;
+    color: var(--ink);
+}
+
+.featured-meta {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.featured-text {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-soft);
+}
+
+.featured-side {
+    flex: 0 1 280px;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.featured-note {
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.funding-intro {
+    margin-bottom: 24px;
+}
+
+.funding-note {
+    margin: 0;
+    max-width: 720px;
+    color: var(--muted);
+}
+
+.engagement-links {
+    color: var(--paper);
+    text-align: center;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.engagement-links a {
+    color: var(--paper);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
