@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="research.css">
+    <link rel="stylesheet" href="site.css">
 </head>
 <body>
     <header class="site-header">
@@ -20,10 +20,10 @@
                 <li><a href="about.html">About</a></li>
                 <li><a href="research.html">Research</a></li>
                 <li><a href="publications.html">Publications</a></li>
-                <li><a href="teaching.html" class="active">Teaching</a></li>
-                <li><a href="academic-profile.html">Academic Leadership</a></li>
+                <li><a href="teaching.html" aria-current="page">Teaching</a></li>
+                <li><a href="leadership.html">Academic Leadership</a></li>
                 <li><a href="services.html">Services & Offers</a></li>
-                <li><a href="news-engagement.html">News & Engagement</a></li>
+                <li><a href="news.html">News & Engagement</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
@@ -43,83 +43,83 @@
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <div class="card" style="padding: 32px;">
+                    <div class="card card-padding-lg">
                         <p class="eyebrow" style="margin-bottom: 16px;">Four countries</p>
-                        <ul class="ruled-list" style="margin-bottom: 16px;">
-                            <li style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-                                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">Palestine</span>
-                                <span style="font-size: 14px; color: var(--muted);">Five universities</span>
+                        <ul class="ruled-list ruled-list-top" style="margin-bottom: 16px;">
+                            <li class="country-row">
+                                <span class="country-name">Palestine</span>
+                                <span class="country-detail">Five universities</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-                                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">United Kingdom</span>
-                                <span style="font-size: 14px; color: var(--muted);">Cambridge, Newcastle</span>
+                            <li class="country-row">
+                                <span class="country-name">United Kingdom</span>
+                                <span class="country-detail">Cambridge, Newcastle</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-                                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">Germany</span>
-                                <span style="font-size: 14px; color: var(--muted);">University of Hamburg</span>
+                            <li class="country-row">
+                                <span class="country-name">Germany</span>
+                                <span class="country-detail">University of Hamburg</span>
                             </li>
-                            <li style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-                                <span style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">United States</span>
-                                <span style="font-size: 14px; color: var(--muted);">Harvard University</span>
+                            <li class="country-row">
+                                <span class="country-name">United States</span>
+                                <span class="country-detail">Harvard University</span>
                             </li>
                         </ul>
-                        <p style="font-size: 14px; color: var(--muted); margin: 0; max-width: 100%;">Currently Affiliated Lecturer, Cambridge Digital Humanities (2026–27).</p>
+                        <p class="country-note">Currently Affiliated Lecturer, Cambridge Digital Humanities (2026–27).</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="section section-card" id="experience">
+        <section class="section section-card" id="experience" aria-labelledby="experience-heading">
             <div class="container">
                 <header class="section-header">
-                    <h2>Teaching experience</h2>
+                    <h2 id="experience-heading">Teaching experience</h2>
                     <p class="section-intro">My teaching has developed across four countries and a range of institutional settings, from formal course delivery to guest lectures and seminars.</p>
                 </header>
-                <ul class="ruled-list" style="border-top: 1px solid var(--line);">
-                    <li style="display: grid; grid-template-columns: 140px 1fr 1fr; gap: 24px; padding: 24px 0; align-items: start;">
-                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--terra);">2026–27</div>
+                <ul class="ruled-list ruled-list-top">
+                    <li class="experience-row">
+                        <div class="experience-period">2026–27</div>
                         <div>
-                            <div style="font-weight: 600; color: var(--ink);">University of Cambridge</div>
-                            <div style="font-size: 14px; color: var(--muted);">Cambridge Digital Humanities, United Kingdom</div>
+                            <div class="experience-institution">University of Cambridge</div>
+                            <div class="experience-unit">Cambridge Digital Humanities, United Kingdom</div>
                         </div>
-                        <div style="font-size: 15px; color: var(--ink-soft);">Affiliated Lecturer: lecturing, undergraduate and postgraduate supervision, and examination.</div>
+                        <div class="experience-role">Affiliated Lecturer: lecturing, undergraduate and postgraduate supervision, and examination.</div>
                     </li>
-                    <li style="display: grid; grid-template-columns: 140px 1fr 1fr; gap: 24px; padding: 24px 0; align-items: start;">
-                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--terra);">2022</div>
+                    <li class="experience-row">
+                        <div class="experience-period">2022</div>
                         <div>
-                            <div style="font-weight: 600; color: var(--ink);">Harvard University</div>
-                            <div style="font-size: 14px; color: var(--muted);">United States</div>
+                            <div class="experience-institution">Harvard University</div>
+                            <div class="experience-unit">United States</div>
                         </div>
-                        <div style="font-size: 15px; color: var(--ink-soft);">Fulbright fellow; guest lecturing, Palestine Politics. <em style="color: var(--muted);">[add guest lecture titles]</em></div>
+                        <div class="experience-role">Fulbright fellow; guest lecturing, Palestine Politics. <span class="muted-italic">[add guest lecture titles]</span></div>
                     </li>
-                    <li style="display: grid; grid-template-columns: 140px 1fr 1fr; gap: 24px; padding: 24px 0; align-items: start;">
-                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--terra);">Jan–Jun 2018</div>
+                    <li class="experience-row">
+                        <div class="experience-period">Jan–Jun 2018</div>
                         <div>
-                            <div style="font-weight: 600; color: var(--ink);">Newcastle University</div>
-                            <div style="font-size: 14px; color: var(--muted);">United Kingdom</div>
+                            <div class="experience-institution">Newcastle University</div>
+                            <div class="experience-unit">United Kingdom</div>
                         </div>
-                        <div style="font-size: 15px; color: var(--ink-soft);">Guest lecturer, MCH3077 Politics, Power and Communication ("Media and Terrorism: Social Media Discourse and Islamic State"); participant, MCH3085 Digital Discourses and Identity; Marie Skłodowska-Curie Fellow (2017–2020).</div>
+                        <div class="experience-role">Guest lecturer, MCH3077 Politics, Power and Communication ("Media and Terrorism: Social Media Discourse and Islamic State"); participant, MCH3085 Digital Discourses and Identity; Marie Skłodowska-Curie Fellow (2017–2020).</div>
                     </li>
-                    <li style="display: grid; grid-template-columns: 140px 1fr 1fr; gap: 24px; padding: 24px 0; align-items: start;">
-                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--terra);">Summer 2013</div>
+                    <li class="experience-row">
+                        <div class="experience-period">Summer 2013</div>
                         <div>
-                            <div style="font-weight: 600; color: var(--ink);">University of Hamburg</div>
-                            <div style="font-size: 14px; color: var(--muted);">Germany</div>
+                            <div class="experience-institution">University of Hamburg</div>
+                            <div class="experience-unit">Germany</div>
                         </div>
-                        <div style="font-size: 15px; color: var(--ink-soft);">Teaching associate for lectures on media discourse analysis in "Qualitative Methods in the Social Sciences: Approaches and Application of Discourse Analysis".</div>
+                        <div class="experience-role">Teaching associate for lectures on media discourse analysis in "Qualitative Methods in the Social Sciences: Approaches and Application of Discourse Analysis".</div>
                     </li>
-                    <li style="display: grid; grid-template-columns: 140px 1fr 1fr; gap: 24px; padding: 24px 0; align-items: start;">
-                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--terra);">Winter 2012/13</div>
+                    <li class="experience-row">
+                        <div class="experience-period">Winter 2012/13</div>
                         <div>
-                            <div style="font-weight: 600; color: var(--ink);">University of Hamburg</div>
-                            <div style="font-size: 14px; color: var(--muted);">Germany</div>
+                            <div class="experience-institution">University of Hamburg</div>
+                            <div class="experience-unit">Germany</div>
                         </div>
-                        <div style="font-size: 15px; color: var(--ink-soft);">Taught qualitative and quantitative methods in the Erasmus Mundus Master's in Journalism, Media and Globalization (research module; seminar "Media Times – Researching Journalism in Changing Media Ecology").</div>
+                        <div class="experience-role">Taught qualitative and quantitative methods in the Erasmus Mundus Master's in Journalism, Media and Globalization (research module; seminar "Media Times – Researching Journalism in Changing Media Ecology").</div>
                     </li>
                 </ul>
-                <article class="card" style="margin-top: 32px; border-top: 4px solid var(--terra);">
+                <article class="card palestine-card">
                     <h3>Palestine</h3>
-                    <p>I have taught in higher education institutions in Gaza and the wider Palestinian academic context. My courses have covered media and communication, journalism, digital media, political communication, research methods and professional communication. <em style="color: var(--muted);">[add roles, levels and periods]</em></p>
+                    <p>I have taught in higher education institutions in Gaza and the wider Palestinian academic context. My courses have covered media and communication, journalism, digital media, political communication, research methods and professional communication. <span class="muted-italic">[add roles, levels and periods]</span></p>
                     <div class="tools-pills" style="margin-top: 16px; margin-bottom: 16px;">
                         <span class="tool-pill">Gaza University</span>
                         <span class="tool-pill">Al-Aqsa University</span>
@@ -127,97 +127,97 @@
                         <span class="tool-pill">Islamic University of Gaza</span>
                         <span class="tool-pill">Al-Quds Open University</span>
                     </div>
-                    <p style="font-size: 14px; color: var(--muted); margin: 0; max-width: 100%;">My experience in academic leadership has also informed my understanding of curriculum development, student learning and the institutional conditions that support higher education. <a href="academic-profile.html">Academic Leadership</a></p>
+                    <p class="palestine-text">My experience in academic leadership has also informed my understanding of curriculum development, student learning and the institutional conditions that support higher education. <a href="leadership.html">Academic Leadership</a></p>
                 </article>
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" aria-labelledby="subjects-heading">
             <div class="container">
                 <header class="section-header">
-                    <h2>Subject areas and selected courses</h2>
+                    <h2 id="subjects-heading">Subject areas and selected courses</h2>
                     <p class="section-intro">My teaching combines theoretical, analytical and applied subjects, organised in seven clusters that support communication studies, media studies, journalism, digital humanities and related interdisciplinary programmes.</p>
                 </header>
-                <div class="projects-grid">
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--ink);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">01</span></div>
-                        <h3 style="font-size: 23px;">Media, society and communication</h3>
-                        <p style="font-size: 15px;">Media institutions, culture, representation, and media in politics and social change.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: Media and Society; Mass Communication</p>
+                <div class="clusters-grid">
+                    <article class="card cluster-card cluster-card-ink">
+                        <div class="card-top"><span class="cluster-number">01</span></div>
+                        <h3 class="cluster-title">Media, society and communication</h3>
+                        <p class="cluster-focus">Media institutions, culture, representation, and media in politics and social change.</p>
+                        <p class="cluster-courses">Courses: Media and Society; Mass Communication</p>
                     </article>
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--teal);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">02</span></div>
-                        <h3 style="font-size: 23px;">Digital media and communication</h3>
-                        <p style="font-size: 15px;">Digital platforms, online discourse, narrative and social media.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: Digital Media and Digital Discourse; Digital Narrative</p>
+                    <article class="card cluster-card cluster-card-teal">
+                        <div class="card-top"><span class="cluster-number">02</span></div>
+                        <h3 class="cluster-title">Digital media and communication</h3>
+                        <p class="cluster-focus">Digital platforms, online discourse, narrative and social media.</p>
+                        <p class="cluster-courses">Courses: Digital Media and Digital Discourse; Digital Narrative</p>
                     </article>
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--teal);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">03</span></div>
-                        <h3 style="font-size: 23px;">Political communication and international affairs</h3>
-                        <p style="font-size: 15px;">Political discourse, media representation, conflict narratives and strategic communication.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: Political Communication; Diplomacy and International Relations; Palestine Politics (guest lecturing, Harvard); guest lecture "Media and Terrorism: Social Media Discourse and Islamic State" (Newcastle, 2018)</p>
+                    <article class="card cluster-card cluster-card-teal">
+                        <div class="card-top"><span class="cluster-number">03</span></div>
+                        <h3 class="cluster-title">Political communication and international affairs</h3>
+                        <p class="cluster-focus">Political discourse, media representation, conflict narratives and strategic communication.</p>
+                        <p class="cluster-courses">Courses: Political Communication; Diplomacy and International Relations; Palestine Politics (guest lecturing, Harvard); guest lecture "Media and Terrorism: Social Media Discourse and Islamic State" (Newcastle, 2018)</p>
                     </article>
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--ink);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">04</span></div>
-                        <h3 style="font-size: 23px;">Journalism and media practice</h3>
-                        <p style="font-size: 15px;">Professional practice, production, digital environments and media ethics.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: Journalism and Specialised Journalism; Media Production and Broadcasting</p>
+                    <article class="card cluster-card cluster-card-ink">
+                        <div class="card-top"><span class="cluster-number">04</span></div>
+                        <h3 class="cluster-title">Journalism and media practice</h3>
+                        <p class="cluster-focus">Professional practice, production, digital environments and media ethics.</p>
+                        <p class="cluster-courses">Courses: Journalism and Specialised Journalism; Media Production and Broadcasting</p>
                     </article>
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--ink);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">05</span></div>
-                        <h3 style="font-size: 23px;">Research methods and academic inquiry</h3>
-                        <p style="font-size: 15px;">Qualitative and quantitative methods, discourse analysis, research design and academic writing.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: Mass Communication Research Methods; discourse analysis lectures, Qualitative Methods in the Social Sciences (Hamburg, 2013); research module seminar, Erasmus Mundus Master's in Journalism, Media and Globalization (Hamburg, 2012/13)</p>
+                    <article class="card cluster-card cluster-card-ink">
+                        <div class="card-top"><span class="cluster-number">05</span></div>
+                        <h3 class="cluster-title">Research methods and academic inquiry</h3>
+                        <p class="cluster-focus">Qualitative and quantitative methods, discourse analysis, research design and academic writing.</p>
+                        <p class="cluster-courses">Courses: Mass Communication Research Methods; discourse analysis lectures, Qualitative Methods in the Social Sciences (Hamburg, 2013); research module seminar, Erasmus Mundus Master's in Journalism, Media and Globalization (Hamburg, 2012/13)</p>
                     </article>
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--ink);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">06</span></div>
-                        <h3 style="font-size: 23px;">Language and professional communication</h3>
-                        <p style="font-size: 15px;">Translation, media English, oral and intercultural communication.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: Media and Journalistic Translation; Media English</p>
+                    <article class="card cluster-card cluster-card-ink">
+                        <div class="card-top"><span class="cluster-number">06</span></div>
+                        <h3 class="cluster-title">Language and professional communication</h3>
+                        <p class="cluster-focus">Translation, media English, oral and intercultural communication.</p>
+                        <p class="cluster-courses">Courses: Media and Journalistic Translation; Media English</p>
                     </article>
-                    <article class="card" style="flex: 1 1 340px; border-top: 4px solid var(--terra);">
-                        <div class="card-top"><span style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; color: var(--muted);">07</span></div>
-                        <h3 style="font-size: 23px;">Higher education, conflict and reconstruction</h3>
-                        <p style="font-size: 15px;">Higher education under occupation and war, academic continuity and resilience, university governance and institutional reconstruction.</p>
-                        <p style="margin-top: auto; padding-top: 16px; font-size: 14px; color: var(--muted); max-width: 100%; border-top: 1px solid var(--line);">Courses: <em>[add courses or teaching]</em></p>
+                    <article class="card cluster-card cluster-card-terra">
+                        <div class="card-top"><span class="cluster-number">07</span></div>
+                        <h3 class="cluster-title">Higher education, conflict and reconstruction</h3>
+                        <p class="cluster-focus">Higher education under occupation and war, academic continuity and resilience, university governance and institutional reconstruction.</p>
+                        <p class="cluster-courses">Courses: <span class="muted-italic">[add courses or teaching]</span></p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section class="section section-card">
+        <section class="section section-card" aria-labelledby="approach-heading">
             <div class="container">
                 <header class="section-header">
-                    <h2>Teaching approach</h2>
+                    <h2 id="approach-heading">Teaching approach</h2>
                 </header>
-                <p style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; line-height: 1.4; color: var(--ink); max-width: 720px; margin-bottom: 32px;">I regard teaching as an intellectual and collaborative process through which students develop the knowledge, confidence and independence to engage critically with their disciplines and the wider world.</p>
-                <div class="foundations-methods-grid">
+                <p class="approach-lead">I regard teaching as an intellectual and collaborative process through which students develop the knowledge, confidence and independence to engage critically with their disciplines and the wider world.</p>
+                <div class="approach-grid">
                     <div>
                         <ul class="ruled-list">
                             <li>
-                                <div style="display: flex; gap: 16px; align-items: baseline;">
-                                    <span style="color: var(--terra); font-size: 12px; font-weight: 600;">01</span>
+                                <div class="approach-item">
+                                    <span class="approach-number">01</span>
                                     <div>
-                                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink); margin-bottom: 8px;">Research-led teaching</div>
-                                        <p style="font-size: 15px; margin: 0; max-width: 100%;">I connect teaching with current scholarship and my own research, so that students engage with academic debates, assess evidence and see how knowledge is produced and contested.</p>
+                                        <div class="approach-title">Research-led teaching</div>
+                                        <p class="approach-text">I connect teaching with current scholarship and my own research, so that students engage with academic debates, assess evidence and see how knowledge is produced and contested.</p>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div style="display: flex; gap: 16px; align-items: baseline;">
-                                    <span style="color: var(--terra); font-size: 12px; font-weight: 600;">02</span>
+                                <div class="approach-item">
+                                    <span class="approach-number">02</span>
                                     <div>
-                                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink); margin-bottom: 8px;">Critical and independent thinking</div>
-                                        <p style="font-size: 15px; margin: 0; max-width: 100%;">I encourage students to question assumptions, evaluate arguments and examine the relationship between media, technology, politics and society, developing analytical judgement rather than relying on the transmission of information.</p>
+                                        <div class="approach-title">Critical and independent thinking</div>
+                                        <p class="approach-text">I encourage students to question assumptions, evaluate arguments and examine the relationship between media, technology, politics and society, developing analytical judgement rather than relying on the transmission of information.</p>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div style="display: flex; gap: 16px; align-items: baseline;">
-                                    <span style="color: var(--terra); font-size: 12px; font-weight: 600;">03</span>
+                                <div class="approach-item">
+                                    <span class="approach-number">03</span>
                                     <div>
-                                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink); margin-bottom: 8px;">Theory connected to practice</div>
-                                        <p style="font-size: 15px; margin: 0; max-width: 100%;">I bring conceptual frameworks into dialogue with contemporary cases and professional practice, so students see the relevance of theory and build practical analytical skills.</p>
+                                        <div class="approach-title">Theory connected to practice</div>
+                                        <p class="approach-text">I bring conceptual frameworks into dialogue with contemporary cases and professional practice, so students see the relevance of theory and build practical analytical skills.</p>
                                     </div>
                                 </div>
                             </li>
@@ -226,66 +226,66 @@
                     <div>
                         <ul class="ruled-list">
                             <li>
-                                <div style="display: flex; gap: 16px; align-items: baseline;">
-                                    <span style="color: var(--terra); font-size: 12px; font-weight: 600;">04</span>
+                                <div class="approach-item">
+                                    <span class="approach-number">04</span>
                                     <div>
-                                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink); margin-bottom: 8px;">Inclusive and responsive learning</div>
-                                        <p style="font-size: 15px; margin: 0; max-width: 100%;">Students bring different educational experiences and perspectives. I adapt methods to academic level and learning context, so that every student can participate and develop.</p>
+                                        <div class="approach-title">Inclusive and responsive learning</div>
+                                        <p class="approach-text">Students bring different educational experiences and perspectives. I adapt methods to academic level and learning context, so that every student can participate and develop.</p>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div style="display: flex; gap: 16px; align-items: baseline;">
-                                    <span style="color: var(--terra); font-size: 12px; font-weight: 600;">05</span>
+                                <div class="approach-item">
+                                    <span class="approach-number">05</span>
                                     <div>
-                                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink); margin-bottom: 8px;">Intellectual and professional development</div>
-                                        <p style="font-size: 15px; margin: 0; max-width: 100%;">I aim to build transferable capacities: research, critical analysis, academic writing, clear communication and collaboration in changing professional and technological environments.</p>
+                                        <div class="approach-title">Intellectual and professional development</div>
+                                        <p class="approach-text">I aim to build transferable capacities: research, critical analysis, academic writing, clear communication and collaboration in changing professional and technological environments.</p>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div style="display: flex; gap: 16px; align-items: baseline;">
-                                    <span style="color: var(--terra); font-size: 12px; font-weight: 600;">06</span>
+                                <div class="approach-item">
+                                    <span class="approach-number">06</span>
                                     <div>
-                                        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink); margin-bottom: 8px;">Digital, AI and technology-enhanced teaching</div>
-                                        <p style="font-size: 15px; margin: 0; max-width: 100%;">I help students use AI and digital tools effectively, responsibly and transparently, with attention to authorship, evidence, reliability, bias and academic integrity. Digital technologies are both teaching resources and subjects of critical inquiry.</p>
+                                        <div class="approach-title">Digital, AI and technology-enhanced teaching</div>
+                                        <p class="approach-text">I help students use AI and digital tools effectively, responsibly and transparently, with attention to authorship, evidence, reliability, bias and academic integrity. Digital technologies are both teaching resources and subjects of critical inquiry.</p>
                                     </div>
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <p style="font-size: 15px; color: var(--muted); margin-top: 24px; max-width: 720px;">Having taught in Palestinian universities, I also pay attention to continuity and quality of learning in difficult conditions, a concern that connects to my research on higher education and reconstruction.</p>
+                <p class="approach-note">Having taught in Palestinian universities, I also pay attention to continuity and quality of learning in difficult conditions, a concern that connects to my research on higher education and reconstruction.</p>
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" aria-labelledby="supervision-heading">
             <div class="container">
-                <div class="foundations-methods-grid">
+                <div class="supervision-grid">
                     <div>
-                        <header class="section-header" style="margin-bottom: 24px;">
-                            <h2>Supervision, examination and mentorship</h2>
+                        <header class="section-header supervision-header">
+                            <h2 id="supervision-heading">Supervision, examination and mentorship</h2>
                         </header>
                         <p>My supervision supports students in developing independent research projects, strengthening their methods and producing rigorous academic work. At Cambridge, my contribution includes undergraduate and postgraduate supervision and examination.</p>
                         <p style="font-size: 15px; color: var(--muted);">I see supervision as more than completing a dissertation: it supports students' development as independent researchers, critical thinkers and emerging academic or professional practitioners.</p>
                     </div>
                     <div>
-                        <ul class="ruled-list" style="border-top: 1px solid var(--line);">
-                            <li style="display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; align-items: start;">
-                                <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">Undergraduate</div>
-                                <div style="font-size: 15px; color: var(--ink-soft);">I help students develop research questions, find relevant literature, choose appropriate methods and build coherent academic arguments, with growing confidence in their own research decisions.</div>
+                        <ul class="ruled-list ruled-list-top">
+                            <li class="supervision-row">
+                                <div class="supervision-label">Undergraduate</div>
+                                <div class="supervision-text">I help students develop research questions, find relevant literature, choose appropriate methods and build coherent academic arguments, with growing confidence in their own research decisions.</div>
                             </li>
-                            <li style="display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; align-items: start;">
-                                <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">Master's</div>
-                                <div style="font-size: 15px; color: var(--ink-soft);">Postgraduate supervision focuses on research design, theoretical frameworks, literature reviews, methodological choices, data collection and analysis, and a clear and original contribution.</div>
+                            <li class="supervision-row">
+                                <div class="supervision-label">Master's</div>
+                                <div class="supervision-text">Postgraduate supervision focuses on research design, theoretical frameworks, literature reviews, methodological choices, data collection and analysis, and a clear and original contribution.</div>
                             </li>
-                            <li style="display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; align-items: start;">
-                                <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">Doctoral research advice</div>
-                                <div style="font-size: 15px; color: var(--ink-soft);">I advise doctoral researchers working in political communication, media and discourse, digital technologies, conflict communication and higher education, on conceptual framing, research design, methodological development and the interpretation of findings.</div>
+                            <li class="supervision-row">
+                                <div class="supervision-label">Doctoral research advice</div>
+                                <div class="supervision-text">I advise doctoral researchers working in political communication, media and discourse, digital technologies, conflict communication and higher education, on conceptual framing, research design, methodological development and the interpretation of findings.</div>
                             </li>
-                            <li style="display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; align-items: start;">
-                                <div style="font-family: 'Newsreader', Georgia, serif; font-size: 23px; color: var(--ink);">Examination and assessment</div>
-                                <div style="font-size: 15px; color: var(--ink-soft);">I assess the coherence of research questions, theoretical understanding, methodological rigour, quality of analysis and contribution to knowledge.</div>
+                            <li class="supervision-row">
+                                <div class="supervision-label">Examination and assessment</div>
+                                <div class="supervision-text">I assess the coherence of research questions, theoretical understanding, methodological rigour, quality of analysis and contribution to knowledge.</div>
                             </li>
                         </ul>
                     </div>
@@ -304,7 +304,7 @@
                 </div>
                 <div class="collab-actions">
                     <a href="contact.html" class="btn btn-light">Contact</a>
-                    <a href="academic-profile.html" class="btn btn-outline-light">Academic profile</a>
+                    <a href="leadership.html" class="btn btn-outline-light">Academic profile</a>
                     <a href="publications.html" class="collab-text-link">Publications</a>
                 </div>
             </div>
