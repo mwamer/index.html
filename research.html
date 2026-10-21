@@ -3,673 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research - Dr Wesam Amer</title>
-    <meta name="description" content="Research in media, technology, political power and higher education.">
+    <title>Research, Dr Wesam Amer</title>
+    <meta name="description" content="My research examines how conflict, technology and political power shape the production, circulation and loss of knowledge.">
     <meta name="author" content="Dr Wesam Amer">
-    <meta name="theme-color" content="#24384A">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        .research-hero-section {
-            padding: clamp(2rem, 4vw, 3rem) 0 var(--space-section);
-        }
-        .research-label {
-            font-size: var(--fs-eyebrow);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: var(--track-eyebrow);
-            color: var(--terracotta);
-            margin-bottom: 1rem;
-        }
-        .research-main-title {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: clamp(2.25rem, 5vw, 3.5rem);
-            font-weight: 700;
-            line-height: 1.08;
-            color: var(--navy);
-            margin-bottom: 1.5rem;
-            max-width: 20ch;
-        }
-        .research-lede-text {
-            font-size: 1.05rem;
-            line-height: var(--lh-body);
-            color: var(--slate);
-            max-width: var(--measure);
-            margin-bottom: 1rem;
-        }
-        .research-question {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: clamp(1.4rem, 3vw, 2rem);
-            font-style: italic;
-            line-height: 1.35;
-            color: var(--navy);
-            max-width: 28ch;
-            margin: 2rem 0;
-            padding: 1.5rem 0;
-            border-top: 1px solid var(--stone);
-            border-bottom: 1px solid var(--stone);
-        }
-        .research-subtext {
-            color: var(--slate);
-            font-size: var(--fs-meta);
-            margin-bottom: 0;
-        }
-        .section-divider {
-            margin: var(--space-section) 0;
-            border-top: 1px solid var(--stone);
-        }
-        .agendas-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-top: 2.5rem;
-        }
-        .agenda-panel {
-            padding: 2rem;
-            border: 1px solid var(--stone);
-            background: var(--white);
-            position: relative;
-        }
-        .agenda-panel--comm {
-            border-top: 3px solid #4A6B8A;
-        }
-        .agenda-panel--ai {
-            border-top: 3px solid #6B7A8A;
-        }
-        .agenda-panel--he {
-            border-top: 3px solid var(--terracotta);
-        }
-        .agenda-panel-title {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: var(--fs-h4);
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 0.75rem;
-            line-height: 1.35;
-        }
-        .agenda-panel-desc {
-            color: var(--slate);
-            font-size: var(--fs-meta);
-            line-height: 1.65;
-            margin-bottom: 1.25rem;
-        }
-        .agenda-themes {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .agenda-themes li {
-            padding: 0.4rem 0;
-            padding-left: 1rem;
-            position: relative;
-            font-size: 0.85rem;
-            color: var(--slate);
-            line-height: 1.55;
-        }
-        .agenda-themes li::before {
-            content: '–';
-            position: absolute;
-            left: 0;
-            color: var(--terracotta);
-        }
-        .contrib-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .contrib-panel {
-            padding: 2rem;
-            border: 1px solid var(--stone);
-            background: var(--white);
-        }
-        .contrib-panel h3 {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: var(--fs-h3);
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 0.5rem;
-        }
-        .contrib-type {
-            font-size: var(--fs-eyebrow);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: var(--track-eyebrow);
-            color: var(--terracotta);
-            margin-bottom: 1rem;
-        }
-        .diagram {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: var(--ivory);
-            border: 1px solid var(--stone);
-            text-align: center;
-        }
-        .diagram-flow {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--fs-meta);
-        }
-        .diagram-box {
-            padding: 0.5rem 0.75rem;
-            background: var(--white);
-            border: 1px solid var(--stone);
-        }
-        .diagram-arrow {
-            color: var(--terracotta);
-        }
-        .project-featured {
-            background: var(--navy);
-            color: var(--stone);
-            padding: clamp(2.5rem, 5vw, 3.5rem);
-            margin: 2rem 0;
-        }
-        .project-featured h3 {
-            color: var(--white);
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: clamp(1.75rem, 3.5vw, 2.25rem);
-            margin-bottom: 0.75rem;
-        }
-        .project-featured .project-kicker {
-            color: var(--terracotta);
-            font-size: var(--fs-eyebrow);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: var(--track-eyebrow);
-            margin-bottom: 0.75rem;
-        }
-        .project-featured p {
-            color: var(--stone);
-            margin-bottom: 1rem;
-        }
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        .project-card {
-            padding: 1.5rem;
-            border: 1px solid var(--stone);
-            background: var(--white);
-        }
-        .project-card h4 {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: var(--fs-h4);
-            color: var(--navy);
-            margin-bottom: 0.5rem;
-        }
-        .project-kicker-small {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: var(--track-eyebrow);
-            color: var(--terracotta);
-            margin-bottom: 0.5rem;
-        }
-        .methods-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .method-group {
-            padding: 1.5rem;
-            border: 1px solid var(--stone);
-            background: var(--white);
-        }
-        .method-group h3 {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: var(--fs-h4);
-            color: var(--navy);
-            margin-bottom: 0.75rem;
-        }
-        .method-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .method-list li {
-            padding: 0.35rem 0;
-            font-size: var(--fs-meta);
-            color: var(--slate);
-            line-height: 1.6;
-        }
-        .tools-strip {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem 1.5rem;
-            padding: 1rem 1.25rem;
-            background: var(--ivory);
-            border: 1px solid var(--stone);
-            margin-top: 1.5rem;
-            font-size: var(--fs-meta);
-            color: var(--navy);
-        }
-        .collab-section {
-            background: var(--navy);
-            color: var(--stone);
-            padding: clamp(3rem, 6vw, 4rem);
-            text-align: center;
-            margin-top: var(--space-section);
-        }
-        .collab-section h2 {
-            color: var(--white);
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: clamp(1.75rem, 3.5vw, 2.25rem);
-            margin-bottom: 1rem;
-        }
-        .collab-section p {
-            color: var(--stone);
-            max-width: 48ch;
-            margin: 0 auto 1.5rem;
-        }
-        .collab-link {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(255,255,255,0.5);
-            padding-bottom: 0.25rem;
-        }
-        .collab-link:hover {
-            border-bottom-color: var(--white);
-        }
-        @media (max-width: 968px) {
-            .agendas-grid {
-                grid-template-columns: 1fr;
-            }
-            .contrib-grid {
-                grid-template-columns: 1fr;
-            }
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-            .methods-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <meta name="theme-color" content="#F4F1EA">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="research.css">
 </head>
-<body class="bg-gray-50 text-gray-800">
-
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" aria-label="Primary">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+<body>
+    <!-- Header / nav -->
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Primary">
             <a href="index.html" class="brand">Dr Wesam Amer</a>
-            <ul class="nav-links nav-desktop">
-                <li><a href="index.html" class="text-gray-700 hover:text-blue-600 transition">Home</a></li>
-                <li><a href="about.html" class="text-gray-700 hover:text-blue-600 transition">About</a></li>
-                <li><a href="research.html" class="text-blue-600 font-semibold transition" aria-current="page">Research</a></li>
-                <li><a href="publications.html" class="text-gray-700 hover:text-blue-600 transition">Publications</a></li>
-                <li><a href="teaching.html" class="text-gray-700 hover:text-blue-600 transition">Teaching</a></li>
-                <li><a href="academic-profile.html" class="text-gray-700 hover:text-blue-600 transition">Academic Profile</a></li>
-                <li><a href="news-engagement.html" class="text-gray-700 hover:text-blue-600 transition">News & Engagement</a></li>
-                <li><a href="services.html" class="text-gray-700 hover:text-blue-600 transition">Services</a></li>
-                <li><a href="contact.html" class="text-gray-700 hover:text-blue-600 transition">Contact</a></li>
+            <ul class="nav-links">
+                <li><a href="about.html">About</a></li>
+                <li><a href="research.html" class="active">Research</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="teaching.html">Teaching</a></li>
+                <li><a href="academic-profile.html">Academic Leadership</a></li>
+                <li><a href="services.html">Services & Offers</a></li>
+                <li><a href="news-engagement.html">News & Engagement</a></li>
+                <li><a href="contact.html">Contact</a></li>
             </ul>
-            <button id="menu-toggle" class="nav-toggle text-gray-700 focus:outline-none" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-        </div>
-        <div id="mobile-menu" class="hidden bg-white border-t border-gray-200 px-6 py-4">
-            <ul class="flex flex-col gap-3">
-                <li><a href="index.html" class="block text-gray-700 hover:text-blue-600">Home</a></li>
-                <li><a href="about.html" class="block text-gray-700 hover:text-blue-600">About</a></li>
-                <li><a href="research.html" class="block text-blue-600 font-semibold">Research</a></li>
-                <li><a href="publications.html" class="block text-gray-700 hover:text-blue-600">Publications</a></li>
-                <li><a href="teaching.html" class="block text-gray-700 hover:text-blue-600">Teaching</a></li>
-                <li><a href="academic-profile.html" class="block text-gray-700 hover:text-blue-600">Academic Profile</a></li>
-                <li><a href="news-engagement.html" class="block text-gray-700 hover:text-blue-600">News & Engagement</a></li>
-                <li><a href="services.html" class="block text-gray-700 hover:text-blue-600">Services</a></li>
-                <li><a href="contact.html" class="block text-gray-700 hover:text-blue-600">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <main class="max-w-6xl mx-auto px-6 py-10">
-        <!-- Section A - Research Opening -->
-        <section class="research-hero-section">
-            <p class="research-label">RESEARCH</p>
-            <h1 class="research-main-title">Media, Technology, Political Power & Higher Education</h1>
-            <p class="research-lede-text">
-                Dr Wesam Amer’s research examines the relationship between communication, technology, political power and the production of knowledge. His work brings together political communication, Critical Discourse Studies, digital media research, critical approaches to artificial intelligence and research on higher education in conflict-affected contexts.
-            </p>
-            <p class="research-lede-text">
-                His research explores how political actors and media institutions construct narratives, how digital platforms and algorithmic systems shape communication and visibility, and how conflict disrupts educational institutions and academic communities.
-            </p>
-            <blockquote class="research-question">
-                Who can speak, be seen and produce knowledge under conditions of conflict and technological change?
-            </blockquote>
-            <p class="research-subtext">
-                Three interconnected research agendas. Two developing intellectual contributions. A shared interest in communication, power, conflict and knowledge production.
-            </p>
-        </section>
-
-        <hr class="section-divider">
-
-        <!-- Section B - Three Interconnected Research Agendas -->
-        <section>
-            <h2 class="about-heading">Three Interconnected Research Agendas</h2>
-            <p class="about-block__intro">
-                Dr Amer’s research is organised around three interconnected areas of inquiry. Each addresses a different dimension of the relationship between communication, technology, political power and knowledge production.
-            </p>
-            <div class="agendas-grid">
-                <article class="agenda-panel agenda-panel--comm">
-                    <h3 class="agenda-panel-title">Political Communication, Media & Conflict</h3>
-                    <p class="agenda-panel-desc">
-                        Examines how political actors, movements and media institutions construct narratives, communicate political objectives and shape public understanding during conflict and political change.
-                    </p>
-                    <ul class="agenda-themes">
-                        <li>Media representation and political narratives</li>
-                        <li>Conflict communication and political legitimacy</li>
-                        <li>Digital communication by political and non-state actors</li>
-                        <li>Islamist movements and mediated political expression</li>
-                        <li>Media discourse, security narratives and political power</li>
-                    </ul>
-                </article>
-                <article class="agenda-panel agenda-panel--ai">
-                    <h3 class="agenda-panel-title">AI, Digital Technologies & Algorithmic Power</h3>
-                    <p class="agenda-panel-desc">
-                        Examines how digital platforms, artificial intelligence and algorithmic systems transform political communication, media production and the circulation and visibility of digital content.
-                    </p>
-                    <ul class="agenda-themes">
-                        <li>AI-mediated political communication</li>
-                        <li>Platform governance and algorithmic visibility</li>
-                        <li>AI-generated, AI-assisted and digitally manipulated media</li>
-                        <li>Multimodal communication across social media platforms</li>
-                        <li>Political actors’ adaptation to changing technological environments</li>
-                        <li>Digital infrastructures, security and political power</li>
-                    </ul>
-                </article>
-                <article class="agenda-panel agenda-panel--he">
-                    <h3 class="agenda-panel-title">Higher Education, Scholasticide & Reconstruction</h3>
-                    <p class="agenda-panel-desc">
-                        Examines the destruction and disruption of higher education, particularly in Palestine, and the institutional, human and organisational conditions necessary to restore academic communities and knowledge production.
-                    </p>
-                    <ul class="agenda-themes">
-                        <li>Scholasticide and the destruction of educational institutions</li>
-                        <li>Academic continuity under war and occupation</li>
-                        <li>Institutional governance and organisational resilience</li>
-                        <li>University reconstruction and recovery</li>
-                        <li>Academic communities and knowledge production</li>
-                        <li>The future of higher education in Palestine</li>
-                    </ul>
-                </article>
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <p class="eyebrow">Research</p>
+                    <h1>Who can speak, be seen and know under conflict</h1>
+                    <p>My research examines how conflict, technology and political power shape the production, circulation and loss of knowledge. It follows two connected agendas. The first studies how media and AI-mediated systems construct political narratives and govern what becomes visible in conflict. The second studies how war destroys, and how societies rebuild, the universities that sustain knowledge production, particularly in Palestine.</p>
+                    <p>Both ask who can speak, be seen and know under violence. I develop a framework for each: Techno-Discursive Critical Analysis (TDCA) and de-scholasticide, the study of how education is restored after scholasticide, its systematic destruction.</p>
+                    <div class="hero-actions">
+                        <a href="#projects" class="btn btn-primary">Explore selected research projects</a>
+                        <a href="publications.html" class="btn btn-outline">Browse publications</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <figure class="visual-slot" data-slot="hero-agenda" style="--ratio: 16 / 9">
+                        <div class="two-agenda-diagram">
+                            <div class="agenda-row">
+                                <div class="agenda-col agenda-col-a">
+                                    <p class="agenda-eyebrow">Agenda A</p>
+                                    <h3 class="agenda-title">Communication, technology and political power</h3>
+                                    <div class="agenda-box">Pillar I: Political communication, media and conflict</div>
+                                    <div class="agenda-pill agenda-pill-teal">TDCA</div>
+                                    <div class="agenda-box">Pillar II: AI, digital technologies and algorithmic power</div>
+                                </div>
+                                <div class="agenda-col agenda-col-b">
+                                    <p class="agenda-eyebrow">Agenda B</p>
+                                    <h3 class="agenda-title">Conflict and knowledge production</h3>
+                                    <div class="agenda-box">Pillar III: Higher education, scholasticide and reconstruction</div>
+                                    <div class="agenda-pill agenda-pill-terra">De-scholasticide</div>
+                                </div>
+                            </div>
+                        </div>
+                        <figcaption class="visual-slot__caption">Two-agenda diagram</figcaption>
+                    </figure>
+                    <div class="agenda-shared-band">
+                        <p>Who can speak, be seen and know under conflict</p>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <hr class="section-divider">
+        <!-- Research pillars and questions -->
+        <section class="section-card">
+            <div class="container">
+                <h2>Research pillars and questions</h2>
+                <div class="pillars-grid">
+                    <article class="pillar-col pillar-col-a">
+                        <div class="pillar-numeral">I</div>
+                        <h3>Pillar I: Political Communication, Media and Conflict</h3>
+                        <p>I investigate how political actors, movements and media institutions construct narratives, communicate political objectives and shape public understanding in contexts of conflict and insecurity.</p>
+                        <p class="pillar-subhead">Guiding questions</p>
+                        <ul>
+                            <li>How do media representations shape understandings of conflict, legitimacy and power?</li>
+                            <li>How do Islamist movements use digital communication for political mobilisation and strategic communication?</li>
+                            <li>How are terrorism, extremism and security framed in political and media discourse?</li>
+                        </ul>
+                        <p class="evidence">Evidence: <a href="https://www.arabmediasociety.com/">PhD research on Gaza war coverage</a> · <a href="#">Hamas in Cyberspace (2023)</a> · <a href="#">Critical Multimodal Discourse Analysis (2024)</a></p>
+                        <figure class="visual-slot" data-slot="pillar-1" style="--ratio: 4 / 3">
+                            <div class="visual-slot__placeholder">Visual placeholder: pillar figure</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                    <article class="pillar-col pillar-col-a">
+                        <div class="pillar-numeral">II</div>
+                        <h3>Pillar II: Artificial Intelligence, Digital Technologies and Algorithmic Power</h3>
+                        <p>I examine how artificial intelligence, digital platforms and algorithmic systems transform communication, political influence and the visibility of information. This pillar asks how political actors adapt to algorithmically mediated environments, and what AI-generated, manipulated and multimodal media mean for conflict and security.</p>
+                        <p class="pillar-subhead">Guiding questions</p>
+                        <ul>
+                            <li>How does AI transform political communication and the production of media content?</li>
+                            <li>How do platform infrastructures and algorithms shape the visibility and circulation of political information?</li>
+                            <li>What role do AI-generated, manipulated and multimodal media play in contemporary conflict and information warfare?</li>
+                        </ul>
+                        <p class="evidence">Evidence: <a href="#projects">HYPERWAR: AI-Mediated Hypermedia Warfare</a> · <a href="#contributions">TDCA framework</a></p>
+                        <figure class="visual-slot" data-slot="pillar-2" style="--ratio: 4 / 3">
+                            <div class="visual-slot__placeholder">Visual placeholder: pillar figure</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                    <article class="pillar-col pillar-col-b">
+                        <div class="pillar-numeral">III</div>
+                        <h3>Pillar III: Higher Education, Scholasticide and Reconstruction</h3>
+                        <p>I investigate the destruction and disruption of higher education in conflict-affected societies, with particular attention to Palestine. Scholasticide, the systematic destruction of education, damages universities, academic communities and the continuity of knowledge production. My work asks what reconstruction requires beyond rebuilt infrastructure, including governance, institutional resilience and academic capacity.</p>
+                        <p class="pillar-subhead">Guiding questions</p>
+                        <ul>
+                            <li>How does the destruction of educational institutions affect academic communities and knowledge production?</li>
+                            <li>How can universities maintain academic continuity under war and occupation?</li>
+                            <li>What does de-scholasticide require beyond the physical reconstruction of educational infrastructure?</li>
+                        </ul>
+                        <p class="evidence">Evidence: <a href="#projects">Beyond Scholasticide: De-Scholasticide and the Reconstruction of Higher Education in Gaza</a> · <a href="#projects">Rebuilding Higher Education in Post-War Gaza</a> · <a href="#projects">Re-engineering Palestinian Universities</a></p>
+                        <figure class="visual-slot" data-slot="pillar-3" style="--ratio: 4 / 3">
+                            <div class="visual-slot__placeholder">Visual placeholder: pillar figure</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                </div>
+            </div>
+        </section>
 
-        <!-- Section C - Developing Intellectual Contributions -->
-        <section>
-            <h2 class="about-heading">Developing Intellectual Contributions</h2>
-            <p class="about-block__intro">
-                Two developing contributions extend Dr Amer’s research in complementary directions. TDCA connects the study of political communication with technological infrastructures and algorithmic systems. De-scholasticide develops a conceptual approach to the restoration of academic communities and knowledge production following the destruction of higher education.
-            </p>
-            <div class="contrib-grid">
-                <article class="contrib-panel">
-                    <h3>Techno-Discursive Critical Analysis</h3>
-                    <p class="contrib-type">A developing analytical framework</p>
-                    <p style="color: var(--slate); margin-bottom: 1rem;">
-                        Techno-Discursive Critical Analysis (TDCA) brings together Critical Discourse Studies, Critical Algorithm Studies and Critical Security Studies. It examines how political discourse interacts with technological infrastructures, platform environments and algorithmic systems.
-                    </p>
-                    <p style="color: var(--slate); margin-bottom: 1rem;">
-                        Rather than treating digital communication as language or content alone, TDCA considers how communicative practices are shaped by the technological conditions through which content is produced, circulated and made visible.
-                    </p>
-                    <div class="diagram">
-                        <div class="diagram-flow">
-                            <div class="diagram-box">Critical Discourse Studies</div>
-                            <span class="diagram-arrow">+</span>
-                            <div class="diagram-box">Critical Algorithm Studies</div>
-                            <span class="diagram-arrow">+</span>
-                            <div class="diagram-box">Critical Security Studies</div>
+        <!-- Conceptual contributions -->
+        <section class="section" id="contributions">
+            <div class="container">
+                <h2>Conceptual contributions</h2>
+                <p class="section-intro">My research engages established theoretical traditions while developing analytical approaches to emerging questions at the intersection of communication, technology, conflict and knowledge production.</p>
+                <div class="contributions-grid">
+                    <article class="contrib-panel contrib-panel-teal">
+                        <span class="badge">Developing framework</span>
+                        <h3>Techno-Discursive Critical Analysis (TDCA)</h3>
+                        <p>TDCA integrates Critical Discourse Studies, Critical Algorithm Studies and Critical Security Studies. It asks how political discourse interacts with technological infrastructures, algorithmic systems and the distribution of visibility in digital information environments. Rather than treating language and technology separately, it examines how narratives, platform architectures and algorithmic ranking together shape what becomes visible and legitimate in conflict. TDCA links Pillars I and II and is applied in the HYPERWAR project.</p>
+                        <a href="#projects" class="contrib-link">Research application: HYPERWAR: AI-Mediated Hypermedia Warfare</a>
+                        <figure class="visual-slot" data-slot="tdca-diagram" style="--ratio: 16 / 9">
+                            <div class="visual-slot__placeholder">Visual placeholder: TDCA diagram</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                    <article class="contrib-panel contrib-panel-terra">
+                        <span class="badge">Developing conceptual approach</span>
+                        <h3>De-scholasticide</h3>
+                        <p>De-scholasticide moves beyond documenting the destruction of educational institutions to examine the processes and conditions needed to restore academic communities, institutional capacity and knowledge production. Where scholasticide names the destruction, de-scholasticide asks what recovery requires: academic continuity, governance, institutional resilience and the rebuilding of the human and organisational capacity of universities. It belongs primarily to Pillar III and is applied to Gaza and to Palestinian higher education more widely.</p>
+                        <a href="#projects" class="contrib-link">Research application: Beyond Scholasticide · Rebuilding Higher Education in Post-War Gaza</a>
+                        <figure class="visual-slot" data-slot="descholasticide-diagram" style="--ratio: 16 / 9">
+                            <div class="visual-slot__placeholder">Visual placeholder: de-scholasticide diagram</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Theoretical foundations and methods -->
+        <section class="section-card">
+            <div class="container">
+                <h2>Theoretical foundations and methods</h2>
+                <p class="section-intro">My work draws on interdisciplinary traditions and uses qualitative, interpretive, computational and comparative methods, chosen according to the research question and the empirical material.</p>
+                <div class="foundations-methods-grid">
+                    <div>
+                        <h3>Theoretical foundations</h3>
+                        <ul class="ruled-list">
+                            <li><strong>Critical Discourse Studies and Systemic Functional Linguistics:</strong> language, representation, ideology and the construction of social actors.</li>
+                            <li><strong>Political Communication and Media Studies:</strong> framing, propaganda, political narratives and media power.</li>
+                            <li><strong>Critical Algorithm Studies and Platform Governance:</strong> algorithmic mediation, platform infrastructures and information visibility.</li>
+                            <li><strong>Critical Security and Conflict Studies:</strong> security narratives, political violence, terrorism, extremism and conflict communication.</li>
+                            <li><strong>Higher Education and Institutional Studies:</strong> institutional governance, academic resilience, knowledge production and organisational reconstruction.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Methods and applications</h3>
+                        <div class="methods-table">
+                            <div class="method-row">
+                                <div class="method-col">Discourse and communication analysis</div>
+                                <div class="method-col">Critical Discourse Analysis, discourse-historical analysis, Systemic Functional Linguistics, framing and narrative analysis</div>
+                            </div>
+                            <div class="method-row">
+                                <div class="method-col">Digital and computational research</div>
+                                <div class="method-col">Social media analysis, digital trace analysis, corpus analysis, metadata analysis, digital ethnography</div>
+                            </div>
+                            <div class="method-row">
+                                <div class="method-col">Multimodal research</div>
+                                <div class="method-col">Analysis of textual, visual, audiovisual and AI-mediated content</div>
+                            </div>
+                            <div class="method-row">
+                                <div class="method-col">Network analysis</div>
+                                <div class="method-col">Social network analysis, digital mapping and visualisation</div>
+                            </div>
+                            <div class="method-row">
+                                <div class="method-col">Institutional and comparative research</div>
+                                <div class="method-col">Case studies, document analysis, institutional assessment, comparative analysis</div>
+                            </div>
                         </div>
-                        <div style="margin-top: 0.75rem;">
-                            <span class="diagram-arrow">↓</span>
-                        </div>
-                        <div style="margin-top: 0.75rem;">
-                            <div class="diagram-box" style="font-weight: 600;">Techno-Discursive Critical Analysis</div>
+                        <h4 class="tools-heading">Research tools</h4>
+                        <div class="tools-pills">
+                            <span class="tool-pill">NVivo</span>
+                            <span class="tool-pill">4CAT</span>
+                            <span class="tool-pill">Gephi</span>
+                            <span class="tool-pill">NodeXL</span>
+                            <span class="tool-pill">Voyant Tools</span>
+                            <span class="tool-pill">Python</span>
                         </div>
                     </div>
-                    <p style="color: var(--slate); font-size: var(--fs-meta);">
-                        <strong>Connects:</strong> Political Communication, Media & Conflict with AI, Digital Technologies & Algorithmic Power
-                    </p>
-                </article>
-                <article class="contrib-panel">
-                    <h3>De-scholasticide</h3>
-                    <p class="contrib-type">A developing conceptual approach</p>
-                    <p style="color: var(--slate); margin-bottom: 1rem;">
-                        De-scholasticide extends the discussion of scholasticide beyond the destruction of educational institutions. It asks what is required to restore the academic communities, institutional capacities and conditions of knowledge production that have been damaged or dismantled.
-                    </p>
-                    <p style="color: var(--slate); margin-bottom: 1rem;">
-                        The approach places emphasis on academic continuity, institutional governance, human and organisational capacity, resilience and the restoration of higher education ecosystems.
-                    </p>
-                    <div class="diagram">
-                        <div class="diagram-flow" style="flex-direction: column; align-items: center;">
-                            <div class="diagram-box">Destruction of higher education</div>
-                            <span class="diagram-arrow">↓</span>
-                            <div class="diagram-box">Restoration of academic communities</div>
-                            <span class="diagram-arrow">↓</span>
-                            <div class="diagram-box">Institutional capacity and academic continuity</div>
-                            <span class="diagram-arrow">↓</span>
-                            <div class="diagram-box">Rebuilding knowledge production</div>
+                </div>
+                <figure class="visual-slot" data-slot="methods-figure" style="--ratio: 16 / 9">
+                    <div class="visual-slot__placeholder">Visual placeholder: methods figure</div>
+                    <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- Selected research projects -->
+        <section class="section" id="projects">
+            <div class="container">
+                <h2>Selected research projects</h2>
+                <div class="projects-grid">
+                    <article class="project-card project-card-teal">
+                        <div class="project-header">
+                            <span class="project-number">01</span>
+                            <span class="status-pill status-in-progress">In progress</span>
                         </div>
-                    </div>
-                    <p style="color: var(--slate); font-size: var(--fs-meta);">
-                        <strong>Develops:</strong> Higher Education, Scholasticide & Reconstruction
-                    </p>
-                </article>
+                        <h3>HYPERWAR</h3>
+                        <p><strong>AI-Mediated Hypermedia Warfare in Contemporary Conflict.</strong> Examines how political communication, AI-mediated content, platform infrastructures and algorithmic visibility interact in contemporary conflict, focusing on Hamas and Hezbollah across Telegram and TikTok. It is a cross-platform study of AI-mediated content, applying TDCA.</p>
+                        <a href="#" class="project-link">Explore HYPERWAR project</a>
+                        <figure class="visual-slot" data-slot="project-01" style="--ratio: 3 / 2">
+                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                    <article class="project-card project-card-teal">
+                        <div class="project-header">
+                            <span class="project-number">02</span>
+                            <span class="status-pill status-published">Published work</span>
+                        </div>
+                        <h3>Hamas Digital Communication</h3>
+                        <p>Examines the digital communication practices, political expression and discursive strategies of Hamas and associated media environments. Unlike HYPERWAR, it is a single-actor study of political discourse.</p>
+                        <p class="evidence">Evidence: Hamas in Cyberspace (2023) · Critical Multimodal Discourse Analysis (2024)</p>
+                        <figure class="visual-slot" data-slot="project-02" style="--ratio: 3 / 2">
+                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                    <article class="project-card project-card-terra">
+                        <div class="project-header">
+                            <span class="project-number">03</span>
+                            <span class="status-pill status-in-progress">In progress</span>
+                        </div>
+                        <h3>Beyond Scholasticide</h3>
+                        <p>De-scholasticide and the reconstruction of higher education in Gaza, examining academic continuity, institutional recovery and the restoration of knowledge production.</p>
+                        <a href="#" class="project-link">Explore research and conceptual framework</a>
+                        <figure class="visual-slot" data-slot="project-03" style="--ratio: 3 / 2">
+                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                    <article class="project-card project-card-terra">
+                        <div class="project-header">
+                            <span class="project-number">04</span>
+                            <span class="status-pill status-in-progress">In progress</span>
+                        </div>
+                        <h3>Rebuilding Palestinian Higher Education</h3>
+                        <p>Research on the institutional, academic and organisational requirements for rebuilding higher education after the destruction of universities and educational infrastructure. It covers institutional transformation, business process re-engineering and organisational resilience.</p>
+                        <p class="evidence">Evidence: <a href="#">Rebuilding Higher Education in Post-War Gaza</a> · <a href="#">Re-engineering Palestinian Universities</a></p>
+                        <figure class="visual-slot" data-slot="project-04" style="--ratio: 3 / 2">
+                            <div class="visual-slot__placeholder">Visual placeholder: project visual</div>
+                            <figcaption class="visual-slot__caption">Caption goes here</figcaption>
+                        </figure>
+                    </article>
+                </div>
+                
+                <!-- Presentation slot -->
+                <div class="presentation-section">
+                    <h3>Research in presentation</h3>
+                    <figure class="visual-slot" data-slot="presentation" style="--ratio: 16 / 9">
+                        <div class="visual-slot__placeholder">Visual placeholder: conference talk, slide deck or video (16:9)</div>
+                        <figcaption class="visual-slot__caption">Embed YouTube/Vimeo iframe or PDF viewer here. Add title attribute for iframes.</figcaption>
+                    </figure>
+                </div>
             </div>
         </section>
 
-        <hr class="section-divider">
-
-        <!-- Section G - Current and Developing Research Projects -->
-        <section>
-            <h2 class="about-heading">Current and Developing Research Projects</h2>
-            <p class="about-block__intro">
-                These projects demonstrate how Dr Amer’s research agendas are pursued through empirical investigation, conceptual development and interdisciplinary research.
-            </p>
-
-            <article class="project-featured">
-                <p class="project-kicker">Featured Project</p>
-                <h3>AI-Mediated Hypermedia Warfare in Contemporary Conflict</h3>
-                <p style="font-style: italic; margin-bottom: 1.25rem;">Ongoing research project</p>
-                <p>
-                    HYPERWAR examines AI-mediated communication and algorithmic visibility in contemporary conflict. It focuses on Hamas and Hezbollah, and on communication across Telegram and TikTok.
-                </p>
-                <p>
-                    The project investigates how political actors anticipate and adapt to changing platform environments, how multimodal and AI-mediated content circulates, and how technological systems shape the visibility of conflict-related communication.
-                </p>
-                <p style="margin-bottom: 0;">
-                    <strong>Actors:</strong> Hamas and Hezbollah | <strong>Platforms:</strong> Telegram and TikTok | <strong>Focus:</strong> AI-mediated content, multimodal communication, technological infrastructures and algorithmic visibility | <strong>Approach:</strong> Techno-Discursive Critical Analysis (TDCA)
-                </p>
-            </article>
-
-            <div class="projects-grid">
-                <article class="project-card">
-                    <p class="project-kicker-small">Research Programme</p>
-                    <h4>Hamas Digital Communication</h4>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); line-height: 1.6; margin-bottom: 0;">
-                        A body of research examining Hamas’s digital communication, political narratives and multimodal practices. Considers how digital communication constructs political meanings and communicates with different audiences, providing foundation for HYPERWAR.
-                    </p>
-                </article>
-                <article class="project-card">
-                    <p class="project-kicker-small">Ongoing Research Agenda</p>
-                    <h4>De-scholasticide and the Reconstruction of Higher Education in Gaza</h4>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); line-height: 1.6; margin-bottom: 0;">
-                        Exploring how higher education can be restored following the destruction and disruption of universities and academic communities in Gaza. Develops the concept of de-scholasticide and examines institutional, organisational and human conditions necessary for academic continuity and reconstruction.
-                    </p>
-                </article>
-                <article class="project-card">
-                    <p class="project-kicker-small">Ongoing Research</p>
-                    <h4>Rebuilding Palestinian Higher Education</h4>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); line-height: 1.6; margin-bottom: 0;">
-                        Research on the institutional and organisational rebuilding of Palestinian higher education. Considers university governance, institutional capacity, organisational resilience and conditions for sustainable recovery.
-                    </p>
-                </article>
-            </div>
-        </section>
-
-        <hr class="section-divider">
-
-        <!-- Section H & I - Theoretical Foundations and Methods -->
-        <section>
-            <h2 class="about-heading">Theoretical Foundations</h2>
-            <p class="about-block__intro">
-                Dr Amer’s research draws on several complementary fields. These perspectives are brought together according to the research question rather than applied as a single, fixed theoretical model.
-            </p>
-            <div class="methods-grid">
-                <article class="method-group">
-                    <h3>Critical Discourse Studies</h3>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); margin-bottom: 0;">Discourse, representation, ideology, power and the production of meaning.</p>
-                </article>
-                <article class="method-group">
-                    <h3>Political Communication and Media Studies</h3>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); margin-bottom: 0;">Political narratives, media systems, public communication and mediated conflict.</p>
-                </article>
-                <article class="method-group">
-                    <h3>Critical Algorithm Studies and Platform Governance</h3>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); margin-bottom: 0;">Algorithmic systems, platform infrastructures, visibility and the governance of digital communication.</p>
-                </article>
-                <article class="method-group">
-                    <h3>Critical Security and Conflict Studies</h3>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); margin-bottom: 0;">Security narratives, political violence, conflict and the relationship between technology and power.</p>
-                </article>
-                <article class="method-group" style="grid-column: 1 / -1;">
-                    <h3>Higher Education and Institutional Studies</h3>
-                    <p style="color: var(--slate); font-size: var(--fs-meta); margin-bottom: 0;">University governance, institutional capacity, resilience and the organisation of knowledge production.</p>
-                </article>
-            </div>
-
-            <h2 class="about-heading" style="margin-top: var(--space-section);">Research Methods and Approaches</h2>
-            <p class="about-block__intro">
-                Dr Amer combines qualitative, quantitative and computational approaches to investigate media discourse, digital communication and institutional change.
-            </p>
-            <div class="methods-grid">
-                <article class="method-group">
-                    <h3>Discourse and Communication Analysis</h3>
-                    <ul class="method-list">
-                        <li>Critical Discourse Analysis</li>
-                        <li>Discourse-historical approaches</li>
-                        <li>Systemic Functional Linguistics</li>
-                        <li>Framing, narrative and representation analysis</li>
-                        <li>Critical multimodal discourse analysis</li>
-                    </ul>
-                </article>
-                <article class="method-group">
-                    <h3>Digital and Computational Research</h3>
-                    <ul class="method-list">
-                        <li>Corpus-assisted discourse analysis</li>
-                        <li>Social media and digital trace analysis</li>
-                        <li>Digital ethnographic approaches</li>
-                        <li>Social network analysis</li>
-                        <li>Analysis of text, images and video across digital platforms</li>
-                    </ul>
-                </article>
-                <article class="method-group">
-                    <h3>Multimodal Research</h3>
-                    <ul class="method-list">
-                        <li>Textual and visual analysis</li>
-                        <li>Image and video analysis</li>
-                        <li>Multimodal political communication</li>
-                        <li>Digital and platform-mediated narratives</li>
-                    </ul>
-                </article>
-                <article class="method-group">
-                    <h3>Institutional and Comparative Research</h3>
-                    <ul class="method-list">
-                        <li>Institutional and organisational case studies</li>
-                        <li>Comparative analysis</li>
-                        <li>Research on governance, institutional capacity and organisational resilience</li>
-                    </ul>
-                </article>
-            </div>
-            <div class="tools-strip">
-                <strong>Selected research tools:</strong>
-                <span>NVivo</span>
-                <span>4CAT</span>
-                <span>Gephi</span>
-                <span>NodeXL</span>
-                <span>Voyant Tools</span>
-                <span>Python</span>
+        <!-- Collaboration -->
+        <section class="collab-band">
+            <div class="container collab-grid">
+                <div class="collab-content">
+                    <p class="collab-eyebrow">Collaboration</p>
+                    <h2>Research collaboration and engagement</h2>
+                    <p>I welcome interdisciplinary collaborations and academic partnerships across the three pillars and the methods set out above, particularly where communication, technology, conflict and higher education meet.</p>
+                    <p>I am interested in collaborative research projects, visiting research opportunities, commissioned studies, interdisciplinary networks and international research initiatives. Consultancy and training work is described in <a href="services.html">Services & Offers</a> and offered through Frontline World.</p>
+                </div>
+                <div class="collab-actions">
+                    <a href="contact.html" class="btn btn-light">Discuss research collaboration</a>
+                    <a href="academic-profile.html" class="btn btn-outline-light">View academic profile</a>
+                    <a href="contact.html" class="collab-text-link">Contact me</a>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- Section J - Research Collaboration -->
-    <section class="collab-section">
-        <h2>Research Collaboration</h2>
-        <p style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.25rem; font-style: italic; margin-bottom: 1rem;">
-            Connecting critical scholarship with contemporary challenges.
-        </p>
-        <p>
-            Dr Amer’s research connects conceptual development with empirical investigation and wider academic and institutional questions. His work seeks to contribute to critical debates on political communication, AI and digital media, conflict, and the future of higher education.
-        </p>
-        <p>
-            He welcomes opportunities for research collaboration, interdisciplinary projects, academic exchange and engagement with institutions working on media, technology, conflict and higher education.
-        </p>
-        <a href="contact.html" class="collab-link">Contact for research enquiries →</a>
-    </section>
-
     <!-- Footer -->
     <footer class="site-footer">
-        <div class="footer-grid">
-            <div>
-                <p class="footer-name">Dr Wesam Amer</p>
-                <p class="footer-role">Scholar of Media, Communication and Political Discourse</p>
-                <p><a class="footer-email" href="mailto:wesaam.amer@gmail.com">wesaam.amer@gmail.com</a></p>
-            </div>
-            <div>
-                <p class="footer-heading">Profile</p>
-                <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="academic-profile.html">Academic Profile</a></li>
-                </ul>
-            </div>
-            <div>
-                <p class="footer-heading">Scholarship</p>
-                <ul class="footer-links">
-                    <li><a href="research.html">Research</a></li>
-                    <li><a href="publications.html">Publications</a></li>
-                    <li><a href="teaching.html">Teaching</a></li>
-                </ul>
-            </div>
-            <div>
-                <p class="footer-heading">Engagement</p>
-                <ul class="footer-links">
-                    <li><a href="news-engagement.html">News &amp; Engagement</a></li>
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-meta">
-            <p class="footer-copy">&copy; 2026 Dr. Mohammedwesam Amer. All rights reserved.</p>
-            <ul class="footer-profiles">
-                <li><a href="https://orcid.org/0000-0002-8796-9097" target="_blank" rel="noopener">ORCID</a></li>
-                <li><a href="https://scholar.google.com/citations?user=CNgZsPQAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a></li>
-                <li><a href="https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/" target="_blank" rel="noopener">LinkedIn</a></li>
-                <li><a href="https://research.sociology.cam.ac.uk/profile/dr-wesam-amer" target="_blank" rel="noopener">University of Cambridge</a></li>
-            </ul>
+        <div class="container footer-grid">
+            <div>Dr Wesam Amer · Also published as Mohammedwesam Amer</div>
+            <div class="footer-right">Founder and Director, Frontline World Ltd</div>
         </div>
     </footer>
-
-    <script>
-        var toggleBtn = document.getElementById('menu-toggle');
-        var mobileMenu = document.getElementById('mobile-menu');
-        if (toggleBtn && mobileMenu) {
-            toggleBtn.addEventListener('click', function () {
-                var isHidden = mobileMenu.classList.toggle('hidden');
-                toggleBtn.setAttribute('aria-expanded', String(!isHidden));
-            });
-        }
-    </script>
 </body>
 </html>
