@@ -1,182 +1,235 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Dr Wesam Amer</title>
-    <meta name="description" content="Academic biography of Dr Wesam Amer.">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>About, Dr Wesam Amer</title>
+    <meta name="description" content="Dr Wesam Amer is an academic, researcher and consultant specialising in political communication, media, AI and higher education in conflict-affected contexts.">
     <meta name="author" content="Dr Wesam Amer">
-    <meta name="theme-color" content="#24384A">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#F4F1EA">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="site.css">
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body>
+    <main>
+        <div class="page-wrapper">
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" aria-label="Primary">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="brand">Dr Wesam Amer</a>
-            <ul class="nav-links nav-desktop">
-                <li><a href="index.html" class="text-gray-700 hover:text-blue-600 transition">Home</a></li>
-                <li><a href="about.html" class="text-blue-600 font-semibold transition" aria-current="page">About</a></li>
-                <li><a href="research.html" class="text-gray-700 hover:text-blue-600 transition">Research</a></li>
-                <li><a href="publications.html" class="text-gray-700 hover:text-blue-600 transition">Publications</a></li>
-                <li><a href="teaching.html" class="text-gray-700 hover:text-blue-600 transition">Teaching</a></li>
-                <li><a href="academic-profile.html" class="text-gray-700 hover:text-blue-600 transition">Academic Profile</a></li>
-                <li><a href="news-engagement.html" class="text-gray-700 hover:text-blue-600 transition">News & Engagement</a></li>
-                <li><a href="services.html" class="text-gray-700 hover:text-blue-600 transition">Services</a></li>
-                <li><a href="contact.html" class="text-gray-700 hover:text-blue-600 transition">Contact</a></li>
-            </ul>
-            <button id="menu-toggle" class="nav-toggle text-gray-700 focus:outline-none" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
+            <header class="site-header">
+                <div class="nav-container">
+                    <a href="index.html" class="brand">Dr Wesam Amer</a>
+                    <nav class="nav-links" aria-label="Primary">
+                        <a href="about.html" aria-current="page" class="nav-active">About</a>
+                        <a href="research.html">Research</a>
+                        <a href="publications.html">Publications</a>
+                        <a href="teaching.html">Teaching</a>
+                        <a href="leadership.html">Academic Leadership</a>
+                        <a href="services.html">Services &amp; Offers</a>
+                        <a href="news.html">News &amp; Engagement</a>
+                        <a href="contact.html">Contact</a>
+                    </nav>
+                </div>
+            </header>
+
+            <section class="pub-hero">
+                <div class="container pub-hero-grid">
+                    <div class="pub-hero-content">
+                        <div class="eyebrow">About</div>
+                        <h1 class="h1-tight">Dr Wesam Amer</h1>
+                        <div class="about-role">Scholar · Expert · Consultant in media, AI, conflict and higher education</div>
+                        <p class="about-lead">Dr Wesam Amer is an academic, researcher and consultant specialising in political communication, media and digital technologies, artificial intelligence, and higher education in conflict-affected contexts.</p>
+                        <p class="about-text">His work examines how communication, technology and political power shape public understanding, political narratives and the production and circulation of knowledge, with particular attention to Palestine and the wider Middle East.</p>
+                        <div class="hero-actions">
+                            <a href="research.html" class="btn btn-primary">Explore his research</a>
+                            <a href="contact.html" class="btn btn-secondary">Get in touch</a>
+                        </div>
+                    </div>
+                    <div class="profile-panel">
+                        <div class="profile-card">
+                            <!-- Photo slot: when images/wesam-amer.jpg exists, replace the placeholder <div> below with
+                                 <img src="images/wesam-amer.jpg" width="..." height="..." alt="Portrait of Dr Wesam Amer"> -->
+                            <figure class="profile-photo">
+                                <div class="profile-photo-slot">Professional photo <i>[add]</i></div>
+                            </figure>
+                            <dl class="fact-list">
+                                <div class="fact-row"><dt>Affiliation</dt><dd>Cambridge Digital Humanities, University of Cambridge</dd></div>
+                                <div class="fact-row"><dt>Role</dt><dd>Affiliated Lecturer, 2026–2027</dd></div>
+                                <div class="fact-row"><dt>Founder</dt><dd>Frontline World; Gaza Center for Research in Humanities and Social Sciences</dd></div>
+                                <div class="fact-row fact-row-last"><dt>Languages</dt><dd>Arabic, English, German</dd></div>
+                            </dl>
+                        </div>
+                        <div class="profile-alias">Also published as Mohammedwesam Amer.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="story" class="section section-alt" aria-labelledby="story-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Profile</div>
+                    <h2 id="story-heading">A career across Palestine, Germany, the UK and the US</h2>
+                    <div class="split-grid split-grid-flush">
+                        <div class="split-col story-col">
+                            <p>He is Affiliated Lecturer at Cambridge Digital Humanities, University of Cambridge, and Founder and Director of Frontline World and of the Gaza Center for Research in Humanities and Social Sciences (GCR-HSS).</p>
+                            <p class="text-flush">His career spans Palestine, Germany, the United Kingdom and the United States, and brings together research, university teaching, institutional leadership and professional engagement.</p>
+                        </div>
+                        <blockquote class="split-col pull-quote">Who can speak, be seen and produce knowledge under conditions of conflict and technological change?</blockquote>
+                    </div>
+                </div>
+            </section>
+
+            <section id="drives" class="section" aria-labelledby="drives-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Research</div>
+                    <h2 id="drives-heading">What drives his work</h2>
+                    <p class="section-intro">Three connected areas of research share one question: who can speak, be seen and produce knowledge under conditions of conflict and technological change?</p>
+                    <div class="clusters-grid drives-grid">
+                        <article class="cluster-card cluster-card-paper cluster-card-third cluster-card-teal">
+                            <div class="pillar-num pillar-num-a">I</div>
+                            <h3 class="cluster-title">Political communication, media and conflict</h3>
+                            <p class="cluster-text">How political actors, movements and media institutions construct narratives and shape public understanding.</p>
+                        </article>
+                        <article class="cluster-card cluster-card-paper cluster-card-third cluster-card-teal">
+                            <div class="pillar-num pillar-num-a">II</div>
+                            <h3 class="cluster-title">AI, digital technologies and algorithmic power</h3>
+                            <p class="cluster-text">How platforms and algorithmic systems transform communication and the visibility of information.</p>
+                        </article>
+                        <article class="cluster-card cluster-card-paper cluster-card-third cluster-card-terra">
+                            <div class="pillar-num pillar-num-b">III</div>
+                            <h3 class="cluster-title">Higher education, scholasticide and reconstruction</h3>
+                            <p class="cluster-text">The destruction of educational institutions in conflict, particularly in Palestine, and the conditions for restoring academic communities and knowledge production.</p>
+                        </article>
+                    </div>
+                    <div class="band-foot">
+                        <p class="band-foot-text">He is developing two frameworks that link these areas: <strong>Techno-Discursive Critical Analysis (TDCA)</strong> and <strong>de-scholasticide</strong>. Current projects include HYPERWAR, on AI-mediated hypermedia warfare, and research on rebuilding Palestinian higher education.</p>
+                        <a href="research.html" class="pill-link">Read more on the Research page</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="teaching" class="section section-alt" aria-labelledby="teaching-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Teaching and leadership</div>
+                    <h2 id="teaching-heading">Teaching and academic leadership</h2>
+                    <div class="clusters-grid">
+                        <article class="cluster-card cluster-card-half cluster-card-teal">
+                            <div class="card-label">Teaching</div>
+                            <h3 class="cluster-title">Research-led and interdisciplinary</h3>
+                            <p class="cluster-text">He has taught undergraduate and postgraduate students in Palestine, the United Kingdom and Germany, and guest lectured at Harvard University as a Fulbright Fellow. At Cambridge he lectures, supervises and examines. His teaching is research-led and interdisciplinary, with growing attention to digital technologies and generative AI in academic work.</p>
+                            <div class="pill-row"><a href="teaching.html" class="pill-link">Teaching &amp; Supervision</a></div>
+                        </article>
+                        <article class="cluster-card cluster-card-half cluster-card-terra">
+                            <div class="card-label">Leadership</div>
+                            <h3 class="cluster-title">Institutional leadership and scholarly service</h3>
+                            <p class="cluster-text">From 2020 to 2023 he was Dean of the Faculty of Mass Communication and Languages at Gaza University. He is also Founder and first Chair of the Middle East Chapter of the Marie Curie Alumni Association.</p>
+                            <div class="pill-row"><a href="leadership.html" class="pill-link">Academic Leadership</a></div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section id="journey" class="section" aria-labelledby="journey-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Academic journey</div>
+                    <h2 id="journey-heading">From Gaza to Cambridge</h2>
+                    <p class="section-intro">His academic journey began in Palestine, where he studied mass communication, before postgraduate studies in the United Kingdom and Germany.</p>
+                    <div class="split-grid">
+                        <div class="split-col journey-col">
+                            <h3 class="col-title">Qualifications</h3>
+                            <ul class="timeline">
+                                <li class="timeline-row"><div class="timeline-period">2015</div><div class="timeline-body"><div class="timeline-title">PhD in Media Studies, Magna Cum Laude</div><div class="timeline-meta">University of Hamburg. Doctoral research on international press coverage of the 2008–09 Gaza war, using Critical Discourse Analysis.</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period"><i class="muted-italic">[add year]</i></div><div class="timeline-body"><div class="timeline-title">MA (Distinction) <i class="muted-italic">[add subject]</i></div><div class="timeline-meta">Anglia Ruskin University</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period"><i class="muted-italic">[add year]</i></div><div class="timeline-body"><div class="timeline-title">BA <i class="muted-italic">[add subject]</i></div><div class="timeline-meta">Al-Azhar University in Gaza</div></div></li>
+                            </ul>
+                        </div>
+                        <div class="split-col journey-col">
+                            <h3 class="col-title">Fellowships and positions</h3>
+                            <ul class="timeline">
+                                <li class="timeline-row"><div class="timeline-period">2017–2020</div><div class="timeline-body"><div class="timeline-title">Marie Skłodowska-Curie Fellow</div><div class="timeline-meta">Newcastle University</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period">2022</div><div class="timeline-body"><div class="timeline-title">Fulbright Fellow, researching Hamas’s digital communication and political communication</div><div class="timeline-meta">Harvard University</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period">2023–2024</div><div class="timeline-body"><div class="timeline-title">Guest Researcher</div><div class="timeline-meta">Hans-Bredow-Institut</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period">2024–2026</div><div class="timeline-body"><div class="timeline-title">CARA / IIE-SRF Fellow, Department of Sociology</div><div class="timeline-meta">University of Cambridge</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period">2026–2027</div><div class="timeline-body"><div class="timeline-title">Affiliated Lecturer, Cambridge Digital Humanities</div><div class="timeline-meta">University of Cambridge</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period"><i class="muted-italic">[add dates]</i></div><div class="timeline-body"><div class="timeline-title">Visiting Scholar</div><div class="timeline-meta">Jesus College, University of Cambridge</div></div></li>
+                                <li class="timeline-row"><div class="timeline-period"><i class="muted-italic">[add dates]</i></div><div class="timeline-body"><div class="timeline-title">Affiliated Fellow, Centre for Islamic Studies; Associate Fellow, Homerton College</div><div class="timeline-meta">University of Cambridge</div></div></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="practice" class="section section-alt" aria-labelledby="practice-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Practice</div>
+                    <h2 id="practice-heading">From research to professional practice</h2>
+                    <div class="clusters-grid">
+                        <article class="cluster-card cluster-card-half cluster-card-ink">
+                            <div class="card-label">Frontline World</div>
+                            <h3 class="cluster-title">Strategic research and advisory</h3>
+                            <p class="cluster-text">Dr Amer brings rigorous research, critical analysis and institutional understanding into professional and organisational settings. Through Frontline World he connects academic knowledge with strategic research, institutional advisory, risk and strategic foresight, strategic communication and professional development.</p>
+                            <div class="pill-row"><a href="services.html" class="pill-link">Services &amp; Offers</a><a href="https://frontlineworld.org" class="pill-link">Frontline World</a></div>
+                        </article>
+                        <article class="cluster-card cluster-card-half cluster-card-ink">
+                            <div class="card-label">GCR-HSS</div>
+                            <h3 class="cluster-title">Gaza Center for Research in Humanities and Social Sciences</h3>
+                            <p class="cluster-text">The Gaza Center for Research in Humanities and Social Sciences (GCR-HSS) advances research and scholarly engagement in the humanities and social sciences, with a focus on Palestinian society. <i class="muted-italic">[add website when live]</i></p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section id="recognition" class="section" aria-labelledby="recognition-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Recognition</div>
+                    <h2 id="recognition-heading">Fellowships and recognition</h2>
+                    <ul class="timeline">
+                        <li class="timeline-row"><div class="timeline-period">2021</div><div class="timeline-body"><div class="timeline-title">First Place, Data-Driven Research Award in MENA</div><div class="timeline-meta">As Junior Researcher Coach. An initiative associated with UNESCO, the University of Liverpool and partner organisations.</div></div></li>
+                        <li class="timeline-row"><div class="timeline-period">2022</div><div class="timeline-body"><div class="timeline-title">Fulbright Fellowship</div><div class="timeline-meta">Harvard University</div></div></li>
+                        <li class="timeline-row"><div class="timeline-period">2017–2020</div><div class="timeline-body"><div class="timeline-title">Marie Skłodowska-Curie Fellowship</div><div class="timeline-meta">Newcastle University</div></div></li>
+                        <li class="timeline-row"><div class="timeline-period">2024–2026</div><div class="timeline-body"><div class="timeline-title">CARA / IIE-SRF Fellowship</div><div class="timeline-meta">University of Cambridge</div></div></li>
+                    </ul>
+                    <p class="recognition-note">He works in Arabic, English and German and publishes as Mohammedwesam Amer. For his academic record, see his <a href="https://www.sociology.cam.ac.uk/people/wesam-amer">University of Cambridge profile</a> and <i class="muted-italic">[add ORCID link]</i>.</p>
+                </div>
+            </section>
+
+            <section id="explore" class="section section-alt" aria-labelledby="explore-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Explore</div>
+                    <h2 id="explore-heading">Explore his work</h2>
+                    <ul class="explore-grid">
+                        <li><a href="research.html" class="explore-link">Research <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                        <li><a href="publications.html" class="explore-link">Publications <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                        <li><a href="teaching.html" class="explore-link">Teaching <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                        <li><a href="leadership.html" class="explore-link">Academic Leadership <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                        <li><a href="services.html" class="explore-link">Services &amp; Offers <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                        <li><a href="news.html" class="explore-link">News &amp; Engagement <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                        <li><a href="contact.html" class="explore-link">Contact <span class="explore-arrow" aria-hidden="true">→</span></a></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="engagement-band" aria-labelledby="closing-heading">
+                <div class="container engagement-grid">
+                    <div class="engagement-content">
+                        <div class="engagement-eyebrow">Across research, education and practice</div>
+                        <h2 id="closing-heading">Understanding how narratives are constructed and knowledge is protected</h2>
+                        <p>His work is guided by the conviction that rigorous academic inquiry and strategic practice can help examine how narratives are constructed, protect educational ecosystems and ensure that the realities of conflict-affected communities are understood.</p>
+                    </div>
+                    <div class="engagement-actions">
+                        <a href="contact.html" class="btn btn-light">Contact</a>
+                        <a href="#" class="btn btn-outline-light">For Media</a>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="site-footer">
+                <div class="container footer-grid">
+                    <span>Dr Wesam Amer · Also published as Mohammedwesam Amer</span>
+                    <span>Founder and Director, Frontline World Ltd</span>
+                </div>
+            </footer>
+
         </div>
-        <div id="mobile-menu" class="hidden bg-white border-t border-gray-200 px-6 py-4">
-            <ul class="flex flex-col gap-3">
-                <li><a href="index.html" class="block text-gray-700 hover:text-blue-600">Home</a></li>
-                <li><a href="about.html" class="block text-blue-600 font-semibold">About</a></li>
-                <li><a href="research.html" class="block text-gray-700 hover:text-blue-600">Research</a></li>
-                <li><a href="publications.html" class="block text-gray-700 hover:text-blue-600">Publications</a></li>
-                <li><a href="teaching.html" class="block text-gray-700 hover:text-blue-600">Teaching</a></li>
-                <li><a href="academic-profile.html" class="block text-gray-700 hover:text-blue-600">Academic Profile</a></li>
-                <li><a href="news-engagement.html" class="block text-gray-700 hover:text-blue-600">News & Engagement</a></li>
-                <li><a href="services.html" class="block text-gray-700 hover:text-blue-600">Services</a></li>
-                <li><a href="contact.html" class="block text-gray-700 hover:text-blue-600">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="max-w-5xl mx-auto px-6 py-10">
-        <section class="about-section">
-            <div class="about-hero">
-                <div class="about-hero__text">
-                    <p class="kicker">About</p>
-                    <h1 class="about-name">Dr Wesam Amer</h1>
-                    <p class="about-descriptor">Scholar of Media, Political Communication and Higher Education</p>
-                    <p class="about-intro">
-                        Dr Wesam Amer is a scholar of media, political communication and higher education whose interdisciplinary research examines how communication technologies, political discourse and institutional structures shape power, conflict and knowledge production.
-                    </p>
-                    <p class="about-intro">
-                        His work spans Palestine, Germany, the United Kingdom and the United States, connecting academic research with teaching, institutional leadership and professional engagement. He is currently an Affiliated Lecturer at Cambridge Digital Humanities, University of Cambridge, and Founder and Director of Frontline World and the Gaza Center for Research in Humanities and Social Sciences.
-                    </p>
-                </div>
-                <figure class="about-photo about-photo--main photo-frame photo-frame--portrait">
-                    <img src="images/wesam-amer-portrait.jpeg" alt="Portrait of Dr Wesam Amer" width="682" height="1023" loading="lazy">
-                </figure>
-            </div>
-
-            <div class="about-block">
-                <h2 class="about-heading">Research Focus</h2>
-                <p class="about-block__intro">
-                    His work is organised around three interconnected areas that share a common concern with communication, power and knowledge under conditions of conflict and technological change.
-                </p>
-                <div class="pillars">
-                    <article class="pillar">
-                        <p class="pillar__kicker">Area 1</p>
-                        <h3 class="pillar__title">Political Communication, Media and Conflict</h3>
-                        <p class="pillar__intro">
-                            Examining how political actors and media institutions construct narratives, communicate political objectives and shape public understanding during conflict and political change, drawing on critical discourse studies and political communication.
-                        </p>
-                    </article>
-                    <article class="pillar">
-                        <p class="pillar__kicker">Area 2</p>
-                        <h3 class="pillar__title">Artificial Intelligence, Digital Technologies and Algorithmic Power</h3>
-                        <p class="pillar__intro">
-                            Investigating how digital platforms, AI and algorithmic systems transform communication, media production and visibility, and how technological infrastructures shape the circulation of political content.
-                        </p>
-                    </article>
-                    <article class="pillar" style="grid-column: 1 / -1; max-width: 48ch; margin: 0 auto; text-align: center;">
-                        <p class="pillar__kicker">Area 3</p>
-                        <h3 class="pillar__title">Higher Education, Scholasticide and Reconstruction</h3>
-                        <p class="pillar__intro">
-                            Researching the destruction of educational institutions in conflict, particularly Palestine, and the conditions required to restore academic communities, institutional capacity and knowledge production.
-                        </p>
-                    </article>
-                </div>
-                <div class="pillars-connection">
-                    <p>
-                        <strong>Central concern:</strong> Who can speak, be seen and produce knowledge under conditions of conflict and technological change?
-                    </p>
-                </div>
-            </div>
-
-            <div class="about-block bio">
-                <h2 class="about-heading">Academic Biography</h2>
-                <p>
-                    Dr Amer holds a PhD in Media Studies and Discourse Analysis from the University of Hamburg (2015, Magna Cum Laude), an MA with Distinction from Anglia Ruskin University (2009), and a BA from Al-Azhar University in Gaza (2001). His doctoral research examined international press coverage of the 2008-09 Gaza war through Critical Discourse Analysis.
-                </p>
-                <p>
-                    His academic appointments include Marie Skłodowska-Curie Fellow at Newcastle University (2017-2020), Fulbright Fellow at Harvard University (2022), Guest Researcher at the Hans-Bredow-Institut (2023-2024), CARA/IIE-SRF Fellow at the University of Cambridge (2024-2026), and Affiliated Lecturer at Cambridge Digital Humanities (2026-2027). He also held visiting positions at Jesus College, Homerton College and the Centre for Islamic Studies at the University of Cambridge. From 2020 to 2023, he served as Dean of the Faculty of Mass Communication and Languages at Gaza University.
-                </p>
-                <p>
-                    He is developing two conceptual contributions: <strong>Techno-Discursive Critical Analysis (TDCA)</strong>, which connects critical discourse studies with critical algorithm studies and critical security studies to examine discourse through technological infrastructures; and <strong>de-scholasticide</strong>, which focuses on restoring and transforming higher education following institutional destruction. His current research includes <strong>HYPERWAR</strong>, examining AI-mediated hypermedia warfare and algorithmic visibility in contemporary conflict.
-                </p>
-                <p>
-                    Alongside research and teaching, he is Founder and Director of <a href="https://frontlineworld.org/">Frontline World</a> and the Gaza Center for Research in Humanities and Social Sciences. He works in Arabic, English and German and is a member of the Marie Curie Alumni Association (founding Chair of its Middle East Chapter).
-                </p>
-                <p>
-                    <a class="pillar__link" href="research.html">Explore Research →</a>
-                    <span style="margin: 0 1rem;">·</span>
-                    <a class="pillar__link" href="academic-profile.html">View Academic Profile →</a>
-                    <span style="margin: 0 1rem;">·</span>
-                    <a class="pillar__link" href="teaching.html">Teaching & Supervision →</a>
-                </p>
-            </div>
-        </section>
     </main>
-
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <div>
-                <p class="footer-name">Dr Wesam Amer</p>
-                <p class="footer-role">Scholar of Media, Communication and Political Discourse</p>
-                <p><a class="footer-email" href="mailto:wesaam.amer@gmail.com">wesaam.amer@gmail.com</a></p>
-            </div>
-            <div>
-                <p class="footer-heading">Profile</p>
-                <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="academic-profile.html">Academic Profile</a></li>
-                </ul>
-            </div>
-            <div>
-                <p class="footer-heading">Scholarship</p>
-                <ul class="footer-links">
-                    <li><a href="research.html">Research</a></li>
-                    <li><a href="publications.html">Publications</a></li>
-                    <li><a href="teaching.html">Teaching</a></li>
-                </ul>
-            </div>
-            <div>
-                <p class="footer-heading">Engagement</p>
-                <ul class="footer-links">
-                    <li><a href="news-engagement.html">News &amp; Engagement</a></li>
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-meta">
-            <p class="footer-copy">&copy; 2026 Dr. Mohammedwesam Amer. All rights reserved.</p>
-            <ul class="footer-profiles">
-                <li><a href="https://orcid.org/0000-0002-8796-9097" target="_blank" rel="noopener">ORCID</a></li>
-                <li><a href="https://scholar.google.com/citations?user=CNgZsPQAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a></li>
-                <li><a href="https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/" target="_blank" rel="noopener">LinkedIn</a></li>
-                <li><a href="https://research.sociology.cam.ac.uk/profile/dr-wesam-amer" target="_blank" rel="noopener">University of Cambridge</a></li>
-            </ul>
-        </div>
-    </footer>
-
-    <script>
-        var toggleBtn = document.getElementById('menu-toggle');
-        var mobileMenu = document.getElementById('mobile-menu');
-        toggleBtn.addEventListener('click', function () {
-            var isHidden = mobileMenu.classList.toggle('hidden');
-            toggleBtn.setAttribute('aria-expanded', String(!isHidden));
-        });
-    </script>
 </body>
 </html>
