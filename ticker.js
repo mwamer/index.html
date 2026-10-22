@@ -1,4 +1,5 @@
-// Fills the "Latest news" strip from the items on news.html (newest first, at most 8).
+// Fills the "Latest news" strip from the items on news.html (newest first, at most 8):
+// date, type, key words (data-keywords on each item) and the item's first photo.
 // If news.html cannot be read, the items typed into the page stay in place.
 (function () {
     var track = document.querySelector('[data-news-ticker]');
@@ -25,11 +26,13 @@
         var role = article.querySelector('.news-item-role');
         var date = article.querySelector('.news-item-date');
         var title = article.querySelector('.news-item-title');
+        var photo = article.querySelector('.news-figure img');
         var record = article.querySelector('.news-links a[href^="engagement-"]');
         return {
             date: date ? date.textContent.trim() : '',
             type: (role && role.textContent.trim()) || (pill ? pill.textContent.trim() : ''),
-            title: title ? title.textContent.trim() : '',
+            title: article.getAttribute('data-keywords') || (title ? title.textContent.trim() : ''),
+            img: photo ? photo.getAttribute('src') : '',
             href: record ? record.getAttribute('href') : 'news.html'
         };
     }
@@ -50,6 +53,16 @@
         if (isCopy) {
             link.setAttribute('aria-hidden', 'true');
             link.tabIndex = -1;
+        }
+        if (item.img) {
+            var photo = document.createElement('img');
+            photo.className = 'tk-photo';
+            photo.src = item.img;
+            photo.width = 56;
+            photo.height = 42;
+            photo.alt = '';
+            photo.loading = 'lazy';
+            link.appendChild(photo);
         }
         [['tk-date', item.date], ['tk-type', item.type], ['tk-title', item.title]].forEach(function (part) {
             var span = document.createElement('span');

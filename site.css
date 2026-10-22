@@ -2766,12 +2766,22 @@ button.btn {
 .tk-item {
     display: inline-flex;
     gap: 8px;
-    align-items: baseline;
+    align-items: center;
     margin-right: 48px;
-    padding: 16px 0;
+    padding: 12px 0;
     text-decoration: none;
     color: var(--ink);
     font-size: 15px;
+}
+
+.tk-photo {
+    display: block;
+    width: 56px;
+    height: 42px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    margin-right: 4px;
 }
 
 .tk-item:hover .tk-title {
