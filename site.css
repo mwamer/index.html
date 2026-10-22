@@ -2715,3 +2715,121 @@ button.btn {
     color: var(--terra);
     font-weight: 600;
 }
+
+/* Latest news strip */
+.tk {
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: stretch;
+}
+
+.tk-label {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.tk-viewport {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.tk-track {
+    display: inline-flex;
+    white-space: nowrap;
+    animation: tk-scroll 60s linear infinite;
+}
+
+.tk:hover .tk-track,
+.tk:focus-within .tk-track {
+    animation-play-state: paused;
+}
+
+@keyframes tk-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.tk-item {
+    display: inline-flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-right: 48px;
+    padding: 16px 0;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 15px;
+}
+
+.tk-item:hover .tk-title {
+    color: var(--terra);
+}
+
+.tk-item:focus-visible {
+    outline-offset: -2px;
+}
+
+.tk-date {
+    color: var(--terra);
+    font-weight: 600;
+}
+
+.tk-type {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.tk-title {
+    font-weight: 500;
+}
+
+.tk-all {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--teal);
+    border-left: 1px solid var(--line);
+    background: var(--card);
+}
+
+.tk-all:hover {
+    color: var(--terra);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tk-track {
+        animation: none;
+    }
+    .tk-viewport {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .tk-label {
+        padding: 16px;
+    }
+    .tk-all {
+        display: none;
+    }
+}
