@@ -2536,12 +2536,12 @@ button.btn {
 }
 
 .profile-card-hero {
-    flex: 1 1 380px;
+    flex: 1 1 440px;
     min-width: 0;
 }
 
 .profile-photo-sm {
-    flex-basis: 130px;
+    flex-basis: 200px;
 }
 
 .credentials {
