@@ -2292,7 +2292,11 @@ button.btn {
 }
 
 .profile-photo img {
+    display: block;
+    height: auto;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
+    border: 1px solid var(--line);
 }
 
 .profile-photo-slot {
