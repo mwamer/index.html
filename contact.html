@@ -40,16 +40,14 @@
                         <p class="pub-hero-lead">I welcome enquiries about research collaboration, teaching and supervision, consultancy and training, invited lectures, and media or policy requests.</p>
                         <p class="pub-hero-text">Please use the form below or write to me directly, and tell me briefly who you are and what you need. I aim to reply <i>[add response time]</i>.</p>
                         <div class="hero-actions">
-                            <a href="#form" class="btn btn-primary">Send a message</a>
-                            <a href="mailto:wesaam.amer@gmail.com" class="btn btn-secondary">Email me</a>
+                            <a href="mailto:wesaam.amer@gmail.com" class="btn btn-primary">Email me</a>
                         </div>
                     </div>
                     <div class="pub-card">
                         <div class="pub-card-title">Contact details</div>
                         <dl class="detail-list">
                             <div class="detail-row"><dt>Email</dt><dd><a href="mailto:wesaam.amer@gmail.com">wesaam.amer@gmail.com</a></dd></div>
-                            <div class="detail-row"><dt>Phone</dt><dd><a href="tel:+4917657855517">+49 176 5785 5517</a></dd></div>
-                            <div class="detail-row"><dt>Based in</dt><dd><i class="detail-note">[add current location]</i></dd></div>
+                            <div class="detail-row"><dt>Based in</dt><dd>Cambridge</dd></div>
                             <div class="detail-row"><dt>Affiliation</dt><dd>Affiliated Lecturer, Cambridge Digital Humanities, University of Cambridge (2026–27); Founder and Director, Frontline World Ltd</dd></div>
                             <div class="detail-row detail-row-last"><dt>Languages</dt><dd>Arabic, English, German</dd></div>
                         </dl>
@@ -87,65 +85,23 @@
                 </div>
             </section>
 
-            <section id="form" class="section" aria-labelledby="form-heading">
-                <div class="container split-grid">
-                    <div class="split-col form-intro">
-                        <div class="section-eyebrow">Contact form</div>
-                        <h2 id="form-heading">Send me a message</h2>
-                        <p class="form-intro-text">Choose the type of enquiry so that your message reaches me with the right subject line.</p>
-                    </div>
-                    <div class="form-card">
-                        <!-- TODO: connect this form to a form service (for example Formspree or Netlify Forms) and add a privacy notice page -->
-                        <form id="contact-form" action="#" method="post" novalidate>
-                            <div class="form-summary" id="form-summary" role="alert" hidden>Please correct the highlighted fields before sending.</div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="name" class="form-label">Full name <span class="form-hint">(required)</span></label>
-                                    <input id="name" name="name" type="text" autocomplete="name" required class="form-control" aria-describedby="name-error">
-                                    <p class="form-error" id="name-error" hidden>Enter your full name.</p>
-                                </div>
-                                <div class="form-field">
-                                    <label for="email" class="form-label">Email address <span class="form-hint">(required)</span></label>
-                                    <input id="email" name="email" type="email" autocomplete="email" required class="form-control" aria-describedby="email-error">
-                                    <p class="form-error" id="email-error" hidden>Enter your email address.</p>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <label for="org" class="form-label">Organisation or institution <span class="form-hint">(optional)</span></label>
-                                    <input id="org" name="organisation" type="text" autocomplete="organization" class="form-control">
-                                </div>
-                                <div class="form-field">
-                                    <label for="type" class="form-label">Type of enquiry</label>
-                                    <select id="type" name="type" class="form-control">
-                                        <option>Research collaboration</option>
-                                        <option>Teaching or supervision</option>
-                                        <option>Consultancy or training</option>
-                                        <option>Invited lecture or event</option>
-                                        <option>Media or policy</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-field">
-                                <label for="message" class="form-label">How can I help? <span class="form-hint">(required)</span></label>
-                                <textarea id="message" name="message" rows="6" required class="form-control form-control-area" aria-describedby="message-error"></textarea>
-                                <p class="form-error" id="message-error" hidden>Tell me briefly how I can help.</p>
-                            </div>
-                            <div class="hp-field" aria-hidden="true">
-                                <label for="website">Leave this field empty</label>
-                                <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
-                            </div>
-                            <div class="form-field">
-                                <div class="consent-row">
-                                    <input id="consent" name="consent" type="checkbox" required class="consent-box" aria-describedby="consent-error">
-                                    <label for="consent" class="consent-label">I agree to my details being used to reply to this enquiry. <a href="#">Privacy notice</a></label>
-                                </div>
-                                <p class="form-error" id="consent-error" hidden>Tick the box to confirm you agree.</p>
-                            </div>
-                            <div><button type="submit" class="btn btn-primary">Send message</button></div>
-                            <p class="form-success" id="form-success" role="status" tabindex="-1" hidden>Thank you. This form is not connected yet, so please email me directly at <a href="mailto:wesaam.amer@gmail.com">wesaam.amer@gmail.com</a>.</p>
-                        </form>
+            <section class="section section-alt" aria-labelledby="open-heading">
+                <div class="container">
+                    <div class="section-eyebrow">Open to</div>
+                    <h2 id="open-heading">Open to</h2>
+                    <ul class="pill-list">
+                        <li class="pill">Research collaborations</li>
+                        <li class="pill">Academic partnerships</li>
+                        <li class="pill">Speaking invitations</li>
+                        <li class="pill">Media requests</li>
+                        <li class="pill">PhD &amp; postgraduate supervision inquiries</li>
+                        <li class="pill">Conference participation</li>
+                        <li class="pill">Consulting &amp; advisory opportunities</li>
+                    </ul>
+                    <div class="contact-gallery">
+                        <figure class="contact-figure">
+                            <img src="images/japan-contact.jpg" alt="Dr Wesam Amer in Japan" loading="lazy">
+                        </figure>
                     </div>
                 </div>
             </section>
@@ -187,10 +143,20 @@
                 </div>
             </section>
 
-            <footer class="site-footer">
-                <div class="container footer-grid">
-                    <span>Dr Wesam Amer · Also published as Mohammedwesam Amer</span>
-                    <span>Founder and Director, Frontline World Ltd</span>
+                        <footer class="site-footer-new">
+                <div class="footer-container">
+                    <div class="footer-top">
+                        <span class="footer-label">Find me online</span>
+                        <a href="https://www.linkedin.com/in/dr-mohammedwesam-amer-b1b40932/" target="_blank" rel="noopener noreferrer" class="footer-link">LinkedIn <span aria-hidden="true">↗</span></a>
+                        <a href="https://frontlineworld.org" target="_blank" rel="noopener noreferrer" class="footer-link">Frontline World <span aria-hidden="true">↗</span></a>
+                        <a href="#" class="footer-link">Download CV</a>
+                        <a href="https://orcid.org/0000-0002-8796-9097" target="_blank" rel="noopener noreferrer" class="footer-link">ORCID <span aria-hidden="true">↗</span></a>
+                        <a href="https://scholar.google.com/citations?user=CNgZsPQAAAAJ&amp;hl=en" target="_blank" rel="noopener noreferrer" class="footer-link">Google Scholar <span aria-hidden="true">↗</span></a>
+                    </div>
+                    <div class="footer-bottom">
+                        <span>Dr Wesam Amer · Also published as Mohammedwesam Amer</span>
+                        <span>Founder and Director, Frontline World Ltd</span>
+                    </div>
                 </div>
             </footer>
 
