@@ -1633,6 +1633,10 @@ h3 {
     color: var(--muted);
 }
 
+.pub-row-title + .pub-row-meta {
+    margin-top: 4px;
+}
+
 .pub-row-link {
     flex: 0 0 120px;
     text-align: right;
