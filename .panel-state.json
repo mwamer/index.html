@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "updated": "2026-11-08T12:37:02.055Z",
+    "updated": "2026-11-08T12:41:44.467Z",
     "files": {
         "engagement-armistice-plan.html": "16007b66fbd7fb7de644fe0cd73dc728203cc0f5908241b452fc45c664d3c637",
         "engagement-cambridge-real-centre-2026.html": "a8294a8a6347b13b35669b44e0dfe60f999b0a957fad1c082715f5cf4f8e2ac7",
@@ -26,8 +26,9 @@
         "engagement-paydesk.html": "73e6110446a8ec8ac78377107d82ecfaf297cbc33d91f9139d04e5fa701ed4c1",
         "engagement-uxil-paris.html": "1974dc9c75f0ca402644ecd166e90b6fa89c8754cbc1fe2118bfa54b458ea70c",
         "engagement-world-beyond-war-silenced.html": "418267b3113e73d0c734444845de19a2f63051f6f55795d99d871c8ed9ce869c",
-        "news-engagement.html": "f583b7d0645ecb16557664b6c88a8d5774df83b0ee1b5023d564da7ab3cdcfaa",
-        "engagement-necropolitics-of-scholasticide-in-gaza-lausanne.html": "ad367e3ff1384df51fee90bd90cc6e63edb92016d9d45373707585be4457f7cb"
+        "news-engagement.html": "15abf068d4e78c1108ad54adb4cdbf7dafdd16b4e7a55a1e9bdb11ffcfc69f2d",
+        "engagement-necropolitics-of-scholasticide-in-gaza-lausanne.html": "ad367e3ff1384df51fee90bd90cc6e63edb92016d9d45373707585be4457f7cb",
+        "engagement-from-discourse-to-digital-power-lausanne.html": "d321ae2747150c6b7818f2b5c88a6e996b8dafb0b7c7d0ca48c132ede29c9135"
     },
     "deleted": [
         {
