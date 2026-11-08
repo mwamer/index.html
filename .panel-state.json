@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "updated": "2026-11-08T12:45:11.156Z",
+    "updated": "2026-11-08T16:05:57.165Z",
     "files": {
         "engagement-armistice-plan.html": "16007b66fbd7fb7de644fe0cd73dc728203cc0f5908241b452fc45c664d3c637",
         "engagement-cambridge-real-centre-2026.html": "a8294a8a6347b13b35669b44e0dfe60f999b0a957fad1c082715f5cf4f8e2ac7",
@@ -9,6 +9,7 @@
         "engagement-eldiario-es-2025.html": "257b3d811e37e2e2ef97cd0dff41d956e49e7e8151a94333e24336bb6699de83",
         "engagement-european-parliament-2026.html": "833552acf17f04e23b160618ae1d5443dc9c31db3f862568cd6f2283f86619e7",
         "engagement-fames-cambridge-2025.html": "29218d952eb8fb66b3947b478411ddd972d011d43be8728fb16714d664ad3dc8",
+        "engagement-from-discourse-to-digital-power-lausanne.html": "d321ae2747150c6b7818f2b5c88a6e996b8dafb0b7c7d0ca48c132ede29c9135",
         "engagement-gaza-centre.html": "1a3f26726690e59465cea40037b551c1b1cf26b089048d6951cd83bc6793144c",
         "engagement-gaza-tribunal-2025.html": "c8dc2e165e6f6729aa71e7c1117299340f2ecfd1202ff0869d22d0a1b2ffef45",
         "engagement-hypermedia-warfare-symposium-cambridge.html": "0c7e3da4ab2243a014cf43389788b9a22f34baeb7053355eb98e68179f539b8b",
@@ -20,15 +21,14 @@
         "engagement-mashahid.html": "a9a8f79455f2c86a707b4aadc13efe390c69ad2d207b1f316af51b340a0ed20b",
         "engagement-maynooth-university-2025.html": "46cd166b3e9181b179605f37bcc03c9e8d4a0606a649a4088d470e4bea172baa",
         "engagement-media-access-centre.html": "c3d402ca013e1e066aef792d06ffe2b94ea7ce089d098ec1140a4c6e3000ed36",
+        "engagement-necropolitics-of-scholasticide-in-gaza-lausanne.html": "ad367e3ff1384df51fee90bd90cc6e63edb92016d9d45373707585be4457f7cb",
         "engagement-neu-international-conference-books-not-bombs.html": "0ab0fb8919233514b5bc25d137033e63b54c6fcb602f9de50d7b2fb518e70335",
         "engagement-neu-international-conference.html": "30af6114c90cd2135cf9f332148727a2eabc2d6d45b53f4d7113fd05d04d7832",
         "engagement-palestine-tv-2025.html": "6d7f1d774cfdc247e5d44de4354df7dadaaef12603e43f3341c5d5a4db123b87",
         "engagement-paydesk.html": "73e6110446a8ec8ac78377107d82ecfaf297cbc33d91f9139d04e5fa701ed4c1",
         "engagement-uxil-paris.html": "1974dc9c75f0ca402644ecd166e90b6fa89c8754cbc1fe2118bfa54b458ea70c",
         "engagement-world-beyond-war-silenced.html": "418267b3113e73d0c734444845de19a2f63051f6f55795d99d871c8ed9ce869c",
-        "news-engagement.html": "3351b891ef0262e8b88022f6556f2efe581df1f1c2f00b4560e099cdada0e48a",
-        "engagement-necropolitics-of-scholasticide-in-gaza-lausanne.html": "ad367e3ff1384df51fee90bd90cc6e63edb92016d9d45373707585be4457f7cb",
-        "engagement-from-discourse-to-digital-power-lausanne.html": "d321ae2747150c6b7818f2b5c88a6e996b8dafb0b7c7d0ca48c132ede29c9135"
+        "news-engagement.html": "3351b891ef0262e8b88022f6556f2efe581df1f1c2f00b4560e099cdada0e48a"
     },
     "deleted": [
         {
