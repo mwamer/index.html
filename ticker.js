@@ -39,21 +39,15 @@
 
     function render(items) {
         track.textContent = '';
-        [false, true].forEach(function (isCopy) {
-            items.forEach(function (item) {
-                track.appendChild(buildLink(item, isCopy));
-            });
+        items.forEach(function (item) {
+            track.appendChild(buildLink(item));
         });
     }
 
-    function buildLink(item, isCopy) {
+    function buildLink(item) {
         var link = document.createElement('a');
         link.className = 'tk-item';
         link.href = item.href;
-        if (isCopy) {
-            link.setAttribute('aria-hidden', 'true');
-            link.tabIndex = -1;
-        }
         if (item.img) {
             var photo = document.createElement('img');
             photo.className = 'tk-photo';

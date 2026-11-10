@@ -720,6 +720,20 @@ h3 {
     color: var(--muted);
 }
 
+.footer-link-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-link-group .footer-link {
+    min-height: 0;
+}
+
+.footer-note {
+    font-size: 12px;
+    color: var(--muted);
+}
+
 .footer-link {
     color: var(--ink);
     text-decoration: none;
@@ -3066,6 +3080,23 @@ button.btn {
     color: var(--muted);
 }
 
+@media (min-width: 1100px) {
+    .credentials-grid {
+        flex-wrap: nowrap;
+        gap: 14px;
+    }
+    .cred-item {
+        flex: 1 1 0;
+        padding-left: 12px;
+    }
+    .cred-name {
+        font-size: 17px;
+    }
+    .cred-meta {
+        font-size: 12.5px;
+    }
+}
+
 /* Eyebrow tags */
 .eyebrow-tag {
     font-size: 13px;
@@ -3429,7 +3460,8 @@ button.btn {
 .tk-track {
     display: inline-flex;
     white-space: nowrap;
-    animation: tk-scroll 60s linear infinite;
+    padding-left: 100%;
+    animation: tk-scroll 90s linear infinite;
 }
 
 .tk:hover .tk-track,
@@ -3439,7 +3471,7 @@ button.btn {
 
 @keyframes tk-scroll {
     from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    to { transform: translateX(-100%); }
 }
 
 .tk-item {
@@ -3508,6 +3540,7 @@ button.btn {
 @media (prefers-reduced-motion: reduce) {
     .tk-track {
         animation: none;
+        padding-left: 0;
     }
     .tk-viewport {
         overflow-x: auto;
